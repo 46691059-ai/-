@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+logs/
+backend/target/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+deploy/data/
+deploy/secrets/
+deploy/backups/
+deploy/.env.production

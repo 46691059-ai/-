@@ -1,0 +1,5 @@
+logging:
+  level:
+    root: INFO
+    cn.gov.enterprise: DEBUG
+    com.baomidou.mybatisplus: DEBUG

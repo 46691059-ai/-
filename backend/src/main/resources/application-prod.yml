@@ -1,0 +1,14 @@
+spring:
+  main:
+    banner-mode: "off"
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+
+logging:
+  level:
+    root: INFO
+    cn.gov.enterprise: INFO
+    com.baomidou.mybatisplus: WARN

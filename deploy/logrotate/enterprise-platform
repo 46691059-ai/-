@@ -1,0 +1,11 @@
+/var/log/enterprise-platform/backup.log {
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    dateext
+    create 0640 root adm
+}
