@@ -64,9 +64,21 @@ erDiagram
   RISK_INFO ||--o{ RISK_RECTIFICATION : rectifies
   PARTY_ORG ||--o{ PARTY_MEMBER : contains
   HR_EMPLOYEE ||--o| PARTY_MEMBER : maps
+  PARTY_MEMBER ||--o{ PARTY_MEMBER_DEVELOPMENT : develops
+  PARTY_MEMBER ||--o{ PARTY_FEE_RECORD : pays
+  PARTY_ORG ||--o{ PARTY_ACTIVITY_PLAN : plans
   PARTY_ORG ||--o{ PARTY_ACTIVITY : organizes
   PARTY_ACTIVITY ||--o{ PARTY_ACTIVITY_MEMBER : signs
   PARTY_MEMBER ||--o{ PARTY_ACTIVITY_MEMBER : attends
+  PARTY_ORG ||--o{ PARTY_THEME_DAY : holds
+  PARTY_MEMBER ||--o{ PARTY_MEMBER_REVIEW : reviews
+  PARTY_ASSESSMENT_INDICATOR ||--o{ PARTY_ASSESSMENT_RECORD : scores
+  PARTY_ORG ||--o{ PARTY_ASSESSMENT_RECORD : assesses
+  PARTY_ORG ||--o{ PARTY_PROJECT : leads
+  PROJECT_INFO ||--o{ PARTY_PROJECT : integrates
+  PARTY_ORG ||--o{ PARTY_POSITION_AREA : establishes
+  INVESTMENT_PROJECT o|--o{ PARTY_MAJOR_DECISION : reviews
+  PARTY_ORG ||--o{ PARTY_HONOR : obtains
 ```
 
 ## 表结构与字段
@@ -101,10 +113,22 @@ erDiagram
 | 人事 | `hr_salary_budget` | `budget_year,org_id,budget_amount,used_amount,remaining_amount` |
 | 人事 | `hr_talent_tag` | `tag_name,tag_type,description,status` |
 | 人事 | `hr_employee_tag` | `employee_id,tag_id` |
-| 党建 | `party_org` | `org_name,org_type,secretary_id,parent_id,sys_org_id` |
-| 党建 | `party_member` | `employee_id,join_date,positive_date,party_position,party_org_id` |
-| 党建 | `party_activity` | `activity_type,title,activity_date,location,content` |
+| 党建 | `party_org` | `org_code,org_name,org_type,parent_id,sys_org_id,secretary_id,member_count,establish_date,status` |
+| 党建 | `party_member` | `employee_id,party_org_id,party_status,apply_date,activist_date,development_date,prepare_date,positive_date,party_position,join_party_date,status` |
+| 党建 | `party_member_development` | `member_id,stage,record_date,responsible_person,content,attachment,approval_status` |
+| 党建 | `party_fee_record` | `member_id,fee_month,income_base,should_pay,actual_pay,pay_date,status` |
+| 党建 | `party_activity_plan` | `party_org_id,plan_year,plan_name,plan_content,status` |
+| 党建 | `party_activity` | `party_org_id,activity_type,title,activity_date,location,host_id,content,summary,attachment,status` |
 | 党建 | `party_activity_member` | `activity_id,member_id,sign_status,sign_time` |
+| 党建 | `party_theme_day` | `party_org_id,theme,activity_date,activity_content,innovation_point,achievement,attachment` |
+| 党建 | `party_member_review` | `member_id,review_year,self_score,organization_score,democratic_score,final_result,review_content` |
+| 党建 | `party_assessment_indicator` | `indicator_code,indicator_name,indicator_type,weight,score_rule,status` |
+| 党建 | `party_assessment_record` | `party_org_id,indicator_id,assessment_year,score,assessment_person` |
+| 党建 | `party_project` | `project_id,party_org_id,project_name,leader_id,member_count,party_goal,achievement,status` |
+| 党建 | `party_position_area` | `party_org_id,area_name,responsible_member,responsibility,achievement,status` |
+| 党建 | `party_major_decision` | `decision_no,decision_name,decision_type,apply_department,investment_id,amount,content,party_opinion,board_result,execution_status,attachment` |
+| 党建 | `party_meeting` | `meeting_type,meeting_date,host_id,participants,agenda,decision,attachment` |
+| 党建 | `party_honor` | `party_org_id,honor_name,honor_level,obtain_date,description,attachment` |
 | 项目 | `project_info` | `project_no,project_name,project_type,project_mode,leader_id,department_id,status,start_date,end_date,budget_amount,expected_income,expected_profit` |
 | 项目 | `project_stage` | `project_id,stage_code,stage_name,stage_order,start_time,end_time,status` |
 | 项目 | `project_task` | `project_id,stage_id,task_no,task_name,responsible_person,plan_date,actual_date,status` |
@@ -157,6 +181,9 @@ erDiagram
 - 员工编号、岗位编码唯一；员工档案按组织、当前岗位、员工类型建立组合索引。
 - 岗位履历按员工和当前标识查询；绩效按员工及考核期间查询；薪酬按员工和月份唯一。
 - 干部任期、契约任期、整改截止日期均设置到期索引，支持预警任务扫描。
+- 党员档案按员工唯一、按党组织和党员状态查询；党费按党员和月份唯一。
+- 组织生活按党组织、活动类型和日期索引；党建考核按组织、指标和年度唯一。
+- 三重一大按事项编号唯一，并按申请部门、事项类型、执行状态和投资事项建立索引。
 - 日志按用户/结果和创建时间建立组合索引；收入、成本和付款节点按主对象及业务日期索引。
 - 投资决策、收益、风险和退出按投资事项与业务日期索引；投后指标按企业、指标和期间唯一。
 - 数据资产链路按资源、资产、产品逐级索引；授权结束日期和数据访问时间单独建立审计索引。
@@ -172,6 +199,8 @@ erDiagram
 - 投资事项关联 `project_info`，投资治理表关联 `investment_company`；数据收益可关联
   `operation_contract`，形成项目、合同、数据产品和收益链路。
 - BI 表是同步快照，不对在线交易表建立物理外键，防止分析装载影响业务事务。
+- 党建融合项目在项目表创建后补充 `project_info` 外键，三重一大事项在投资表创建后
+  补充 `investment_project` 外键，保证模块初始化顺序和跨域完整性兼顾。
 - 为兼容国产数据库，原设计中的 `condition`、`level`、`date`、`position`、
   `period` 分别规范为 `rule_condition`、`warning_level`、`statistic_date`、
   `director_position`、`monitor_period`。
@@ -182,6 +211,7 @@ erDiagram
 [`01_database.sql`](../../../database/mysql/01_database.sql)、
 [`02_sys.sql`](../../../database/mysql/02_sys.sql)、
 [`03_hr.sql`](../../../database/mysql/03_hr.sql)、
+[`04_party.sql`](../../../database/mysql/04_party.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

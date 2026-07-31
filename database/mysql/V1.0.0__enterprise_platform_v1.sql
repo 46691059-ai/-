@@ -356,7 +356,7 @@ CREATE TABLE IF NOT EXISTS hr_performance_indicator (
     CONSTRAINT chk_hr_indicator_weight CHECK (weight >= 0 AND weight <= 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='绩效指标';
 
-CREATE TABLE party_org (
+CREATE TABLE IF NOT EXISTS party_org (
     id BIGINT NOT NULL,
     org_name VARCHAR(128) NOT NULL,
     org_type VARCHAR(32) NOT NULL,
@@ -380,7 +380,7 @@ CREATE TABLE party_org (
     CONSTRAINT fk_party_org_sys_org FOREIGN KEY (sys_org_id) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='党组织';
 
-CREATE TABLE party_member (
+CREATE TABLE IF NOT EXISTS party_member (
     id BIGINT NOT NULL,
     employee_id BIGINT NOT NULL,
     join_date DATE NOT NULL,
@@ -403,7 +403,7 @@ CREATE TABLE party_member (
     CONSTRAINT fk_party_member_org FOREIGN KEY (party_org_id) REFERENCES party_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='党员档案';
 
-CREATE TABLE party_activity (
+CREATE TABLE IF NOT EXISTS party_activity (
     id BIGINT NOT NULL,
     activity_type VARCHAR(32) NOT NULL,
     title VARCHAR(200) NOT NULL,
@@ -425,7 +425,7 @@ CREATE TABLE party_activity (
     CONSTRAINT fk_party_activity_org FOREIGN KEY (party_org_id) REFERENCES party_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组织生活';
 
-CREATE TABLE party_activity_member (
+CREATE TABLE IF NOT EXISTS party_activity_member (
     id BIGINT NOT NULL,
     activity_id BIGINT NOT NULL,
     member_id BIGINT NOT NULL,

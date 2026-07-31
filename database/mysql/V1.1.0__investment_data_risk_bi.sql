@@ -647,4 +647,13 @@ CREATE TABLE bi_project_analysis (
     CONSTRAINT chk_bi_project_progress CHECK (progress >= 0 AND progress <= 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目分析宽表';
 
+-- 党建表先于项目、投资表创建，跨模块外键在依赖表就绪后补充。
+ALTER TABLE party_project
+    ADD CONSTRAINT fk_party_project_business_project
+    FOREIGN KEY (project_id) REFERENCES project_info(id);
+
+ALTER TABLE party_major_decision
+    ADD CONSTRAINT fk_party_major_decision_investment
+    FOREIGN KEY (investment_id) REFERENCES investment_project(id);
+
 SET FOREIGN_KEY_CHECKS = 1;
