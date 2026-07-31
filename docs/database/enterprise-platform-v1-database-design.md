@@ -40,6 +40,18 @@ erDiagram
   HR_EMPLOYEE ||--o{ PROJECT_TASK : handles
   PROJECT_INFO ||--o{ PROJECT_MEMBER : staffs
   HR_EMPLOYEE ||--o{ PROJECT_MEMBER : joins
+  PROJECT_INFO ||--o{ PROJECT_MILESTONE : controls
+  PROJECT_INFO ||--o| PROJECT_INVESTMENT_INFO : extends
+  PROJECT_INFO ||--o| PROJECT_BUSINESS_INFO : extends
+  PROJECT_INFO o|--o{ PROJECT_OPPORTUNITY : converts
+  PROJECT_INFO ||--o{ PROJECT_BID : bids
+  PROJECT_INFO ||--o{ PROJECT_CHANGE : changes
+  PROJECT_INFO ||--o{ PROJECT_RISK : exposes
+  PROJECT_INFO ||--o{ PROJECT_COST : costs
+  PROJECT_INFO ||--o{ PROJECT_INCOME : earns
+  PROJECT_INFO ||--o{ PROJECT_ACCEPTANCE : accepts
+  PROJECT_INFO ||--o{ PROJECT_EVALUATION : evaluates
+  PROJECT_INFO ||--o{ PROJECT_ARCHIVE : archives
   PROJECT_INFO ||--o{ OPERATION_CONTRACT : supports
   OPERATION_CONTRACT ||--o{ CONTRACT_PAYMENT : schedules
   PROJECT_INFO ||--o{ OPERATION_INCOME : generates
@@ -129,15 +141,27 @@ erDiagram
 | 党建 | `party_major_decision` | `decision_no,decision_name,decision_type,apply_department,investment_id,amount,content,party_opinion,board_result,execution_status,attachment` |
 | 党建 | `party_meeting` | `meeting_type,meeting_date,host_id,participants,agenda,decision,attachment` |
 | 党建 | `party_honor` | `party_org_id,honor_name,honor_level,obtain_date,description,attachment` |
-| 项目 | `project_info` | `project_no,project_name,project_type,project_mode,leader_id,department_id,status,start_date,end_date,budget_amount,expected_income,expected_profit` |
-| 项目 | `project_stage` | `project_id,stage_code,stage_name,stage_order,start_time,end_time,status` |
-| 项目 | `project_task` | `project_id,stage_id,task_no,task_name,responsible_person,plan_date,actual_date,status` |
-| 项目 | `project_member` | `project_id,employee_id,role,joined_date,left_date,status` |
+| 项目 | `project_info` | `project_no,project_name,project_type,project_mode,source_type,customer_id,department_id,leader_id,start_date,end_date,status,budget_amount,contract_amount,expected_income,expected_profit,actual_income,actual_profit,risk_level,progress` |
+| 项目 | `project_stage` | `project_id,stage_code,stage_name,stage_order,start_time,end_time,actual_start_time,actual_end_time,status,responsible_person,approval_status,completion_percent` |
+| 项目 | `project_task` | `project_id,stage_id,parent_task_id,task_no,task_name,task_content,responsible_person,plan_date,plan_start,plan_end,actual_date,actual_start,actual_end,progress,priority,status` |
+| 项目 | `project_member` | `project_id,employee_id,role,responsibilities,joined_date,left_date,status` |
+| 项目 | `project_milestone` | `project_id,milestone_name,plan_date,actual_date,status` |
+| 项目 | `project_investment_info` | `project_id,investment_amount,capital_source,investment_ratio,partner_name,spv_company,expected_roi,irr,payback_period` |
+| 项目 | `project_business_info` | `project_id,customer_name,tender_no,bid_amount,win_date,delivery_period,payment_method` |
+| 项目 | `project_opportunity` | `opportunity_no,opportunity_name,source,customer,estimated_amount,responsible_person,converted_project_id,status` |
+| 项目 | `project_bid` | `project_id,bid_no,tender_company,bid_date,bid_amount,result,reason` |
+| 项目 | `project_change` | `project_id,change_type,change_content,before_value,after_value,approval_status` |
+| 项目 | `project_risk` | `project_id,risk_name,risk_type,risk_level,description,measure,status` |
+| 项目 | `project_cost` | `project_id,cost_type,cost_name,amount,source_type,cost_date` |
+| 项目 | `project_income` | `project_id,income_type,amount,income_date,source` |
+| 项目 | `project_acceptance` | `project_id,acceptance_date,acceptance_type,result,customer_confirm,attachment` |
+| 项目 | `project_evaluation` | `project_id,evaluation_date,economic_score,management_score,customer_score,overall_score,summary` |
+| 项目 | `project_archive` | `project_id,archive_type,file_id,file_name,file_url,archive_date` |
 | 经营 | `operation_contract` | `contract_no,contract_name,customer_id,project_id,amount,sign_date,status` |
 | 经营 | `contract_payment` | `contract_id,payment_name,amount,plan_date,actual_date,status` |
 | 经营 | `operation_income` | `project_id,contract_id,income_amount,income_date` |
 | 经营 | `operation_cost` | `project_id,cost_type,amount,cost_date` |
-| 经营 | `project_profit` | `project_id,income,cost,profit,profit_rate,statistic_date` |
+| 经营 | `project_profit` | `project_id,total_income,total_cost,profit,profit_rate,calculate_date` |
 | 投资 | `investment_plan` | `plan_year,plan_name,industry_direction,plan_amount,actual_amount,responsible_dept,status` |
 | 投资 | `investment_project` | `investment_no,plan_id,project_id,investment_name,investment_type,investment_amount,investment_ratio,expected_return,risk_level,approval_status` |
 | 投资 | `investment_decision` | `investment_id,decision_type,meeting_type,meeting_date,decision_result,decision_file` |
@@ -178,6 +202,9 @@ erDiagram
   `leader_id,status,deleted`。
 - 阶段按 `project_id,deleted,stage_order` 排序；任务按阶段、状态、排序号查询；
   成员提供项目和员工两个查询方向。
+- 项目编号唯一，项目列表按状态、类型、责任部门、负责人和当前阶段建立组合索引。
+- 机会、投标、变更、里程碑、风险、验收和后评价均按项目与业务日期/状态建立索引。
+- 成本、收入和利润分析按项目与发生日期索引，档案同时关联统一文件中心。
 - 员工编号、岗位编码唯一；员工档案按组织、当前岗位、员工类型建立组合索引。
 - 岗位履历按员工和当前标识查询；绩效按员工及考核期间查询；薪酬按员工和月份唯一。
 - 干部任期、契约任期、整改截止日期均设置到期索引，支持预警任务扫描。
@@ -212,6 +239,7 @@ erDiagram
 [`02_sys.sql`](../../../database/mysql/02_sys.sql)、
 [`03_hr.sql`](../../../database/mysql/03_hr.sql)、
 [`04_party.sql`](../../../database/mysql/04_party.sql)、
+[`05_project.sql`](../../../database/mysql/05_project.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

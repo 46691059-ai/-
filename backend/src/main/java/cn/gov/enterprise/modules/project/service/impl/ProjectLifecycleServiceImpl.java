@@ -32,11 +32,13 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
     private static final BigDecimal ZERO = BigDecimal.ZERO.setScale(2);
     private static final List<StageDefinition> DEFAULT_STAGES = List.of(
             new StageDefinition("RESERVE", "项目储备", 1),
-            new StageDefinition("INITIATION", "立项审批", 2),
-            new StageDefinition("IMPLEMENTATION", "建设实施", 3),
-            new StageDefinition("OPERATION", "运营管理", 4),
-            new StageDefinition("EVALUATION", "项目评价", 5),
-            new StageDefinition("ARCHIVE", "项目归档", 6));
+            new StageDefinition("DEMONSTRATION", "项目论证", 2),
+            new StageDefinition("INITIATION", "立项审批", 3),
+            new StageDefinition("IMPLEMENTATION", "建设实施", 4),
+            new StageDefinition("ACCEPTANCE", "项目验收", 5),
+            new StageDefinition("OPERATION", "运营管理", 6),
+            new StageDefinition("EVALUATION", "项目后评价", 7),
+            new StageDefinition("ARCHIVE", "项目归档", 8));
 
     private final ProjectMapper projectMapper;
     private final ProjectStageMapper stageMapper;

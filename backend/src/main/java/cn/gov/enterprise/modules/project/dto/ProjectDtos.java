@@ -18,7 +18,7 @@ public final class ProjectDtos {
     public record CreateRequest(
             @NotBlank @Size(max = 64) String projectNo,
             @NotBlank @Size(max = 200) String projectName,
-            @NotBlank @Pattern(regexp = "INVESTMENT|OPERATION|ENGINEERING|DIGITAL|RD|OTHER")
+            @NotBlank @Pattern(regexp = "01|02|03|04|05|06")
             String projectType,
             @Size(max = 32) String projectMode,
             @NotNull Long leaderId,
@@ -34,7 +34,7 @@ public final class ProjectDtos {
 
     public record UpdateRequest(
             @NotBlank @Size(max = 200) String projectName,
-            @NotBlank @Pattern(regexp = "INVESTMENT|OPERATION|ENGINEERING|DIGITAL|RD|OTHER")
+            @NotBlank @Pattern(regexp = "01|02|03|04|05|06")
             String projectType,
             @Size(max = 32) String projectMode,
             @NotNull Long leaderId,

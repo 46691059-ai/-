@@ -26,7 +26,7 @@ async function submit(value: ProjectFormModel) {
       riskLevel: value.riskLevel,
       remark: value.remark,
     })
-    ElMessage.success('项目已创建，六个生命周期阶段已初始化')
+    ElMessage.success('项目已创建，八个生命周期阶段已初始化')
     await router.push(`/projects/${result.project.id}`)
   } finally {
     submitting.value = false

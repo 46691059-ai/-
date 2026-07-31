@@ -40,7 +40,7 @@ class ProjectStageTransitionPolicyTest {
     @Test
     void rejectsCompletingApprovalStageWithOpenTasks() {
         when(taskMapper.selectCount(any())).thenReturn(1L);
-        ProjectStageEntity stage = stage("EVALUATION", "IN_PROGRESS", 5);
+        ProjectStageEntity stage = stage("ACCEPTANCE", "IN_PROGRESS", 5);
 
         assertThatThrownBy(() -> policy.validate(stage, request("COMPLETED", "APPROVED")))
                 .isInstanceOf(BusinessException.class)

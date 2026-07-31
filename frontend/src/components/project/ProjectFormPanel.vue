@@ -45,7 +45,7 @@ function defaults(): ProjectFormModel {
   return {
     projectNo: '',
     projectName: '',
-    projectType: 'DIGITAL' as ProjectType,
+    projectType: '04' as ProjectType,
     projectMode: '',
     departmentId: '',
     leaderId: '',
@@ -89,12 +89,12 @@ async function submit() {
         </ElFormItem>
         <ElFormItem label="项目类型" prop="projectType">
           <ElSelect v-model="form.projectType">
-            <ElOption label="投资项目" value="INVESTMENT" />
-            <ElOption label="经营项目" value="OPERATION" />
-            <ElOption label="工程项目" value="ENGINEERING" />
-            <ElOption label="数字项目" value="DIGITAL" />
-            <ElOption label="研发项目" value="RD" />
-            <ElOption label="其他" value="OTHER" />
+            <ElOption label="投资项目" value="01" />
+            <ElOption label="中标项目" value="02" />
+            <ElOption label="工程项目" value="03" />
+            <ElOption label="数字化项目" value="04" />
+            <ElOption label="研发项目" value="05" />
+            <ElOption label="运营项目" value="06" />
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="项目模式">
@@ -123,7 +123,7 @@ async function submit() {
     <section class="form-section">
       <div class="form-section__head">
         <div><span>02</span><h2>计划与经营目标</h2></div>
-        <p>项目创建后自动生成储备、立项、实施、运营、评价、归档六个阶段。</p>
+        <p>项目创建后自动生成储备、论证、立项、实施、验收、运营、后评价、归档八个阶段。</p>
       </div>
       <div class="form-grid">
         <ElFormItem label="计划开始日期" prop="startDate">

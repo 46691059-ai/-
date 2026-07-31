@@ -1,4 +1,4 @@
-export type ProjectType = 'INVESTMENT' | 'OPERATION' | 'ENGINEERING' | 'DIGITAL' | 'RD' | 'OTHER'
+export type ProjectType = '01' | '02' | '03' | '04' | '05' | '06'
 export type ProjectStatus = 'RESERVED' | 'IN_PROGRESS' | 'SUSPENDED' | 'COMPLETED' | 'CANCELLED'
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 

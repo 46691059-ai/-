@@ -446,7 +446,7 @@ CREATE TABLE IF NOT EXISTS party_activity_member (
     CONSTRAINT fk_party_am_member FOREIGN KEY (member_id) REFERENCES party_member(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='党员活动签到';
 
-CREATE TABLE project_info (
+CREATE TABLE IF NOT EXISTS project_info (
     id BIGINT NOT NULL,
     project_no VARCHAR(64) NOT NULL,
     project_name VARCHAR(200) NOT NULL,
@@ -485,7 +485,7 @@ CREATE TABLE project_info (
     CONSTRAINT chk_project_info_progress CHECK (progress >= 0 AND progress <= 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目主表';
 
-CREATE TABLE project_stage (
+CREATE TABLE IF NOT EXISTS project_stage (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     stage_code VARCHAR(32) NOT NULL,
@@ -516,7 +516,7 @@ CREATE TABLE project_stage (
     CONSTRAINT chk_project_stage_progress CHECK (completion_percent >= 0 AND completion_percent <= 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目阶段';
 
-CREATE TABLE project_task (
+CREATE TABLE IF NOT EXISTS project_task (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     stage_id BIGINT NOT NULL,
@@ -550,7 +550,7 @@ CREATE TABLE project_task (
     CONSTRAINT chk_project_task_progress CHECK (progress >= 0 AND progress <= 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目任务';
 
-CREATE TABLE project_member (
+CREATE TABLE IF NOT EXISTS project_member (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     employee_id BIGINT NOT NULL,
@@ -665,7 +665,7 @@ CREATE TABLE operation_cost (
     CONSTRAINT chk_operation_cost_amount CHECK (amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目成本';
 
-CREATE TABLE project_profit (
+CREATE TABLE IF NOT EXISTS project_profit (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     income DECIMAL(18,2) NOT NULL DEFAULT 0,

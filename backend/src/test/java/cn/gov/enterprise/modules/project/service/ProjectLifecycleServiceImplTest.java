@@ -58,7 +58,7 @@ class ProjectLifecycleServiceImplTest {
     }
 
     @Test
-    void createInitializesSixStagesAndManagerMembership() {
+    void createInitializesEightStagesAndManagerMembership() {
         AtomicReference<ProjectEntity> insertedProject = new AtomicReference<>();
         List<ProjectStageEntity> insertedStages = new ArrayList<>();
         List<ProjectMemberEntity> insertedMembers = new ArrayList<>();
@@ -102,7 +102,7 @@ class ProjectLifecycleServiceImplTest {
         ProjectDtos.DetailResponse result = service.create(new ProjectDtos.CreateRequest(
                 "PRJ-2026-001",
                 "县域数据运营项目",
-                "DIGITAL",
+                "04",
                 "SELF_OPERATED",
                 200L,
                 100L,
@@ -117,8 +117,8 @@ class ProjectLifecycleServiceImplTest {
         assertThat(result.project().id()).isEqualTo(9001L);
         assertThat(result.stages()).extracting(ProjectDtos.StageResponse::stageCode)
                 .containsExactly(
-                        "RESERVE", "INITIATION", "IMPLEMENTATION",
-                        "OPERATION", "EVALUATION", "ARCHIVE");
+                        "RESERVE", "DEMONSTRATION", "INITIATION", "IMPLEMENTATION",
+                        "ACCEPTANCE", "OPERATION", "EVALUATION", "ARCHIVE");
         assertThat(result.stages().getFirst().status()).isEqualTo("IN_PROGRESS");
         assertThat(result.members()).hasSize(1);
         assertThat(result.members().getFirst().role()).isEqualTo("MANAGER");
@@ -130,7 +130,7 @@ class ProjectLifecycleServiceImplTest {
         ProjectDtos.CreateRequest request = new ProjectDtos.CreateRequest(
                 "PRJ-2026-002",
                 "日期错误项目",
-                "DIGITAL",
+                "04",
                 null,
                 200L,
                 100L,

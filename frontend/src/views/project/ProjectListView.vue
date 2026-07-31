@@ -32,10 +32,12 @@ const query = reactive({
 
 const stageNames: Record<string, string> = {
   RESERVE: '项目储备',
+  DEMONSTRATION: '项目论证',
   INITIATION: '立项审批',
   IMPLEMENTATION: '建设实施',
+  ACCEPTANCE: '项目验收',
   OPERATION: '运营管理',
-  EVALUATION: '项目评价',
+  EVALUATION: '项目后评价',
   ARCHIVE: '项目归档',
 }
 

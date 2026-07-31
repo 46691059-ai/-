@@ -18,7 +18,7 @@ public class ProjectStageTransitionPolicy {
             "IN_PROGRESS", Set.of("IN_PROGRESS", "COMPLETED"),
             "COMPLETED", Set.of("COMPLETED"),
             "SKIPPED", Set.of("SKIPPED"));
-    private static final Set<String> APPROVAL_STAGES = Set.of("INITIATION", "EVALUATION");
+    private static final Set<String> APPROVAL_STAGES = Set.of("INITIATION", "ACCEPTANCE");
 
     private final ProjectStageMapper stageMapper;
     private final ProjectTaskMapper taskMapper;

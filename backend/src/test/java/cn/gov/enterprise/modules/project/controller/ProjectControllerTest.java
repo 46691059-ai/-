@@ -44,7 +44,7 @@ class ProjectControllerTest {
     @WithMockUser(authorities = "project:lifecycle:list")
     void pageReturnsUnifiedRestResponse() throws Exception {
         ProjectDtos.Response project = new ProjectDtos.Response(
-                9001L, "PRJ-001", "测试项目", "DIGITAL", "SELF_OPERATED",
+                9001L, "PRJ-001", "测试项目", "04", "SELF_OPERATED",
                 200L, 100L, "RESERVED", null, null, null, null,
                 BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ZERO, "RESERVE",
                 "LOW", BigDecimal.ZERO, null,
