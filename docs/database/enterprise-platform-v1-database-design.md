@@ -70,7 +70,10 @@ erDiagram
 | 系统 | `sys_role_menu` | `role_id,menu_id` |
 | 系统 | `sys_role_org` | `role_id,org_id` |
 | 系统 | `sys_org` | `org_code,org_name,org_type,parent_id,leader_id` |
+| 系统 | `sys_dict` | `dict_type,dict_label,dict_value,sort_no,status` |
 | 系统 | `sys_log` | `user_id,operation,request_url,ip,result,trace_id` |
+| 系统 | `sys_file` | `file_name,file_path,file_type,file_size,file_hash,storage_type,business_type,business_id` |
+| 系统 | `sys_message` | `receiver_id,title,content,message_type,read_status,read_time` |
 | 人事 | `hr_employee` | `employee_no,name,gender,id_card,org_id,position_id,status` |
 | 人事 | `hr_position` | `position_code,position_name,department_id,position_level` |
 | 人事 | `hr_three_definition` | `org_id,position_id,approved_number,current_number,definition_year` |
@@ -150,6 +153,8 @@ erDiagram
 ## 初始化与升级
 
 新环境执行
+[`01_database.sql`](../../../database/mysql/01_database.sql)、
+[`02_sys.sql`](../../../database/mysql/02_sys.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

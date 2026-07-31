@@ -5,7 +5,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE sys_org (
+CREATE TABLE IF NOT EXISTS sys_org (
     id BIGINT NOT NULL,
     org_code VARCHAR(64) NOT NULL,
     org_name VARCHAR(128) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE sys_org (
     CONSTRAINT fk_sys_org_parent FOREIGN KEY (parent_id) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组织架构';
 
-CREATE TABLE sys_role (
+CREATE TABLE IF NOT EXISTS sys_role (
     id BIGINT NOT NULL,
     role_name VARCHAR(128) NOT NULL,
     role_code VARCHAR(64) NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE sys_role (
     KEY idx_sys_role_status (status, deleted)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色';
 
-CREATE TABLE sys_permission (
+CREATE TABLE IF NOT EXISTS sys_permission (
     id BIGINT NOT NULL,
     permission_name VARCHAR(128) NOT NULL,
     permission_code VARCHAR(128) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE sys_permission (
     KEY idx_sys_permission_module (module_code, status, deleted)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限资源';
 
-CREATE TABLE sys_menu (
+CREATE TABLE IF NOT EXISTS sys_menu (
     id BIGINT NOT NULL,
     menu_name VARCHAR(128) NOT NULL,
     menu_type VARCHAR(16) NOT NULL COMMENT 'DIRECTORY/MENU/BUTTON/EXTERNAL',
@@ -99,7 +99,7 @@ CREATE TABLE sys_menu (
     CONSTRAINT fk_sys_menu_parent FOREIGN KEY (parent_id) REFERENCES sys_menu(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单';
 
-CREATE TABLE sys_user (
+CREATE TABLE IF NOT EXISTS sys_user (
     id BIGINT NOT NULL,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL COMMENT '仅保存BCrypt/Argon2摘要',
@@ -130,7 +130,7 @@ CREATE TABLE sys_user (
     CONSTRAINT fk_sys_user_org FOREIGN KEY (org_id) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统用户';
 
-CREATE TABLE sys_user_role (
+CREATE TABLE IF NOT EXISTS sys_user_role (
     id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE sys_user_role (
     CONSTRAINT fk_sys_user_role_role FOREIGN KEY (role_id) REFERENCES sys_role(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关系';
 
-CREATE TABLE sys_role_permission (
+CREATE TABLE IF NOT EXISTS sys_role_permission (
     id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     permission_id BIGINT NOT NULL,
@@ -168,7 +168,7 @@ CREATE TABLE sys_role_permission (
     CONSTRAINT fk_sys_rp_permission FOREIGN KEY (permission_id) REFERENCES sys_permission(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色权限关系';
 
-CREATE TABLE sys_role_menu (
+CREATE TABLE IF NOT EXISTS sys_role_menu (
     id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     menu_id BIGINT NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE sys_role_menu (
     CONSTRAINT fk_sys_rm_menu FOREIGN KEY (menu_id) REFERENCES sys_menu(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关系';
 
-CREATE TABLE sys_role_org (
+CREATE TABLE IF NOT EXISTS sys_role_org (
     id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     org_id BIGINT NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE sys_role_org (
     CONSTRAINT fk_sys_ro_org FOREIGN KEY (org_id) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色组织数据范围';
 
-CREATE TABLE sys_log (
+CREATE TABLE IF NOT EXISTS sys_log (
     id BIGINT NOT NULL,
     user_id BIGINT NULL,
     operation VARCHAR(255) NOT NULL,
