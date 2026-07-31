@@ -73,7 +73,7 @@ public class ProjectTaskCommandService {
         if (childCount > 0) {
             throw new BusinessException("B0001", "存在子任务，不能删除");
         }
-        if (taskMapper.softDelete(task.getId(), securityContext.userId()) == 0) {
+        if (taskMapper.softDelete(task.getId(), securityContext.username()) == 0) {
             throw concurrentModification();
         }
     }
@@ -84,16 +84,14 @@ public class ProjectTaskCommandService {
             throw new BusinessException("B0001", "任务所属阶段不能为空");
         }
         requireStage(projectId, request.stageId());
-        referenceValidator.requireActiveUser(request.assigneeUserId(), "任务负责人");
-        validateDates(request.plannedStartDate(), request.plannedEndDate(), "任务计划日期");
-        validateDates(request.actualStartDate(), request.actualEndDate(), "任务实际日期");
+        referenceValidator.requireActiveEmployee(request.responsiblePerson(), "任务负责人");
         if (request.parentTaskId() != null) {
             ProjectTaskEntity parent = requireTask(projectId, request.parentTaskId());
             ensureNoCycle(projectId, taskId, parent);
         }
         long duplicate = taskMapper.selectCount(new LambdaQueryWrapper<ProjectTaskEntity>()
                 .eq(ProjectTaskEntity::getProjectId, projectId)
-                .eq(ProjectTaskEntity::getTaskCode, request.taskCode().trim())
+                .eq(ProjectTaskEntity::getTaskNo, request.taskNo().trim())
                 .ne(taskId != null, ProjectTaskEntity::getId, taskId));
         if (duplicate > 0) {
             throw new BusinessException("B0001", "项目内任务编码已存在");
@@ -104,35 +102,24 @@ public class ProjectTaskCommandService {
         task.setProjectId(projectId);
         task.setStageId(request.stageId());
         task.setParentTaskId(request.parentTaskId());
-        task.setTaskCode(request.taskCode().trim());
+        task.setTaskNo(request.taskNo().trim());
         task.setTaskName(request.taskName().trim());
-        task.setTaskType(request.taskType());
-        task.setAssigneeUserId(request.assigneeUserId());
+        task.setResponsiblePerson(request.responsiblePerson());
+        task.setPlanDate(request.planDate());
+        task.setActualDate(request.actualDate());
+        task.setStatus(request.status());
         task.setPriority(request.priority());
-        task.setTaskStatus(request.taskStatus());
-        task.setPlannedStartDate(request.plannedStartDate());
-        task.setPlannedEndDate(request.plannedEndDate());
-        task.setActualStartDate(request.actualStartDate());
-        task.setActualEndDate(request.actualEndDate());
         task.setProgress(request.progress());
-        if ("TODO".equals(request.taskStatus())) {
+        if ("TODO".equals(request.status())) {
             task.setProgress(ZERO);
-            task.setActualStartDate(null);
-            task.setActualEndDate(null);
-        } else if ("COMPLETED".equals(request.taskStatus())) {
+            task.setActualDate(null);
+        } else if ("COMPLETED".equals(request.status())) {
             task.setProgress(BigDecimal.valueOf(100).setScale(2));
-            if (task.getActualStartDate() == null) {
-                task.setActualStartDate(LocalDate.now());
+            if (task.getActualDate() == null) {
+                task.setActualDate(LocalDate.now());
             }
-            if (task.getActualEndDate() == null) {
-                task.setActualEndDate(LocalDate.now());
-            }
-        } else if ("IN_PROGRESS".equals(request.taskStatus())
-                && task.getActualStartDate() == null) {
-            task.setActualStartDate(LocalDate.now());
         }
-        task.setOutputDesc(request.outputDesc());
-        task.setRiskDesc(request.riskDesc());
+        task.setRemark(request.remark());
         task.setSortNo(request.sortNo() == null ? 0 : request.sortNo());
     }
 

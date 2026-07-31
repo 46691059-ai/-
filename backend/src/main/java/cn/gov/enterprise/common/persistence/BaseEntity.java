@@ -12,16 +12,16 @@ import lombok.Setter;
 @Setter
 public abstract class BaseEntity {
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedTime;
+    private LocalDateTime updateTime;
 
     @TableField(fill = FieldFill.INSERT)
-    private Long createdBy;
+    private String createBy;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long updatedBy;
+    private String updateBy;
 
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
@@ -30,4 +30,6 @@ public abstract class BaseEntity {
     @Version
     @TableField(fill = FieldFill.INSERT)
     private Integer version;
+
+    private String remark;
 }

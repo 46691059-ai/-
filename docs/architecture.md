@@ -25,5 +25,6 @@ enterprise-platform
 - `modules.project.service.ProjectLifecycleAssembler`：Entity/DTO 装配
 
 业务模块必须按 `controller / dto / entity / mapper / service` 分层，模块间通过公开服务或 DTO 交互。
-数据库脚本按版本递增执行；`V1.2.0` 增加令牌版本、逻辑删除唯一键修复、组合外键和查询索引。
+数据库以 `V1.0.0__enterprise_platform_v1.sql` 为完整基线，统一审计字段、
+逻辑删除唯一键、乐观锁、复合外键和查询索引；旧版数据使用独立迁移目录人工升级。
 客户端退出登录调用 `POST /api/auth/logout`，服务端按 JWT `jti` 将令牌加入 Redis 撤销表直到其自然过期。

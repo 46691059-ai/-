@@ -68,9 +68,10 @@ enterprise-platform/
 
 数据库按顺序执行：
 
-1. `database/mysql/V1.0.0__system_base.sql`
-2. `database/mysql/V1.1.0__project_lifecycle.sql`
-3. `database/mysql/V1.2.0__security_and_project_hardening.sql`
+1. `database/mysql/V1.0.0__enterprise_platform_v1.sql`
+
+已部署旧版环境按 `database/mysql/migration/V2.0.0__legacy_to_v1.sql`
+执行蓝绿迁移；该目录不会被 Docker 初始化流程自动执行。
 
 ## 启动
 

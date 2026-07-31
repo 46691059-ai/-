@@ -7,12 +7,12 @@ import org.apache.ibatis.annotations.Update;
 
 public interface ProjectStageMapper extends BaseMapper<ProjectStageEntity> {
     @Update("""
-        UPDATE pm_project_stage
+        UPDATE project_stage
         SET deleted = 1, delete_token = id,
-            updated_time = CURRENT_TIMESTAMP(3), updated_by = #{userId}
+            update_time = CURRENT_TIMESTAMP(3), update_by = #{operator}
         WHERE project_id = #{projectId} AND deleted = 0
         """)
     int softDeleteByProject(
             @Param("projectId") Long projectId,
-            @Param("userId") Long userId);
+            @Param("operator") String operator);
 }

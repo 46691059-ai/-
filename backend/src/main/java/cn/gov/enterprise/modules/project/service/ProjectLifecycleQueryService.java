@@ -43,17 +43,18 @@ public class ProjectLifecycleQueryService {
     }
 
     public PageResponse<ProjectDtos.Response> page(
-            long page, long size, String keyword, String status, String stageCode, Long orgId) {
+            long page, long size, String keyword, String status,
+            String stageCode, Long departmentId) {
         String safeKeyword = escapeLikeKeyword(keyword);
         LambdaQueryWrapper<ProjectEntity> query = new LambdaQueryWrapper<ProjectEntity>()
                 .and(StringUtils.hasText(safeKeyword), wrapper -> wrapper
-                        .likeRight(ProjectEntity::getProjectCode, safeKeyword)
+                        .likeRight(ProjectEntity::getProjectNo, safeKeyword)
                         .or()
                         .likeRight(ProjectEntity::getProjectName, safeKeyword))
-                .eq(StringUtils.hasText(status), ProjectEntity::getProjectStatus, status)
+                .eq(StringUtils.hasText(status), ProjectEntity::getStatus, status)
                 .eq(StringUtils.hasText(stageCode), ProjectEntity::getCurrentStageCode, stageCode);
-        accessPolicy.applyScope(query, orgId);
-        query.orderByDesc(ProjectEntity::getCreatedTime);
+        accessPolicy.applyScope(query, departmentId);
+        query.orderByDesc(ProjectEntity::getCreateTime);
         Page<ProjectEntity> source = projectMapper.selectPage(
                 Page.of(normalizePage(page), normalizeSize(size)), query);
         return new PageResponse<>(
@@ -111,7 +112,7 @@ public class ProjectLifecycleQueryService {
                         .eq(ProjectTaskEntity::getProjectId, projectId)
                         .eq(stageId != null, ProjectTaskEntity::getStageId, stageId)
                         .orderByAsc(ProjectTaskEntity::getSortNo)
-                        .orderByAsc(ProjectTaskEntity::getCreatedTime));
+                        .orderByAsc(ProjectTaskEntity::getCreateTime));
     }
 
     private Page<ProjectMemberEntity> selectMemberPage(
@@ -120,7 +121,7 @@ public class ProjectLifecycleQueryService {
                 Page.of(normalizePage(page), normalizeSize(size)),
                 new LambdaQueryWrapper<ProjectMemberEntity>()
                         .eq(ProjectMemberEntity::getProjectId, projectId)
-                        .orderByAsc(ProjectMemberEntity::getCreatedTime));
+                        .orderByAsc(ProjectMemberEntity::getCreateTime));
     }
 
     private long normalizePage(long page) {

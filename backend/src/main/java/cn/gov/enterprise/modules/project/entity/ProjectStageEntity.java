@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@TableName("pm_project_stage")
+@TableName("project_stage")
 public class ProjectStageEntity extends BaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
@@ -21,14 +21,12 @@ public class ProjectStageEntity extends BaseEntity {
     private String stageCode;
     private String stageName;
     private Integer stageOrder;
-    private String stageStatus;
-    private Long ownerUserId;
-    private LocalDate plannedStartDate;
-    private LocalDate plannedEndDate;
-    private LocalDate actualStartDate;
-    private LocalDate actualEndDate;
+    private LocalDate startTime;
+    private LocalDate endTime;
+    private LocalDate actualStartTime;
+    private LocalDate actualEndTime;
+    private String status;
+    private Long responsiblePerson;
     private String approvalStatus;
     private BigDecimal completionPercent;
-    private String milestoneDesc;
-    private String riskSummary;
 }

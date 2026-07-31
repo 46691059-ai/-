@@ -13,25 +13,25 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@TableName("pm_project")
+@TableName("project_info")
 public class ProjectEntity extends BaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    private String projectCode;
+    private String projectNo;
     private String projectName;
     private String projectType;
-    private Long orgId;
-    private Long managerUserId;
-    private String description;
-    private LocalDate plannedStartDate;
-    private LocalDate plannedEndDate;
+    private String projectMode;
+    private Long leaderId;
+    private Long departmentId;
+    private String status;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private LocalDate actualStartDate;
     private LocalDate actualEndDate;
-    private BigDecimal investmentAmount;
+    private BigDecimal budgetAmount;
     private BigDecimal expectedIncome;
-    private BigDecimal actualIncome;
+    private BigDecimal expectedProfit;
     private String currentStageCode;
-    private String projectStatus;
     private String riskLevel;
     private BigDecimal progress;
 }

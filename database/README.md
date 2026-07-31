@@ -1,14 +1,9 @@
 # Database
 
-数据库脚本目录。当前仅初始化工程，不创建任何业务表。
+MySQL 8 全量初始化脚本位于 `mysql/` 根目录，Docker 首次创建数据卷时自动执行。
+`mysql/migration/` 仅存放已部署旧版环境的人工升级脚本，不会被容器初始化程序执行。
 
-后续每个模块应按版本增加迁移脚本，命名示例：
+- `V1.0.0__enterprise_platform_v1.sql`：V1.0 完整基线及最小权限菜单数据。
+- `migration/V2.0.0__legacy_to_v1.sql`：旧 `pm_project*` 数据迁移说明和保留表操作。
 
-```text
-mysql/
-  V1.0.0__create_system_user_tables.sql
-dm/
-  V1.0.0__create_system_user_tables.sql
-kingbase/
-  V1.0.0__create_system_user_tables.sql
-```
+生产升级前必须完成全量备份，并在预发布环境核对外键、记录数和金额汇总。

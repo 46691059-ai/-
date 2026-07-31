@@ -58,7 +58,7 @@ class ProjectLifecycleServiceImplTest {
     }
 
     @Test
-    void createInitializesFiveStagesAndManagerMembership() {
+    void createInitializesSixStagesAndManagerMembership() {
         AtomicReference<ProjectEntity> insertedProject = new AtomicReference<>();
         List<ProjectStageEntity> insertedStages = new ArrayList<>();
         List<ProjectMemberEntity> insertedMembers = new ArrayList<>();
@@ -103,22 +103,26 @@ class ProjectLifecycleServiceImplTest {
                 "PRJ-2026-001",
                 "县域数据运营项目",
                 "DIGITAL",
-                100L,
+                "SELF_OPERATED",
                 200L,
-                "项目说明",
+                100L,
                 LocalDate.of(2026, 8, 1),
                 LocalDate.of(2027, 7, 31),
                 new BigDecimal("5000000.00"),
                 new BigDecimal("800000.00"),
-                "MEDIUM"));
+                new BigDecimal("200000.00"),
+                "MEDIUM",
+                "项目说明"));
 
         assertThat(result.project().id()).isEqualTo(9001L);
         assertThat(result.stages()).extracting(ProjectDtos.StageResponse::stageCode)
-                .containsExactly("RESERVE", "INITIATION", "IMPLEMENTATION", "OPERATION", "ACCEPTANCE");
-        assertThat(result.stages().getFirst().stageStatus()).isEqualTo("IN_PROGRESS");
+                .containsExactly(
+                        "RESERVE", "INITIATION", "IMPLEMENTATION",
+                        "OPERATION", "EVALUATION", "ARCHIVE");
+        assertThat(result.stages().getFirst().status()).isEqualTo("IN_PROGRESS");
         assertThat(result.members()).hasSize(1);
-        assertThat(result.members().getFirst().memberRole()).isEqualTo("MANAGER");
-        assertThat(result.members().getFirst().userId()).isEqualTo(200L);
+        assertThat(result.members().getFirst().role()).isEqualTo("MANAGER");
+        assertThat(result.members().getFirst().employeeId()).isEqualTo(200L);
     }
 
     @Test
@@ -127,14 +131,16 @@ class ProjectLifecycleServiceImplTest {
                 "PRJ-2026-002",
                 "日期错误项目",
                 "DIGITAL",
-                100L,
-                200L,
                 null,
+                200L,
+                100L,
                 LocalDate.of(2027, 1, 1),
                 LocalDate.of(2026, 1, 1),
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
-                "LOW");
+                BigDecimal.ZERO,
+                "LOW",
+                null);
 
         assertThatThrownBy(() -> service.create(request))
                 .isInstanceOf(BusinessException.class)

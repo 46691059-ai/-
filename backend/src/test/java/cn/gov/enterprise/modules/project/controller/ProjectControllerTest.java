@@ -44,10 +44,10 @@ class ProjectControllerTest {
     @WithMockUser(authorities = "project:lifecycle:list")
     void pageReturnsUnifiedRestResponse() throws Exception {
         ProjectDtos.Response project = new ProjectDtos.Response(
-                9001L, "PRJ-001", "测试项目", "DIGITAL", 100L, 200L,
-                null, null, null, null, null,
-                BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ZERO,
-                "RESERVE", "RESERVED", "LOW", BigDecimal.ZERO,
+                9001L, "PRJ-001", "测试项目", "DIGITAL", "SELF_OPERATED",
+                200L, 100L, "RESERVED", null, null, null, null,
+                BigDecimal.TEN, BigDecimal.ONE, BigDecimal.ZERO, "RESERVE",
+                "LOW", BigDecimal.ZERO, null,
                 LocalDateTime.now(), LocalDateTime.now(), 0);
         when(service.page(1, 20, null, null, null, null))
                 .thenReturn(new PageResponse<>(List.of(project), 1, 1, 20));
@@ -56,7 +56,7 @@ class ProjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("0"))
                 .andExpect(jsonPath("$.data.total").value(1))
-                .andExpect(jsonPath("$.data.records[0].projectCode").value("PRJ-001"));
+                .andExpect(jsonPath("$.data.records[0].projectNo").value("PRJ-001"));
     }
 
     @Test

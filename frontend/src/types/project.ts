@@ -1,49 +1,51 @@
-export type ProjectType = 'INVESTMENT' | 'ENGINEERING' | 'DIGITAL' | 'OPERATION' | 'OTHER'
-export type ProjectStatus = 'DRAFT' | 'RESERVED' | 'IN_PROGRESS' | 'SUSPENDED' | 'COMPLETED' | 'CANCELLED'
+export type ProjectType = 'INVESTMENT' | 'OPERATION' | 'ENGINEERING' | 'DIGITAL' | 'RD' | 'OTHER'
+export type ProjectStatus = 'RESERVED' | 'IN_PROGRESS' | 'SUSPENDED' | 'COMPLETED' | 'CANCELLED'
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
 export interface Project {
   id: string
-  projectCode: string
+  projectNo: string
   projectName: string
   projectType: ProjectType
-  orgId: string
-  managerUserId: string
-  description?: string
-  plannedStartDate?: string
-  plannedEndDate?: string
+  projectMode?: string
+  leaderId: string
+  departmentId: string
+  status: ProjectStatus
+  startDate?: string
+  endDate?: string
   actualStartDate?: string
   actualEndDate?: string
-  investmentAmount: number
+  budgetAmount: number
   expectedIncome: number
-  actualIncome: number
+  expectedProfit: number
   currentStageCode: string
-  projectStatus: ProjectStatus
   riskLevel: RiskLevel
   progress: number
-  createdTime: string
-  updatedTime: string
+  remark?: string
+  createTime: string
+  updateTime: string
   version: number
 }
 
 export interface ProjectCreateInput {
-  projectCode: string
+  projectNo: string
   projectName: string
   projectType: ProjectType
-  orgId: string
-  managerUserId: string
-  description?: string
-  plannedStartDate?: string
-  plannedEndDate?: string
-  investmentAmount: number
+  projectMode?: string
+  leaderId: string
+  departmentId: string
+  startDate?: string
+  endDate?: string
+  budgetAmount: number
   expectedIncome: number
+  expectedProfit: number
   riskLevel: RiskLevel
+  remark?: string
 }
 
-export interface ProjectUpdateInput extends Omit<ProjectCreateInput, 'projectCode'> {
+export interface ProjectUpdateInput extends Omit<ProjectCreateInput, 'projectNo'> {
   actualStartDate?: string
   actualEndDate?: string
-  actualIncome: number
   version: number
 }
 
@@ -53,16 +55,15 @@ export interface ProjectStage {
   stageCode: string
   stageName: string
   stageOrder: number
-  stageStatus: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED'
-  ownerUserId?: string
-  plannedStartDate?: string
-  plannedEndDate?: string
-  actualStartDate?: string
-  actualEndDate?: string
+  startTime?: string
+  endTime?: string
+  actualStartTime?: string
+  actualEndTime?: string
+  status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED'
+  responsiblePerson?: string
   approvalStatus: 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED'
   completionPercent: number
-  milestoneDesc?: string
-  riskSummary?: string
+  remark?: string
   version: number
 }
 
@@ -71,32 +72,29 @@ export interface ProjectTask {
   projectId: string
   stageId: string
   parentTaskId?: string
-  taskCode: string
+  taskNo: string
   taskName: string
-  taskType: string
-  assigneeUserId?: string
+  responsiblePerson?: string
+  planDate?: string
+  actualDate?: string
+  status: 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'COMPLETED' | 'CANCELLED'
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
-  taskStatus: 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'COMPLETED' | 'CANCELLED'
-  plannedStartDate?: string
-  plannedEndDate?: string
-  actualStartDate?: string
-  actualEndDate?: string
   progress: number
-  outputDesc?: string
-  riskDesc?: string
   sortNo: number
+  remark?: string
   version: number
 }
 
 export interface ProjectMember {
   id: string
   projectId: string
-  userId: string
-  memberRole: 'MANAGER' | 'CORE' | 'PARTICIPANT' | 'EXPERT'
+  employeeId: string
+  role: 'MANAGER' | 'CORE' | 'PARTICIPANT' | 'EXPERT'
   responsibilities?: string
   joinedDate: string
   leftDate?: string
-  memberStatus: 'ACTIVE' | 'INACTIVE'
+  status: 'ACTIVE' | 'INACTIVE'
+  remark?: string
   version: number
 }
 

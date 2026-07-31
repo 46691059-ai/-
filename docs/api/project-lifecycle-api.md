@@ -1,47 +1,50 @@
-# 项目全生命周期 REST API
+# 项目全生命周期 REST API（V1.0）
 
-基础路径：`/api/projects`。所有接口要求 JWT，并返回统一 `ApiResponse<T>`。
-JWT 只携带用户标识和令牌版本；权限、用户状态及组织数据范围以数据库当前状态为准。
-除接口权限外，所有项目读写均校验角色数据范围；`SELF` 范围只允许访问本人负责或作为有效成员参与的项目。
+基础路径为 `/api/projects`。所有接口要求 JWT，并同时校验功能权限和组织数据范围。
+
+## 项目接口
 
 | 方法 | 路径 | 权限 | 说明 |
 |---|---|---|---|
-| `GET` | `/projects` | `project:lifecycle:list` | 项目分页查询 |
-| `GET` | `/projects/{id}` | `project:lifecycle:list` | 项目聚合详情 |
-| `POST` | `/projects` | `project:lifecycle:create` | 新增项目并初始化五个阶段 |
-| `PUT` | `/projects/{id}` | `project:lifecycle:update` | 编辑项目 |
-| `DELETE` | `/projects/{id}` | `project:lifecycle:delete` | 逻辑删除项目 |
-| `GET` | `/projects/{id}/stages` | `project:lifecycle:list` | 阶段列表 |
-| `PUT` | `/projects/{id}/stages/{stageId}` | `project:lifecycle:update` | 更新阶段 |
-| `GET` | `/projects/{id}/tasks?page=1&size=20&stageId=` | `project:lifecycle:list` | 任务分页，单页最多100条 |
-| `POST` | `/projects/{id}/tasks` | `project:lifecycle:update` | 新增任务 |
-| `PUT` | `/projects/{id}/tasks/{taskId}` | `project:lifecycle:update` | 编辑任务 |
-| `DELETE` | `/projects/{id}/tasks/{taskId}` | `project:lifecycle:update` | 删除任务 |
-| `GET` | `/projects/{id}/members?page=1&size=20` | `project:lifecycle:list` | 成员分页，单页最多100条 |
-| `POST` | `/projects/{id}/members` | `project:lifecycle:update` | 添加成员 |
-| `PUT` | `/projects/{id}/members/{memberId}` | `project:lifecycle:update` | 编辑成员 |
-| `DELETE` | `/projects/{id}/members/{memberId}` | `project:lifecycle:update` | 移除成员 |
+| GET | `/projects` | `project:lifecycle:list` | 分页查询 |
+| GET | `/projects/{id}` | `project:lifecycle:list` | 生命周期详情 |
+| POST | `/projects` | `project:lifecycle:create` | 新增并初始化六阶段 |
+| PUT | `/projects/{id}` | `project:lifecycle:update` | 编辑 |
+| DELETE | `/projects/{id}` | `project:lifecycle:delete` | 逻辑删除 |
 
-项目创建请求：
+列表参数：`page`、`size`、`keyword`、`status`、`stageCode`、`departmentId`。
 
 ```json
 {
-  "projectCode": "PRJ-2026-001",
-  "projectName": "县域数据资源运营项目",
+  "projectNo": "PRJ-2026-001",
+  "projectName": "县域数据运营项目",
   "projectType": "DIGITAL",
-  "orgId": 10001,
-  "managerUserId": 10010,
-  "plannedStartDate": "2026-08-01",
-  "plannedEndDate": "2027-07-31",
-  "investmentAmount": 5000000,
+  "projectMode": "SELF_OPERATED",
+  "leaderId": 10010,
+  "departmentId": 10001,
+  "startDate": "2026-08-01",
+  "endDate": "2027-07-31",
+  "budgetAmount": 5000000,
   "expectedIncome": 800000,
+  "expectedProfit": 200000,
   "riskLevel": "MEDIUM",
-  "description": "建设县域数据资源运营体系"
+  "remark": "建设县域数据资源运营体系"
 }
 ```
 
-项目编辑请求不接受 `projectStatus` 和 `progress`。两者由阶段状态和阶段进度在后端事务内反算。
-阶段只能按 `NOT_STARTED → IN_PROGRESS → COMPLETED` 顺序流转；允许未开始阶段标记为
-`SKIPPED`。立项与验收阶段必须审批通过，且阶段下不存在未完成任务后才能完成。
+编辑时必须提交响应中的 `version`。`status`、`currentStageCode` 和 `progress`
+由后端根据阶段状态反算，不接受前端直接修改。
 
-聚合详情仅返回前20条任务和成员，同时返回 `taskTotal`、`memberTotal`；其余数据通过对应分页接口获取。
+## 子资源接口
+
+| 资源 | GET | POST | PUT | DELETE |
+|---|---|---|---|---|
+| 阶段 | `/projects/{id}/stages` | - | `/projects/{id}/stages/{stageId}` | - |
+| 任务 | `/projects/{id}/tasks` | `/projects/{id}/tasks` | `/projects/{id}/tasks/{taskId}` | `/projects/{id}/tasks/{taskId}` |
+| 成员 | `/projects/{id}/members` | `/projects/{id}/members` | `/projects/{id}/members/{memberId}` | `/projects/{id}/members/{memberId}` |
+
+阶段依次为 `RESERVE`、`INITIATION`、`IMPLEMENTATION`、`OPERATION`、
+`EVALUATION`、`ARCHIVE`。阶段负责人、任务负责人和项目成员字段分别为
+`responsiblePerson`、`responsiblePerson`、`employeeId`，全部引用员工主数据。
+
+统一响应：`{"code":"0","message":"success","data":...,"traceId":"..."}`。

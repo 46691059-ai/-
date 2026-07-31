@@ -35,7 +35,8 @@ const stageNames: Record<string, string> = {
   INITIATION: '立项审批',
   IMPLEMENTATION: '建设实施',
   OPERATION: '运营管理',
-  ACCEPTANCE: '验收评价',
+  EVALUATION: '项目评价',
+  ARCHIVE: '项目归档',
 }
 
 const statusNames: Record<string, string> = {
@@ -90,14 +91,14 @@ onMounted(load)
     <div>
       <span class="page-eyebrow">PROJECT PORTFOLIO</span>
       <h1>项目全生命周期</h1>
-      <p>统一管理项目储备、立项、实施、运营与验收评价。</p>
+      <p>统一管理项目储备、立项、实施、运营、评价与归档。</p>
     </div>
     <ElButton type="primary" :icon="Plus" @click="router.push('/projects/create')">新增项目</ElButton>
   </div>
 
   <section class="summary-band">
     <div><span>项目总数</span><strong>{{ total }}</strong></div>
-    <div><span>本页进行中</span><strong>{{ rows.filter((item) => item.projectStatus === 'IN_PROGRESS').length }}</strong></div>
+    <div><span>本页进行中</span><strong>{{ rows.filter((item) => item.status === 'IN_PROGRESS').length }}</strong></div>
     <div><span>本页重大风险</span><strong>{{ rows.filter((item) => item.riskLevel === 'CRITICAL').length }}</strong></div>
     <p>项目数据贯穿投资、合同、资金、风险与经营分析。</p>
   </section>
@@ -122,13 +123,13 @@ onMounted(load)
     </div>
 
     <ElTable v-loading="loading" :data="rows" stripe @row-click="(row: Project) => router.push(`/projects/${row.id}`)">
-      <ElTableColumn prop="projectCode" label="项目编码" width="150" />
+      <ElTableColumn prop="projectNo" label="项目编号" width="150" />
       <ElTableColumn prop="projectName" label="项目名称" min-width="220" show-overflow-tooltip />
       <ElTableColumn label="当前阶段" width="120">
         <template #default="{ row }">{{ stageNames[row.currentStageCode] ?? row.currentStageCode }}</template>
       </ElTableColumn>
       <ElTableColumn label="投资金额" width="150" align="right">
-        <template #default="{ row }">{{ money(row.investmentAmount) }}</template>
+        <template #default="{ row }">{{ money(row.budgetAmount) }}</template>
       </ElTableColumn>
       <ElTableColumn label="进度" width="150">
         <template #default="{ row }"><ElProgress :percentage="Number(row.progress)" :stroke-width="7" /></template>
@@ -141,7 +142,7 @@ onMounted(load)
         </template>
       </ElTableColumn>
       <ElTableColumn label="状态" width="100">
-        <template #default="{ row }">{{ statusNames[row.projectStatus] }}</template>
+        <template #default="{ row }">{{ statusNames[row.status] }}</template>
       </ElTableColumn>
       <ElTableColumn label="操作" width="170" fixed="right">
         <template #default="{ row }">

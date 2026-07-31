@@ -12,15 +12,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@TableName("pm_project_member")
+@TableName("project_member")
 public class ProjectMemberEntity extends BaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private Long projectId;
-    private Long userId;
-    private String memberRole;
+    private Long employeeId;
+    private String role;
     private String responsibilities;
     private LocalDate joinedDate;
     private LocalDate leftDate;
-    private String memberStatus;
+    private String status;
 }

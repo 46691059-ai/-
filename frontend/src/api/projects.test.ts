@@ -32,7 +32,7 @@ describe('project lifecycle api', () => {
       stageCode: 'INITIATION',
       stageName: '立项审批',
       stageOrder: 2,
-      stageStatus: 'IN_PROGRESS',
+      status: 'IN_PROGRESS',
       approvalStatus: 'PENDING',
       completionPercent: 35,
       version: 4,

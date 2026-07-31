@@ -13,29 +13,29 @@ public class MybatisAuditMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         LocalDateTime now = LocalDateTime.now();
-        Long userId = currentUserId();
-        strictInsertFill(metaObject, "createdTime", LocalDateTime.class, now);
-        strictInsertFill(metaObject, "updatedTime", LocalDateTime.class, now);
-        strictInsertFill(metaObject, "createdBy", Long.class, userId);
-        strictInsertFill(metaObject, "updatedBy", Long.class, userId);
+        String operator = currentOperator();
+        strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
+        strictInsertFill(metaObject, "updateTime", LocalDateTime.class, now);
+        strictInsertFill(metaObject, "createBy", String.class, operator);
+        strictInsertFill(metaObject, "updateBy", String.class, operator);
         strictInsertFill(metaObject, "deleted", Integer.class, 0);
         strictInsertFill(metaObject, "version", Integer.class, 0);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        setFieldValByName("updatedTime", LocalDateTime.now(), metaObject);
-        setFieldValByName("updatedBy", currentUserId(), metaObject);
+        setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
+        setFieldValByName("updateBy", currentOperator(), metaObject);
     }
 
-    private Long currentUserId() {
+    private String currentOperator() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
+            return "system";
         }
         if (authentication.getPrincipal() instanceof SecurityPrincipal principal) {
-            return principal.userId();
+            return principal.username();
         }
-        return null;
+        return "system";
     }
 }

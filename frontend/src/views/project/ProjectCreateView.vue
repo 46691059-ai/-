@@ -12,19 +12,21 @@ async function submit(value: ProjectFormModel) {
   submitting.value = true
   try {
     const result = await createProject({
-      projectCode: value.projectCode,
+      projectNo: value.projectNo,
       projectName: value.projectName,
       projectType: value.projectType,
-      orgId: value.orgId,
-      managerUserId: value.managerUserId,
-      description: value.description,
-      plannedStartDate: value.plannedStartDate,
-      plannedEndDate: value.plannedEndDate,
-      investmentAmount: value.investmentAmount,
+      projectMode: value.projectMode,
+      departmentId: value.departmentId,
+      leaderId: value.leaderId,
+      startDate: value.startDate,
+      endDate: value.endDate,
+      budgetAmount: value.budgetAmount,
       expectedIncome: value.expectedIncome,
+      expectedProfit: value.expectedProfit,
       riskLevel: value.riskLevel,
+      remark: value.remark,
     })
-    ElMessage.success('项目已创建，五个生命周期阶段已初始化')
+    ElMessage.success('项目已创建，六个生命周期阶段已初始化')
     await router.push(`/projects/${result.project.id}`)
   } finally {
     submitting.value = false

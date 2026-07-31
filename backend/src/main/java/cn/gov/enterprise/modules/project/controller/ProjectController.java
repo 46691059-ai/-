@@ -37,8 +37,9 @@ public class ProjectController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String stageCode,
-            @RequestParam(required = false) Long orgId) {
-        return ApiResponse.success(service.page(page, size, keyword, status, stageCode, orgId));
+            @RequestParam(required = false) Long departmentId) {
+        return ApiResponse.success(
+                service.page(page, size, keyword, status, stageCode, departmentId));
     }
 
     @GetMapping("/{projectId}")

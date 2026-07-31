@@ -45,16 +45,15 @@ export async function updateProjectStage(projectId: string, stage: ProjectStage)
   const response = await http.put<ApiResponse<ProjectStage>>(
     `/projects/${projectId}/stages/${stage.id}`,
     {
-      ownerUserId: stage.ownerUserId || null,
-      plannedStartDate: stage.plannedStartDate || null,
-      plannedEndDate: stage.plannedEndDate || null,
-      actualStartDate: stage.actualStartDate || null,
-      actualEndDate: stage.actualEndDate || null,
-      stageStatus: stage.stageStatus,
+      responsiblePerson: stage.responsiblePerson || null,
+      startTime: stage.startTime || null,
+      endTime: stage.endTime || null,
+      actualStartTime: stage.actualStartTime || null,
+      actualEndTime: stage.actualEndTime || null,
+      status: stage.status,
       approvalStatus: stage.approvalStatus,
       completionPercent: stage.completionPercent,
-      milestoneDesc: stage.milestoneDesc,
-      riskSummary: stage.riskSummary,
+      remark: stage.remark,
       version: stage.version,
     },
   )

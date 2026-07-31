@@ -30,8 +30,8 @@ class ProjectAccessPolicyTest {
     void rejectsProjectOutsideAllowedOrganizations() {
         ProjectEntity project = new ProjectEntity();
         project.setId(1L);
-        project.setOrgId(200L);
-        project.setManagerUserId(10L);
+        project.setDepartmentId(200L);
+        project.setLeaderId(10L);
         when(projectMapper.selectById(1L)).thenReturn(project);
         when(securityContext.principal()).thenReturn(principal(Set.of(100L), false));
 
@@ -43,10 +43,10 @@ class ProjectAccessPolicyTest {
     void selfScopeRequiresManagerOrActiveMember() {
         ProjectEntity project = new ProjectEntity();
         project.setId(1L);
-        project.setOrgId(100L);
-        project.setManagerUserId(20L);
+        project.setDepartmentId(100L);
+        project.setLeaderId(20L);
         when(projectMapper.selectById(1L)).thenReturn(project);
-        when(projectMapper.countActiveMember(1L, 10L)).thenReturn(0L);
+        when(projectMapper.countSelfAccessible(1L, 10L)).thenReturn(0L);
         when(securityContext.principal()).thenReturn(principal(Set.of(100L), true));
 
         assertThatThrownBy(() -> policy.requireAccessible(1L))

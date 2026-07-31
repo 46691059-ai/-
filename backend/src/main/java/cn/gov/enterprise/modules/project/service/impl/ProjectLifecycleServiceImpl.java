@@ -35,7 +35,8 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
             new StageDefinition("INITIATION", "立项审批", 2),
             new StageDefinition("IMPLEMENTATION", "建设实施", 3),
             new StageDefinition("OPERATION", "运营管理", 4),
-            new StageDefinition("ACCEPTANCE", "验收评价", 5));
+            new StageDefinition("EVALUATION", "项目评价", 5),
+            new StageDefinition("ARCHIVE", "项目归档", 6));
 
     private final ProjectMapper projectMapper;
     private final ProjectStageMapper stageMapper;
@@ -79,8 +80,9 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
 
     @Override
     public PageResponse<ProjectDtos.Response> page(
-            long page, long size, String keyword, String status, String stageCode, Long orgId) {
-        return queryService.page(page, size, keyword, status, stageCode, orgId);
+            long page, long size, String keyword, String status,
+            String stageCode, Long departmentId) {
+        return queryService.page(page, size, keyword, status, stageCode, departmentId);
     }
 
     @Override
@@ -91,29 +93,30 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
     @Override
     @Transactional
     public ProjectDtos.DetailResponse create(ProjectDtos.CreateRequest request) {
-        accessPolicy.requireOrgAccessible(request.orgId());
-        referenceValidator.requireActiveOrgAndManager(
-                request.orgId(), request.managerUserId());
-        validateDates(request.plannedStartDate(), request.plannedEndDate(), "项目计划日期");
+        accessPolicy.requireOrgAccessible(request.departmentId());
+        referenceValidator.requireActiveOrgAndLeader(
+                request.departmentId(), request.leaderId());
+        validateDates(request.startDate(), request.endDate(), "项目计划日期");
         if (projectMapper.selectCount(new LambdaQueryWrapper<ProjectEntity>()
-                .eq(ProjectEntity::getProjectCode, request.projectCode().trim())) > 0) {
+                .eq(ProjectEntity::getProjectNo, request.projectNo().trim())) > 0) {
             throw new BusinessException("B0001", "项目编码已存在");
         }
 
         ProjectEntity project = new ProjectEntity();
-        project.setProjectCode(request.projectCode().trim());
+        project.setProjectNo(request.projectNo().trim());
         project.setProjectName(request.projectName().trim());
         project.setProjectType(request.projectType());
-        project.setOrgId(request.orgId());
-        project.setManagerUserId(request.managerUserId());
-        project.setDescription(request.description());
-        project.setPlannedStartDate(request.plannedStartDate());
-        project.setPlannedEndDate(request.plannedEndDate());
-        project.setInvestmentAmount(request.investmentAmount());
+        project.setProjectMode(request.projectMode());
+        project.setDepartmentId(request.departmentId());
+        project.setLeaderId(request.leaderId());
+        project.setRemark(request.remark());
+        project.setStartDate(request.startDate());
+        project.setEndDate(request.endDate());
+        project.setBudgetAmount(request.budgetAmount());
         project.setExpectedIncome(request.expectedIncome());
-        project.setActualIncome(ZERO);
+        project.setExpectedProfit(request.expectedProfit());
         project.setCurrentStageCode("RESERVE");
-        project.setProjectStatus("RESERVED");
+        project.setStatus("RESERVED");
         project.setRiskLevel(request.riskLevel());
         project.setProgress(ZERO);
         projectMapper.insert(project);
@@ -124,11 +127,11 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
             stage.setStageCode(definition.code());
             stage.setStageName(definition.name());
             stage.setStageOrder(definition.order());
-            stage.setStageStatus(definition.order() == 1 ? "IN_PROGRESS" : "NOT_STARTED");
-            stage.setOwnerUserId(definition.order() == 1 ? request.managerUserId() : null);
-            stage.setPlannedStartDate(definition.order() == 1 ? request.plannedStartDate() : null);
-            stage.setPlannedEndDate(definition.order() == 5 ? request.plannedEndDate() : null);
-            stage.setActualStartDate(definition.order() == 1 ? LocalDate.now() : null);
+            stage.setStatus(definition.order() == 1 ? "IN_PROGRESS" : "NOT_STARTED");
+            stage.setResponsiblePerson(definition.order() == 1 ? request.leaderId() : null);
+            stage.setStartTime(definition.order() == 1 ? request.startDate() : null);
+            stage.setEndTime(definition.order() == DEFAULT_STAGES.size() ? request.endDate() : null);
+            stage.setActualStartTime(definition.order() == 1 ? LocalDate.now() : null);
             stage.setApprovalStatus("NOT_SUBMITTED");
             stage.setCompletionPercent(ZERO);
             stageMapper.insert(stage);
@@ -136,12 +139,11 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
 
         ProjectMemberEntity manager = new ProjectMemberEntity();
         manager.setProjectId(project.getId());
-        manager.setUserId(request.managerUserId());
-        manager.setMemberRole("MANAGER");
+        manager.setEmployeeId(request.leaderId());
+        manager.setRole("MANAGER");
         manager.setResponsibilities("项目总体负责");
-        manager.setJoinedDate(request.plannedStartDate() != null
-                ? request.plannedStartDate() : LocalDate.now());
-        manager.setMemberStatus("ACTIVE");
+        manager.setJoinedDate(request.startDate() != null ? request.startDate() : LocalDate.now());
+        manager.setStatus("ACTIVE");
         memberMapper.insert(manager);
         return queryService.detail(project.getId());
     }
@@ -149,25 +151,26 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
     @Override
     @Transactional
     public ProjectDtos.Response update(Long projectId, ProjectDtos.UpdateRequest request) {
-        validateDates(request.plannedStartDate(), request.plannedEndDate(), "项目计划日期");
+        validateDates(request.startDate(), request.endDate(), "项目计划日期");
         validateDates(request.actualStartDate(), request.actualEndDate(), "项目实际日期");
         ProjectEntity project = requireProject(projectId);
-        accessPolicy.requireOrgAccessible(request.orgId());
-        referenceValidator.requireActiveOrgAndManager(
-                request.orgId(), request.managerUserId());
-        Long previousManagerUserId = project.getManagerUserId();
+        accessPolicy.requireOrgAccessible(request.departmentId());
+        referenceValidator.requireActiveOrgAndLeader(
+                request.departmentId(), request.leaderId());
+        Long previousLeaderId = project.getLeaderId();
         project.setProjectName(request.projectName().trim());
         project.setProjectType(request.projectType());
-        project.setOrgId(request.orgId());
-        project.setManagerUserId(request.managerUserId());
-        project.setDescription(request.description());
-        project.setPlannedStartDate(request.plannedStartDate());
-        project.setPlannedEndDate(request.plannedEndDate());
+        project.setProjectMode(request.projectMode());
+        project.setDepartmentId(request.departmentId());
+        project.setLeaderId(request.leaderId());
+        project.setRemark(request.remark());
+        project.setStartDate(request.startDate());
+        project.setEndDate(request.endDate());
         project.setActualStartDate(request.actualStartDate());
         project.setActualEndDate(request.actualEndDate());
-        project.setInvestmentAmount(request.investmentAmount());
+        project.setBudgetAmount(request.budgetAmount());
         project.setExpectedIncome(request.expectedIncome());
-        project.setActualIncome(request.actualIncome());
+        project.setExpectedProfit(request.expectedProfit());
         project.setRiskLevel(request.riskLevel());
         project.setVersion(request.version());
         if (projectMapper.updateById(project) == 0) {
@@ -175,9 +178,9 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
         }
         memberCommandService.synchronizeManager(
                 projectId,
-                previousManagerUserId,
-                request.managerUserId(),
-                request.plannedStartDate());
+                previousLeaderId,
+                request.leaderId(),
+                request.startDate());
         return assembler.project(projectMapper.selectById(projectId));
     }
 
@@ -185,11 +188,11 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
     @Transactional
     public void delete(Long projectId) {
         requireProject(projectId);
-        Long userId = securityContext.userId();
-        taskMapper.softDeleteByProject(projectId, userId);
-        stageMapper.softDeleteByProject(projectId, userId);
-        memberMapper.softDeleteByProject(projectId, userId);
-        if (projectMapper.softDelete(projectId, userId) == 0) {
+        String operator = securityContext.username();
+        taskMapper.softDeleteByProject(projectId, operator);
+        stageMapper.softDeleteByProject(projectId, operator);
+        memberMapper.softDeleteByProject(projectId, operator);
+        if (projectMapper.softDelete(projectId, operator) == 0) {
             throw concurrentModification();
         }
     }
@@ -204,29 +207,28 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
     public ProjectDtos.StageResponse updateStage(
             Long projectId, Long stageId, ProjectDtos.StageUpdateRequest request) {
         requireProject(projectId);
-        validateDates(request.plannedStartDate(), request.plannedEndDate(), "阶段计划日期");
-        validateDates(request.actualStartDate(), request.actualEndDate(), "阶段实际日期");
+        validateDates(request.startTime(), request.endTime(), "阶段计划日期");
+        validateDates(request.actualStartTime(), request.actualEndTime(), "阶段实际日期");
         ProjectStageEntity stage = requireStage(projectId, stageId);
-        referenceValidator.requireActiveUser(request.ownerUserId(), "阶段负责人");
+        referenceValidator.requireActiveEmployee(request.responsiblePerson(), "阶段负责人");
         stageTransitionPolicy.validate(stage, request);
-        stage.setOwnerUserId(request.ownerUserId());
-        stage.setPlannedStartDate(request.plannedStartDate());
-        stage.setPlannedEndDate(request.plannedEndDate());
-        stage.setActualStartDate(request.actualStartDate());
-        stage.setActualEndDate(request.actualEndDate());
-        stage.setStageStatus(request.stageStatus());
+        stage.setResponsiblePerson(request.responsiblePerson());
+        stage.setStartTime(request.startTime());
+        stage.setEndTime(request.endTime());
+        stage.setActualStartTime(request.actualStartTime());
+        stage.setActualEndTime(request.actualEndTime());
+        stage.setStatus(request.status());
         stage.setApprovalStatus(request.approvalStatus());
         stage.setCompletionPercent(request.completionPercent());
-        stage.setMilestoneDesc(request.milestoneDesc());
-        stage.setRiskSummary(request.riskSummary());
+        stage.setRemark(request.remark());
         stage.setVersion(request.version());
-        if ("IN_PROGRESS".equals(stage.getStageStatus()) && stage.getActualStartDate() == null) {
-            stage.setActualStartDate(LocalDate.now());
+        if ("IN_PROGRESS".equals(stage.getStatus()) && stage.getActualStartTime() == null) {
+            stage.setActualStartTime(LocalDate.now());
         }
-        if ("COMPLETED".equals(stage.getStageStatus())) {
+        if ("COMPLETED".equals(stage.getStatus())) {
             stage.setCompletionPercent(BigDecimal.valueOf(100).setScale(2));
-            if (stage.getActualEndDate() == null) {
-                stage.setActualEndDate(LocalDate.now());
+            if (stage.getActualEndTime() == null) {
+                stage.setActualEndTime(LocalDate.now());
             }
         }
         if (stageMapper.updateById(stage) == 0) {
@@ -293,20 +295,20 @@ public class ProjectLifecycleServiceImpl implements ProjectLifecycleService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .divide(BigDecimal.valueOf(stages.size()), 2, RoundingMode.HALF_UP);
         ProjectStageEntity current = stages.stream()
-                .filter(stage -> !"COMPLETED".equals(stage.getStageStatus())
-                        && !"SKIPPED".equals(stage.getStageStatus()))
+                .filter(stage -> !"COMPLETED".equals(stage.getStatus())
+                        && !"SKIPPED".equals(stage.getStatus()))
                 .findFirst()
                 .orElse(null);
         ProjectEntity project = requireProject(projectId);
         project.setProgress(progress);
         if (current == null) {
-            project.setCurrentStageCode("ACCEPTANCE");
-            project.setProjectStatus("COMPLETED");
+            project.setCurrentStageCode("ARCHIVE");
+            project.setStatus("COMPLETED");
             project.setActualEndDate(project.getActualEndDate() == null
                     ? LocalDate.now() : project.getActualEndDate());
         } else {
             project.setCurrentStageCode(current.getStageCode());
-            project.setProjectStatus("RESERVE".equals(current.getStageCode())
+            project.setStatus("RESERVE".equals(current.getStageCode())
                     ? "RESERVED" : "IN_PROGRESS");
             if (project.getActualStartDate() == null && !"RESERVE".equals(current.getStageCode())) {
                 project.setActualStartDate(LocalDate.now());

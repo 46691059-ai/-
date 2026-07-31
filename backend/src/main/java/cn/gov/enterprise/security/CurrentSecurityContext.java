@@ -20,4 +20,8 @@ public class CurrentSecurityContext {
     public Long userId() {
         return principal().userId();
     }
+
+    public String username() {
+        return principal().username();
+    }
 }

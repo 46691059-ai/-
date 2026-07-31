@@ -40,7 +40,7 @@ class ProjectStageTransitionPolicyTest {
     @Test
     void rejectsCompletingApprovalStageWithOpenTasks() {
         when(taskMapper.selectCount(any())).thenReturn(1L);
-        ProjectStageEntity stage = stage("ACCEPTANCE", "IN_PROGRESS", 5);
+        ProjectStageEntity stage = stage("EVALUATION", "IN_PROGRESS", 5);
 
         assertThatThrownBy(() -> policy.validate(stage, request("COMPLETED", "APPROVED")))
                 .isInstanceOf(BusinessException.class)
@@ -52,7 +52,7 @@ class ProjectStageTransitionPolicyTest {
         stage.setId(10L);
         stage.setProjectId(1L);
         stage.setStageCode(code);
-        stage.setStageStatus(status);
+        stage.setStatus(status);
         stage.setStageOrder(order);
         return stage;
     }
@@ -60,6 +60,6 @@ class ProjectStageTransitionPolicyTest {
     private ProjectDtos.StageUpdateRequest request(String status, String approval) {
         return new ProjectDtos.StageUpdateRequest(
                 null, null, null, null, null, status, approval,
-                BigDecimal.ZERO, null, null, 0);
+                BigDecimal.ZERO, null, 0);
     }
 }

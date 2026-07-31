@@ -43,7 +43,7 @@ public class ProjectAccessPolicy {
     public void applyScope(LambdaQueryWrapper<ProjectEntity> query, Long requestedOrgId) {
         SecurityPrincipal principal = securityContext.principal();
         if (principal.allDataScope()) {
-            query.eq(requestedOrgId != null, ProjectEntity::getOrgId, requestedOrgId);
+            query.eq(requestedOrgId != null, ProjectEntity::getDepartmentId, requestedOrgId);
             return;
         }
         if (requestedOrgId != null && !principal.allowedOrgIds().contains(requestedOrgId)) {
@@ -53,23 +53,29 @@ public class ProjectAccessPolicy {
             query.apply("1 = 0");
             return;
         }
-        query.in(ProjectEntity::getOrgId, principal.allowedOrgIds());
+        query.in(ProjectEntity::getDepartmentId, principal.allowedOrgIds());
         if (requestedOrgId != null) {
-            query.eq(ProjectEntity::getOrgId, requestedOrgId);
+            query.eq(ProjectEntity::getDepartmentId, requestedOrgId);
         }
         if (principal.selfOnly()) {
-            query.and(wrapper -> wrapper
-                    .eq(ProjectEntity::getManagerUserId, principal.userId())
-                    .or()
-                    .apply("""
-                        EXISTS (
-                            SELECT 1 FROM pm_project_member member_scope
-                            WHERE member_scope.project_id = pm_project.id
-                              AND member_scope.user_id = {0}
-                              AND member_scope.member_status = 'ACTIVE'
-                              AND member_scope.deleted = 0
+            query.apply("""
+                EXISTS (
+                    SELECT 1
+                    FROM sys_user scope_user
+                    WHERE scope_user.id = {0}
+                      AND scope_user.deleted = 0
+                      AND (
+                        project_info.leader_id = scope_user.employee_id
+                        OR EXISTS (
+                            SELECT 1 FROM project_member scope_member
+                            WHERE scope_member.project_id = project_info.id
+                              AND scope_member.employee_id = scope_user.employee_id
+                              AND scope_member.status = 'ACTIVE'
+                              AND scope_member.deleted = 0
                         )
-                        """, principal.userId()));
+                      )
+                )
+                """, principal.userId());
         }
     }
 
@@ -77,12 +83,10 @@ public class ProjectAccessPolicy {
         if (principal.allDataScope()) {
             return true;
         }
-        if (!principal.allowedOrgIds().contains(project.getOrgId())) {
+        if (!principal.allowedOrgIds().contains(project.getDepartmentId())) {
             return false;
         }
-        if (!principal.selfOnly() || principal.userId().equals(project.getManagerUserId())) {
-            return true;
-        }
-        return projectMapper.countActiveMember(project.getId(), principal.userId()) > 0;
+        return !principal.selfOnly()
+                || projectMapper.countSelfAccessible(project.getId(), principal.userId()) > 0;
     }
 }

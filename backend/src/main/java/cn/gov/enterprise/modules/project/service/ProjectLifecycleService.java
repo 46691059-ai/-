@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface ProjectLifecycleService {
     PageResponse<ProjectDtos.Response> page(
-            long page, long size, String keyword, String status, String stageCode, Long orgId);
+            long page, long size, String keyword, String status,
+            String stageCode, Long departmentId);
 
     ProjectDtos.DetailResponse detail(Long projectId);
 
