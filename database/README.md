@@ -5,6 +5,7 @@ MySQL 8 全量初始化脚本位于 `mysql/` 根目录，Docker 首次创建数�
 
 - `01_database.sql`：创建并切换到 `enterprise_platform` 数据库。
 - `02_sys.sql`：系统基础域，包含用户、角色、权限、菜单、组织、字典、日志、文件和消息。
+- `03_hr.sql`：组织人事域，包含人员、岗位、干部、培训、绩效、薪酬和人才标签。
 - `V1.0.0__enterprise_platform_v1.sql`：V1.0 完整基线及最小权限菜单数据。
 - `V1.1.0__investment_data_risk_bi.sql`：投资、数据资产、风险合规和 BI 分域。
 - `migration/V2.0.0__legacy_to_v1.sql`：旧 `pm_project*` 数据迁移说明和保留表操作。

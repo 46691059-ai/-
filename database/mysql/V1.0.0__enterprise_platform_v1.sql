@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS sys_log (
     CONSTRAINT fk_sys_log_user FOREIGN KEY (user_id) REFERENCES sys_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计日志';
 
-CREATE TABLE hr_position (
+CREATE TABLE IF NOT EXISTS hr_position (
     id BIGINT NOT NULL,
     position_code VARCHAR(64) NOT NULL,
     position_name VARCHAR(128) NOT NULL,
@@ -254,7 +254,7 @@ CREATE TABLE hr_position (
     CONSTRAINT fk_hr_position_department FOREIGN KEY (department_id) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='岗位';
 
-CREATE TABLE hr_employee (
+CREATE TABLE IF NOT EXISTS hr_employee (
     id BIGINT NOT NULL,
     employee_no VARCHAR(64) NOT NULL,
     name VARCHAR(64) NOT NULL,
@@ -290,7 +290,7 @@ ALTER TABLE sys_user
 ALTER TABLE sys_org
     ADD CONSTRAINT fk_sys_org_leader FOREIGN KEY (leader_id) REFERENCES hr_employee(id);
 
-CREATE TABLE hr_three_definition (
+CREATE TABLE IF NOT EXISTS hr_three_definition (
     id BIGINT NOT NULL,
     org_id BIGINT NOT NULL,
     position_id BIGINT NOT NULL,
@@ -312,7 +312,7 @@ CREATE TABLE hr_three_definition (
     CONSTRAINT chk_hr_td_number CHECK (approved_number >= 0 AND current_number >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='三定管理';
 
-CREATE TABLE hr_cadre (
+CREATE TABLE IF NOT EXISTS hr_cadre (
     id BIGINT NOT NULL,
     employee_id BIGINT NOT NULL,
     cadre_level VARCHAR(32) NULL,
@@ -335,7 +335,7 @@ CREATE TABLE hr_cadre (
     CONSTRAINT chk_hr_cadre_term CHECK (term_start IS NULL OR term_end IS NULL OR term_start <= term_end)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='干部档案';
 
-CREATE TABLE hr_performance_indicator (
+CREATE TABLE IF NOT EXISTS hr_performance_indicator (
     id BIGINT NOT NULL,
     indicator_name VARCHAR(128) NOT NULL,
     indicator_type VARCHAR(32) NOT NULL,

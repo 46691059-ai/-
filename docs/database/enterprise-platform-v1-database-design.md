@@ -15,6 +15,18 @@
 erDiagram
   SYS_ORG ||--o{ HR_EMPLOYEE : employs
   HR_POSITION ||--o{ HR_EMPLOYEE : assigns
+  HR_EMPLOYEE ||--o{ HR_EMPLOYEE_POSITION : changes
+  HR_POSITION ||--o{ HR_EMPLOYEE_POSITION : history
+  HR_EMPLOYEE ||--o| HR_CADRE : identifies
+  HR_EMPLOYEE ||--o{ HR_CADRE_APPOINTMENT : appoints
+  HR_EMPLOYEE ||--o{ HR_CONTRACTUAL_MANAGEMENT : contracts
+  HR_EMPLOYEE ||--o{ HR_TRAINING_RECORD : attends
+  HR_TRAINING_COURSE ||--o{ HR_TRAINING_RECORD : contains
+  HR_EMPLOYEE ||--o{ HR_PERFORMANCE_RECORD : assesses
+  HR_PERFORMANCE_INDICATOR ||--o{ HR_PERFORMANCE_RECORD : scores
+  HR_EMPLOYEE ||--o{ HR_SALARY_RECORD : receives
+  HR_EMPLOYEE ||--o{ HR_EMPLOYEE_TAG : tags
+  HR_TALENT_TAG ||--o{ HR_EMPLOYEE_TAG : classifies
   HR_EMPLOYEE o|--o| SYS_USER : binds
   SYS_USER ||--o{ SYS_USER_ROLE : has
   SYS_ROLE ||--o{ SYS_USER_ROLE : grants
@@ -74,11 +86,21 @@ erDiagram
 | 系统 | `sys_log` | `user_id,operation,request_url,ip,result,trace_id` |
 | 系统 | `sys_file` | `file_name,file_path,file_type,file_size,file_hash,storage_type,business_type,business_id` |
 | 系统 | `sys_message` | `receiver_id,title,content,message_type,read_status,read_time` |
-| 人事 | `hr_employee` | `employee_no,name,gender,id_card,org_id,position_id,status` |
-| 人事 | `hr_position` | `position_code,position_name,department_id,position_level` |
-| 人事 | `hr_three_definition` | `org_id,position_id,approved_number,current_number,definition_year` |
-| 人事 | `hr_cadre` | `employee_id,cadre_level,current_position,term_start,term_end` |
-| 人事 | `hr_performance_indicator` | `indicator_name,indicator_type,weight,target_value,score_rule` |
+| 人事 | `hr_employee` | `employee_no,name,gender,birthday,id_card,phone,email,education,major,school,political_status,party_date,org_id,position_id,entry_date,employee_type,status` |
+| 人事 | `hr_position` | `position_code,position_name,org_id,position_level,job_description,qualification,status` |
+| 人事 | `hr_employee_position` | `employee_id,position_id,start_date,end_date,is_current` |
+| 人事 | `hr_three_definition` | `definition_year,org_id,position_id,approved_number,actual_number,difference_number,status` |
+| 人事 | `hr_cadre` | `employee_id,cadre_level,current_position,appointment_date,term_start,term_end,political_evaluation,performance_summary,status` |
+| 人事 | `hr_cadre_appointment` | `employee_id,appointment_type,before_position,after_position,approval_date,approval_document` |
+| 人事 | `hr_contractual_management` | `employee_id,contract_position,term_start,term_end,target_content,annual_target,assessment_result,status` |
+| 人事 | `hr_training_course` | `course_name,course_type,teacher,hours,content,status` |
+| 人事 | `hr_training_record` | `employee_id,course_id,training_date,score,certificate` |
+| 人事 | `hr_performance_indicator` | `indicator_code,indicator_name,indicator_type,weight,target_value,score_rule,status` |
+| 人事 | `hr_performance_record` | `employee_id,indicator_id,assessment_period,target_value,actual_value,score,assessor_id,assessment_date` |
+| 人事 | `hr_salary_record` | `employee_id,salary_month,basic_salary,performance_salary,allowance,total_salary` |
+| 人事 | `hr_salary_budget` | `budget_year,org_id,budget_amount,used_amount,remaining_amount` |
+| 人事 | `hr_talent_tag` | `tag_name,tag_type,description,status` |
+| 人事 | `hr_employee_tag` | `employee_id,tag_id` |
 | 党建 | `party_org` | `org_name,org_type,secretary_id,parent_id,sys_org_id` |
 | 党建 | `party_member` | `employee_id,join_date,positive_date,party_position,party_org_id` |
 | 党建 | `party_activity` | `activity_type,title,activity_date,location,content` |
@@ -132,6 +154,9 @@ erDiagram
   `leader_id,status,deleted`。
 - 阶段按 `project_id,deleted,stage_order` 排序；任务按阶段、状态、排序号查询；
   成员提供项目和员工两个查询方向。
+- 员工编号、岗位编码唯一；员工档案按组织、当前岗位、员工类型建立组合索引。
+- 岗位履历按员工和当前标识查询；绩效按员工及考核期间查询；薪酬按员工和月份唯一。
+- 干部任期、契约任期、整改截止日期均设置到期索引，支持预警任务扫描。
 - 日志按用户/结果和创建时间建立组合索引；收入、成本和付款节点按主对象及业务日期索引。
 - 投资决策、收益、风险和退出按投资事项与业务日期索引；投后指标按企业、指标和期间唯一。
 - 数据资产链路按资源、资产、产品逐级索引；授权结束日期和数据访问时间单独建立审计索引。
@@ -142,6 +167,7 @@ erDiagram
 - `sys_user.employee_id`、项目/阶段/任务负责人及项目成员全部引用 `hr_employee.id`。
 - 任务使用 `(stage_id,project_id)` 复合外键，禁止跨项目引用阶段或父任务。
 - 身份证、手机号字段预留密文长度，应用层必须加密，接口不得直接输出。
+- 薪酬数据属于高敏感数据，接口必须同时执行功能权限、组织数据范围和字段脱敏控制。
 - 外键限制物理删除，业务数据统一逻辑删除，保持审计链完整。
 - 投资事项关联 `project_info`，投资治理表关联 `investment_company`；数据收益可关联
   `operation_contract`，形成项目、合同、数据产品和收益链路。
@@ -155,6 +181,7 @@ erDiagram
 新环境执行
 [`01_database.sql`](../../../database/mysql/01_database.sql)、
 [`02_sys.sql`](../../../database/mysql/02_sys.sql)、
+[`03_hr.sql`](../../../database/mysql/03_hr.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；
