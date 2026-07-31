@@ -4,7 +4,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE investment_plan (
+CREATE TABLE IF NOT EXISTS investment_plan (
     id BIGINT NOT NULL,
     plan_year INT NOT NULL,
     plan_name VARCHAR(200) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE investment_plan (
     CONSTRAINT chk_investment_plan_amount CHECK (plan_amount >= 0 AND actual_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资年度计划';
 
-CREATE TABLE investment_project (
+CREATE TABLE IF NOT EXISTS investment_project (
     id BIGINT NOT NULL,
     investment_no VARCHAR(64) NOT NULL,
     plan_id BIGINT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE investment_project (
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资事项';
 
-CREATE TABLE investment_decision (
+CREATE TABLE IF NOT EXISTS investment_decision (
     id BIGINT NOT NULL,
     investment_id BIGINT NOT NULL,
     decision_type VARCHAR(32) NOT NULL COMMENT 'PARTY_COMMITTEE/MANAGER_MEETING/BOARD/SHAREHOLDER',
@@ -87,7 +87,7 @@ CREATE TABLE investment_decision (
         REFERENCES investment_project(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资决策记录';
 
-CREATE TABLE investment_evaluation (
+CREATE TABLE IF NOT EXISTS investment_evaluation (
     id BIGINT NOT NULL,
     investment_id BIGINT NOT NULL,
     total_amount DECIMAL(18,2) NOT NULL DEFAULT 0,
@@ -117,7 +117,7 @@ CREATE TABLE investment_evaluation (
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资经济测算';
 
-CREATE TABLE investment_company (
+CREATE TABLE IF NOT EXISTS investment_company (
     id BIGINT NOT NULL,
     company_name VARCHAR(200) NOT NULL,
     credit_code VARCHAR(32) NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE investment_company (
     CONSTRAINT chk_investment_company_capital CHECK (register_capital >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='被投资企业';
 
-CREATE TABLE investment_equity (
+CREATE TABLE IF NOT EXISTS investment_equity (
     id BIGINT NOT NULL,
     investment_company_id BIGINT NOT NULL,
     holder_name VARCHAR(200) NOT NULL,
@@ -168,14 +168,14 @@ CREATE TABLE investment_equity (
     CONSTRAINT chk_investment_equity_amount CHECK (investment_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='股权台账';
 
-CREATE TABLE investment_shareholder_right (
+CREATE TABLE IF NOT EXISTS investment_meeting (
     id BIGINT NOT NULL,
     company_id BIGINT NOT NULL,
     meeting_type VARCHAR(32) NOT NULL COMMENT 'SHAREHOLDER/BOARD/SUPERVISOR',
     meeting_date DATE NOT NULL,
     agenda TEXT NULL,
     resolution TEXT NULL,
-    file_url VARCHAR(500) NULL,
+    attachment VARCHAR(500) NULL,
     create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     create_by VARCHAR(64) NULL,
     update_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -185,12 +185,12 @@ CREATE TABLE investment_shareholder_right (
     remark VARCHAR(500) NULL,
     version INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    KEY idx_investment_right_company (company_id, meeting_date, meeting_type, deleted),
-    CONSTRAINT fk_investment_right_company FOREIGN KEY (company_id)
+    KEY idx_investment_meeting_company (company_id, meeting_date, meeting_type, deleted),
+    CONSTRAINT fk_investment_meeting_company FOREIGN KEY (company_id)
         REFERENCES investment_company(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='股东权利管理';
 
-CREATE TABLE investment_director (
+CREATE TABLE IF NOT EXISTS investment_director (
     id BIGINT NOT NULL,
     company_id BIGINT NOT NULL,
     person_name VARCHAR(64) NOT NULL,
@@ -216,7 +216,7 @@ CREATE TABLE investment_director (
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='董事监事管理';
 
-CREATE TABLE investment_monitor_indicator (
+CREATE TABLE IF NOT EXISTS investment_monitor_indicator (
     id BIGINT NOT NULL,
     company_id BIGINT NOT NULL,
     indicator_name VARCHAR(128) NOT NULL,
@@ -241,7 +241,7 @@ CREATE TABLE investment_monitor_indicator (
         REFERENCES investment_company(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投后监管指标';
 
-CREATE TABLE investment_income (
+CREATE TABLE IF NOT EXISTS investment_income (
     id BIGINT NOT NULL,
     investment_id BIGINT NOT NULL,
     income_type VARCHAR(32) NOT NULL COMMENT 'DIVIDEND/EQUITY_APPRECIATION/EXIT',
@@ -263,7 +263,7 @@ CREATE TABLE investment_income (
     CONSTRAINT chk_investment_income_amount CHECK (income_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资收益记录';
 
-CREATE TABLE investment_risk (
+CREATE TABLE IF NOT EXISTS investment_risk (
     id BIGINT NOT NULL,
     investment_id BIGINT NOT NULL,
     risk_type VARCHAR(32) NOT NULL,
@@ -286,7 +286,7 @@ CREATE TABLE investment_risk (
         REFERENCES investment_project(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资风险';
 
-CREATE TABLE investment_exit (
+CREATE TABLE IF NOT EXISTS investment_exit (
     id BIGINT NOT NULL,
     investment_id BIGINT NOT NULL,
     exit_type VARCHAR(32) NOT NULL COMMENT 'TRANSFER/REPURCHASE/LIQUIDATION/IPO',

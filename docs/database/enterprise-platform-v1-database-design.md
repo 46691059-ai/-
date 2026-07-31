@@ -171,18 +171,21 @@ erDiagram
 | 经营 | `operation_profit_analysis` | `project_id,contract_amount,income_amount,cost_amount,profit_amount,profit_rate,analysis_date` |
 | 经营 | `operation_target` | `target_year,target_type,target_name,target_value,actual_value,completion_rate,responsible_org` |
 | 经营 | `operation_dashboard_snapshot` | `snapshot_date,income_total,cost_total,profit_total,contract_total,receivable_total,project_count` |
-| 投资 | `investment_plan` | `plan_year,plan_name,industry_direction,plan_amount,actual_amount,responsible_dept,status` |
-| 投资 | `investment_project` | `investment_no,plan_id,project_id,investment_name,investment_type,investment_amount,investment_ratio,expected_return,risk_level,approval_status` |
-| 投资 | `investment_decision` | `investment_id,decision_type,meeting_type,meeting_date,decision_result,decision_file` |
-| 投资 | `investment_evaluation` | `investment_id,total_amount,annual_income,annual_cost,annual_profit,roi,irr,payback_period` |
-| 投资 | `investment_company` | `company_name,credit_code,register_capital,legal_person,establish_date,industry,company_status` |
-| 投资 | `investment_equity` | `investment_company_id,holder_name,holding_ratio,investment_amount,share_type,acquire_date` |
-| 投资 | `investment_shareholder_right` | `company_id,meeting_type,meeting_date,agenda,resolution,file_url` |
-| 投资 | `investment_director` | `company_id,person_name,director_position,appoint_date,term_start,term_end` |
-| 投资 | `investment_monitor_indicator` | `company_id,indicator_name,target_value,actual_value,monitor_period,status` |
-| 投资 | `investment_income` | `investment_id,income_type,income_date,income_amount` |
-| 投资 | `investment_risk` | `investment_id,risk_type,risk_description,risk_level,response_measure,status` |
-| 投资 | `investment_exit` | `investment_id,exit_type,exit_date,exit_amount,exit_income,status` |
+| 投资 | `investment_plan` | `plan_year,plan_name,investment_direction,industry_type,plan_amount,actual_amount,responsible_org,status` |
+| 投资 | `investment_project` | `investment_no,plan_id,project_id,investment_name,investment_type,industry,total_amount,own_capital,financing_amount,investment_ratio,spv_company_id,expected_income,expected_roi,risk_level,approval_status,status` |
+| 投资 | `investment_feasibility` | `investment_id,market_analysis,technical_analysis,financial_analysis,risk_analysis,investment_period,annual_income,annual_cost,annual_profit,roi,irr,payback_period` |
+| 投资 | `investment_decision` | `investment_id,decision_type,meeting_date,meeting_name,decision_result,decision_content,attachment` |
+| 投资 | `investment_payment` | `investment_id,payment_date,payment_amount,payment_type,bank_account,approval_no` |
+| 投资 | `investment_company` | `company_name,credit_code,legal_person,register_capital,establish_date,industry,company_type,registered_address,business_scope,status` |
+| 投资 | `investment_equity` | `company_id,holder_name,holder_type,holding_ratio,investment_amount,share_type,acquire_date,status` |
+| 投资 | `investment_director` | `company_id,person_name,employee_id,director_position,appoint_date,term_start,term_end,status` |
+| 投资 | `investment_meeting` | `company_id,meeting_type,meeting_date,agenda,resolution,attachment` |
+| 投资 | `investment_monitor_indicator` | `company_id,indicator_name,indicator_type,target_value,unit,frequency,warning_value,status` |
+| 投资 | `investment_monitor_data` | `company_id,indicator_id,monitor_period,actual_value,data_source` |
+| 投资 | `investment_risk` | `investment_id,risk_type,risk_name,risk_level,risk_description,response_measure,responsible_person,status` |
+| 投资 | `investment_income` | `investment_id,income_type,income_date,income_amount,income_source` |
+| 投资 | `investment_exit` | `investment_id,exit_type,exit_date,exit_reason,exit_amount,income_amount,approval_status,status` |
+| 投资 | `investment_evaluation` | `investment_id,evaluation_date,economic_score,management_score,risk_score,overall_score,summary` |
 | 数据资产 | `data_resource` | `resource_code,resource_name,resource_type,source_unit,responsible_person,update_frequency,data_size,security_level` |
 | 数据资产 | `data_asset` | `asset_code,asset_name,resource_id,ownership,application_scene,value_level,evaluation_amount,status` |
 | 数据资产 | `data_product` | `product_code,product_name,asset_id,service_object,service_mode,price,status` |
@@ -199,10 +202,13 @@ erDiagram
 | BI | `bi_project_analysis` | `project_id,statistic_date,income,cost,profit,risk_level,progress` |
 
 精确类型、长度、默认值、字段注释和检查约束以
+[`05_project.sql`](../../../database/mysql/05_project.sql)、
+[`06_operation.sql`](../../../database/mysql/06_operation.sql)、
+[`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)
-为唯一可执行基准。
+共同作为可执行基准。
 
 ## 索引设计
 
@@ -221,7 +227,7 @@ erDiagram
 - 组织生活按党组织、活动类型和日期索引；党建考核按组织、指标和年度唯一。
 - 三重一大按事项编号唯一，并按申请部门、事项类型、执行状态和投资事项建立索引。
 - 日志按用户/结果和创建时间建立组合索引；收入、成本和付款节点按主对象及业务日期索引。
-- 投资决策、收益、风险和退出按投资事项与业务日期索引；投后指标按企业、指标和期间唯一。
+- 投资决策、支付、收益、风险和退出按投资事项与业务日期索引；投后指标按企业和指标唯一，采集数据按指标和期间唯一。
 - 数据资产链路按资源、资产、产品逐级索引；授权结束日期和数据访问时间单独建立审计索引。
 - 风险整改、审计、巡察按责任组织、状态和截止日期索引；BI 按统计日期保存唯一快照。
 
@@ -230,6 +236,7 @@ erDiagram
 - `sys_user.employee_id`、项目/阶段/任务负责人及项目成员全部引用 `hr_employee.id`。
 - 任务使用 `(stage_id,project_id)` 复合外键，禁止跨项目引用阶段或父任务。
 - 身份证、手机号字段预留密文长度，应用层必须加密，接口不得直接输出。
+- 投资支付银行账户属于敏感数据，必须加密存储并在查询接口中脱敏输出。
 - 薪酬数据属于高敏感数据，接口必须同时执行功能权限、组织数据范围和字段脱敏控制。
 - 外键限制物理删除，业务数据统一逻辑删除，保持审计链完整。
 - 投资事项关联 `project_info`，投资治理表关联 `investment_company`；数据收益可关联
@@ -250,6 +257,7 @@ erDiagram
 [`04_party.sql`](../../../database/mysql/04_party.sql)、
 [`05_project.sql`](../../../database/mysql/05_project.sql)、
 [`06_operation.sql`](../../../database/mysql/06_operation.sql)、
+[`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

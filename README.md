@@ -74,8 +74,9 @@ enterprise-platform/
 4. `database/mysql/04_party.sql`
 5. `database/mysql/05_project.sql`
 6. `database/mysql/06_operation.sql`
-7. `database/mysql/V1.0.0__enterprise_platform_v1.sql`
-8. `database/mysql/V1.1.0__investment_data_risk_bi.sql`
+7. `database/mysql/07_investment.sql`
+8. `database/mysql/V1.0.0__enterprise_platform_v1.sql`
+9. `database/mysql/V1.1.0__investment_data_risk_bi.sql`
 
 已部署旧版环境按 `database/mysql/migration/V2.0.0__legacy_to_v1.sql`
 执行蓝绿迁移；该目录不会被 Docker 初始化流程自动执行。
