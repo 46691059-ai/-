@@ -157,11 +157,20 @@ erDiagram
 | 项目 | `project_acceptance` | `project_id,acceptance_date,acceptance_type,result,customer_confirm,attachment` |
 | 项目 | `project_evaluation` | `project_id,evaluation_date,economic_score,management_score,customer_score,overall_score,summary` |
 | 项目 | `project_archive` | `project_id,archive_type,file_id,file_name,file_url,archive_date` |
-| 经营 | `operation_contract` | `contract_no,contract_name,customer_id,project_id,amount,sign_date,status` |
-| 经营 | `contract_payment` | `contract_id,payment_name,amount,plan_date,actual_date,status` |
-| 经营 | `operation_income` | `project_id,contract_id,income_amount,income_date` |
-| 经营 | `operation_cost` | `project_id,cost_type,amount,cost_date` |
-| 经营 | `project_profit` | `project_id,total_income,total_cost,profit,profit_rate,calculate_date` |
+| 经营 | `operation_customer` | `customer_no,customer_name,customer_type,credit_code,contact_person,contact_phone,customer_level,status` |
+| 经营 | `operation_supplier` | `supplier_no,supplier_name,credit_code,supplier_type,contact_person,contact_phone,qualification,status` |
+| 经营 | `operation_contract` | `contract_no,contract_name,contract_type,project_id,customer_id,amount,sign_date,start_date,end_date,responsible_person,status,approval_status` |
+| 经营 | `operation_contract_approval` | `contract_id,node_name,approver_id,approval_result,approval_comment,approval_time` |
+| 经营 | `operation_contract_payment` | `contract_id,payment_name,payment_ratio,payment_amount,plan_date,actual_date,status` |
+| 经营 | `operation_contract_change` | `contract_id,change_type,change_content,before_amount,after_amount,approval_status` |
+| 经营 | `operation_income` | `project_id,contract_id,income_type,income_amount,income_date,confirm_status,confirm_person` |
+| 经营 | `operation_receivable` | `contract_id,customer_id,receivable_amount,received_amount,remaining_amount,due_date,aging_days,status,responsible_person` |
+| 经营 | `operation_collection` | `receivable_id,collection_amount,collection_date,collection_method,bank_reference` |
+| 经营 | `operation_cost` | `project_id,contract_id,cost_type,cost_name,supplier_id,amount,cost_date,source_type` |
+| 经营 | `operation_cost_budget` | `project_id,cost_type,budget_amount,actual_amount,remaining_amount` |
+| 经营 | `operation_profit_analysis` | `project_id,contract_amount,income_amount,cost_amount,profit_amount,profit_rate,analysis_date` |
+| 经营 | `operation_target` | `target_year,target_type,target_name,target_value,actual_value,completion_rate,responsible_org` |
+| 经营 | `operation_dashboard_snapshot` | `snapshot_date,income_total,cost_total,profit_total,contract_total,receivable_total,project_count` |
 | 投资 | `investment_plan` | `plan_year,plan_name,industry_direction,plan_amount,actual_amount,responsible_dept,status` |
 | 投资 | `investment_project` | `investment_no,plan_id,project_id,investment_name,investment_type,investment_amount,investment_ratio,expected_return,risk_level,approval_status` |
 | 投资 | `investment_decision` | `investment_id,decision_type,meeting_type,meeting_date,decision_result,decision_file` |
@@ -240,6 +249,7 @@ erDiagram
 [`03_hr.sql`](../../../database/mysql/03_hr.sql)、
 [`04_party.sql`](../../../database/mysql/04_party.sql)、
 [`05_project.sql`](../../../database/mysql/05_project.sql)、
+[`06_operation.sql`](../../../database/mysql/06_operation.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

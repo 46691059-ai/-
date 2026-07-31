@@ -576,7 +576,7 @@ CREATE TABLE IF NOT EXISTS project_member (
     CONSTRAINT chk_project_member_dates CHECK (left_date IS NULL OR joined_date <= left_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目成员';
 
-CREATE TABLE operation_contract (
+CREATE TABLE IF NOT EXISTS operation_contract (
     id BIGINT NOT NULL,
     contract_no VARCHAR(64) NOT NULL,
     contract_name VARCHAR(200) NOT NULL,
@@ -600,11 +600,11 @@ CREATE TABLE operation_contract (
     CONSTRAINT chk_operation_contract_amount CHECK (amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合同';
 
-CREATE TABLE contract_payment (
+CREATE TABLE IF NOT EXISTS operation_contract_payment (
     id BIGINT NOT NULL,
     contract_id BIGINT NOT NULL,
     payment_name VARCHAR(128) NOT NULL,
-    amount DECIMAL(18,2) NOT NULL DEFAULT 0,
+    payment_amount DECIMAL(18,2) NOT NULL DEFAULT 0,
     plan_date DATE NOT NULL,
     actual_date DATE NULL,
     status VARCHAR(32) NOT NULL DEFAULT 'PLANNED',
@@ -617,12 +617,12 @@ CREATE TABLE contract_payment (
     remark VARCHAR(500) NULL,
     version INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    KEY idx_contract_payment_contract (contract_id, status, plan_date, deleted),
-    CONSTRAINT fk_contract_payment_contract FOREIGN KEY (contract_id) REFERENCES operation_contract(id),
-    CONSTRAINT chk_contract_payment_amount CHECK (amount >= 0)
+    KEY idx_operation_contract_payment_contract (contract_id, status, plan_date, deleted),
+    CONSTRAINT fk_operation_contract_payment_contract FOREIGN KEY (contract_id) REFERENCES operation_contract(id),
+    CONSTRAINT chk_operation_contract_payment_amount CHECK (payment_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合同付款节点';
 
-CREATE TABLE operation_income (
+CREATE TABLE IF NOT EXISTS operation_income (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     contract_id BIGINT NULL,
@@ -644,7 +644,7 @@ CREATE TABLE operation_income (
     CONSTRAINT chk_operation_income_amount CHECK (income_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目收入';
 
-CREATE TABLE operation_cost (
+CREATE TABLE IF NOT EXISTS operation_cost (
     id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     cost_type VARCHAR(32) NOT NULL,

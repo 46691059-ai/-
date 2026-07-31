@@ -26,7 +26,7 @@ enterprise-platform
 
 业务模块必须按 `controller / dto / entity / mapper / service` 分层，模块间通过公开服务或 DTO 交互。
 数据库先执行 `01_database.sql`、`02_sys.sql`、`03_hr.sql`、`04_party.sql`、
-`05_project.sql` 建立物理库以及系统、组织人事、党建治理、项目生命周期基础域，随后以
+`05_project.sql`、`06_operation.sql` 建立物理库以及系统、组织人事、党建治理、项目生命周期和经营管理基础域，随后以
 `V1.0.0__enterprise_platform_v1.sql` 为主数据和核心业务基线，
 `V1.1.0__investment_data_risk_bi.sql` 扩展投资、数据资产、风险合规和 BI 分域；
 统一使用审计字段、逻辑删除唯一键、乐观锁、复合外键和查询索引。旧版数据使用
