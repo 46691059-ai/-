@@ -488,7 +488,7 @@ CREATE TABLE IF NOT EXISTS data_access_log (
     CONSTRAINT fk_data_access_resource FOREIGN KEY (resource_id) REFERENCES data_resource(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据使用审计日志';
 
-CREATE TABLE risk_info (
+CREATE TABLE IF NOT EXISTS risk_info (
     id BIGINT NOT NULL,
     risk_code VARCHAR(64) NOT NULL,
     risk_name VARCHAR(200) NOT NULL,
@@ -513,11 +513,11 @@ CREATE TABLE risk_info (
     CONSTRAINT fk_risk_info_person FOREIGN KEY (responsible_person) REFERENCES hr_employee(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='风险库';
 
-CREATE TABLE risk_rule (
+CREATE TABLE IF NOT EXISTS risk_warning_rule (
     id BIGINT NOT NULL,
     rule_name VARCHAR(200) NOT NULL,
     business_type VARCHAR(64) NOT NULL,
-    rule_condition VARCHAR(1000) NOT NULL COMMENT '规则表达式，禁止存储可执行SQL',
+    condition_expression VARCHAR(1000) NOT NULL COMMENT '规则表达式，禁止存储可执行SQL',
     warning_level VARCHAR(16) NOT NULL,
     enabled SMALLINT NOT NULL DEFAULT 1,
     create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -529,11 +529,11 @@ CREATE TABLE risk_rule (
     remark VARCHAR(500) NULL,
     version INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    KEY idx_risk_rule_business (business_type, enabled, deleted),
-    KEY idx_risk_rule_level (warning_level, enabled, deleted)
+    KEY idx_risk_warning_rule_business (business_type, enabled, deleted),
+    KEY idx_risk_warning_rule_level (warning_level, enabled, deleted)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='风险预警规则';
 
-CREATE TABLE risk_rectification (
+CREATE TABLE IF NOT EXISTS risk_rectification (
     id BIGINT NOT NULL,
     risk_id BIGINT NOT NULL,
     problem VARCHAR(1000) NOT NULL,
@@ -558,7 +558,7 @@ CREATE TABLE risk_rectification (
         REFERENCES hr_employee(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='风险整改任务';
 
-CREATE TABLE audit_problem (
+CREATE TABLE IF NOT EXISTS risk_audit_problem (
     id BIGINT NOT NULL,
     audit_project VARCHAR(200) NOT NULL,
     problem_content VARCHAR(2000) NOT NULL,
@@ -574,12 +574,12 @@ CREATE TABLE audit_problem (
     remark VARCHAR(500) NULL,
     version INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    KEY idx_audit_problem_dept (department, rectification_status, deleted),
-    KEY idx_audit_problem_level (problem_level, rectification_status, deleted),
-    CONSTRAINT fk_audit_problem_dept FOREIGN KEY (department) REFERENCES sys_org(id)
+    KEY idx_risk_audit_problem_dept (department, rectification_status, deleted),
+    KEY idx_risk_audit_problem_level (problem_level, rectification_status, deleted),
+    CONSTRAINT fk_risk_audit_problem_dept FOREIGN KEY (department) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审计问题';
 
-CREATE TABLE inspection_problem (
+CREATE TABLE IF NOT EXISTS risk_inspection_problem (
     id BIGINT NOT NULL,
     inspection_batch VARCHAR(100) NOT NULL,
     problem VARCHAR(2000) NOT NULL,
@@ -595,9 +595,9 @@ CREATE TABLE inspection_problem (
     remark VARCHAR(500) NULL,
     version INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
-    KEY idx_inspection_problem_unit (responsible_unit, status, deleted),
-    KEY idx_inspection_problem_deadline (deadline, status, deleted),
-    CONSTRAINT fk_inspection_problem_unit FOREIGN KEY (responsible_unit) REFERENCES sys_org(id)
+    KEY idx_risk_inspection_problem_unit (responsible_unit, status, deleted),
+    KEY idx_risk_inspection_problem_deadline (deadline, status, deleted),
+    CONSTRAINT fk_risk_inspection_problem_unit FOREIGN KEY (responsible_unit) REFERENCES sys_org(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='巡察问题';
 
 -- BI 表保存业务数据的同步快照，不建立到在线交易表的物理外键。

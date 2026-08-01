@@ -200,11 +200,19 @@ erDiagram
 | 数据资产 | `data_trade_order` | `order_no,product_id,buyer_name,trade_amount,trade_date,status,contract_id` |
 | 数据资产 | `data_income` | `product_id,authorization_id,trade_order_id,contract_id,income_type,income_amount,income_date,customer_name` |
 | 数据资产 | `data_access_log` | `user_id,resource_id,operation_type,access_time,ip,result,trace_id` |
-| 风险 | `risk_info` | `risk_code,risk_name,risk_type,risk_level,responsible_dept,responsible_person,status` |
-| 风险 | `risk_rule` | `rule_name,business_type,rule_condition,warning_level,enabled` |
-| 风险 | `risk_rectification` | `risk_id,problem,measure,responsible_person,deadline,status` |
-| 风险 | `audit_problem` | `audit_project,problem_content,problem_level,department,rectification_status` |
-| 风险 | `inspection_problem` | `inspection_batch,problem,responsible_unit,deadline,status` |
+| 风险 | `risk_category` | `category_code,category_name,parent_id,description,status` |
+| 风险 | `risk_info` | `risk_no,risk_name,category_id,business_type,business_id,risk_level,probability,impact_level,description,responsible_org,responsible_person,discovery_source,status` |
+| 风险 | `risk_evaluation` | `risk_id,evaluation_date,probability_score,impact_score,risk_score,evaluation_result,evaluator` |
+| 风险 | `risk_warning_rule` | `rule_code,rule_name,business_type,condition_expression,warning_level,warning_message,enabled` |
+| 风险 | `risk_warning` | `risk_id,rule_id,warning_level,warning_content,trigger_time,handler_id,handle_status,handle_result,handled_time` |
+| 风险 | `risk_rectification` | `risk_id,problem_description,rectification_measure,responsible_person,plan_finish_date,actual_finish_date,verification_person,verification_result,status` |
+| 风险 | `risk_control_process` | `process_code,process_name,business_domain,control_target,control_measure,responsible_department,status` |
+| 风险 | `risk_control_point` | `process_id,control_name,control_type,control_requirement,check_frequency,status,sort_no` |
+| 风险 | `risk_audit_project` | `audit_no,audit_name,audit_type,audit_department,start_date,end_date,audit_person,status` |
+| 风险 | `risk_audit_problem` | `audit_id,problem_title,problem_content,problem_level,responsible_department,responsible_person,rectification_status,deadline` |
+| 风险 | `risk_inspection_problem` | `inspection_batch,problem_title,problem_content,responsible_org,responsible_person,rectification_measure,deadline,status` |
+| 风险 | `risk_integrity` | `employee_id,position_name,risk_point,risk_level,prevention_measure,responsible_department,status` |
+| 风险 | `risk_contract` | `contract_id,risk_type,risk_description,risk_level,handling_measure,status` |
 | BI | `bi_operation_dashboard` | `statistic_date,income,profit,asset,cash,project_count` |
 | BI | `bi_project_analysis` | `project_id,statistic_date,income,cost,profit,risk_level,progress` |
 
@@ -213,6 +221,7 @@ erDiagram
 [`06_operation.sql`](../../../database/mysql/06_operation.sql)、
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
+[`09_risk.sql`](../../../database/mysql/09_risk.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)
@@ -237,7 +246,7 @@ erDiagram
 - 日志按用户/结果和创建时间建立组合索引；收入、成本和付款节点按主对象及业务日期索引。
 - 投资决策、支付、收益、风险和退出按投资事项与业务日期索引；投后指标按企业和指标唯一，采集数据按指标和期间唯一。
 - 数据资产链路按来源、资源、资产、产品逐级索引；字段敏感性、治理截止日期、授权结束日期、交易日期和数据访问时间均建立专用索引。
-- 风险整改、审计、巡察按责任组织、状态和截止日期索引；BI 按统计日期保存唯一快照。
+- 风险按分类、等级、责任主体和业务对象检索；预警、整改、审计、巡察按处理人、状态和截止日期建立闭环索引；BI 按统计日期保存唯一快照。
 
 ## 外键与安全
 
@@ -247,6 +256,8 @@ erDiagram
 - 投资支付银行账户属于敏感数据，必须加密存储并在查询接口中脱敏输出。
 - 数据来源联系人电话必须加密存储；资源字段按敏感标识执行分级授权、动态脱敏和访问审计。
 - 数据服务接口只保存服务地址和认证方式，不得在业务表中明文保存密钥、令牌或数据库凭据。
+- 风险规则表达式仅允许受控DSL或JSON，执行前必须进行语法解析、字段白名单和操作符白名单校验，禁止拼接为SQL执行。
+- `risk_info.business_type + business_id`属于多态逻辑引用，服务层必须校验目标对象存在且处于当前用户的数据权限范围内。
 - 薪酬数据属于高敏感数据，接口必须同时执行功能权限、组织数据范围和字段脱敏控制。
 - 外键限制物理删除，业务数据统一逻辑删除，保持审计链完整。
 - 投资事项关联 `project_info`，投资治理表关联 `investment_company`；数据收益可关联
@@ -256,7 +267,7 @@ erDiagram
   补充 `investment_project` 外键，保证模块初始化顺序和跨域完整性兼顾。
 - 为兼容国产数据库，原设计中的 `condition`、`level`、`date`、`position`、
   `period` 分别规范为 `rule_condition`、`warning_level`、`statistic_date`、
-  `director_position`、`monitor_period`。
+  `director_position`/`position_name`、`monitor_period`。
 
 ## 初始化与升级
 
@@ -269,6 +280,7 @@ erDiagram
 [`06_operation.sql`](../../../database/mysql/06_operation.sql)、
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
+[`09_risk.sql`](../../../database/mysql/09_risk.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；
