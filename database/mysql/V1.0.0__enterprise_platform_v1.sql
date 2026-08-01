@@ -688,41 +688,4 @@ CREATE TABLE IF NOT EXISTS project_profit (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 不内置默认账号和密码，只初始化角色、权限、菜单。
-INSERT INTO sys_role (
-    id, role_name, role_code, description, data_scope_type, status,
-    create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
-) VALUES (
-    1, '超级管理员', 'SUPER_ADMIN', '系统内置角色', 'ALL', 1,
-    CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0
-);
-
-INSERT INTO sys_permission (
-    id, permission_name, permission_code, permission_type, resource_path, http_method,
-    module_code, status, create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
-) VALUES
-    (2001, '项目查询', 'project:lifecycle:list', 'API', '/projects/**', 'GET', 'project', 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (2002, '项目新增', 'project:lifecycle:create', 'API', '/projects', 'POST', 'project', 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (2003, '项目修改', 'project:lifecycle:update', 'API', '/projects/**', 'PUT', 'project', 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (2004, '项目删除', 'project:lifecycle:delete', 'API', '/projects/**', 'DELETE', 'project', 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0);
-
-INSERT INTO sys_menu (
-    id, menu_name, menu_type, parent_id, path, component, permission, icon, sort_no,
-    visible, status, create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
-) VALUES
-    (200, '项目全生命周期', 'DIRECTORY', NULL, '/projects', NULL, NULL, 'Management', 20, 1, 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (210, '项目库', 'MENU', 200, '/projects', 'project/ProjectListView', 'project:lifecycle:list', 'List', 10, 1, 1, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0);
-
-INSERT INTO sys_role_permission (
-    id, role_id, permission_id, create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
-) VALUES
-    (12001, 1, 2001, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (12002, 1, 2002, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (12003, 1, 2003, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (12004, 1, 2004, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0);
-
-INSERT INTO sys_role_menu (
-    id, role_id, menu_id, create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
-) VALUES
-    (12200, 1, 200, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0),
-    (12210, 1, 210, CURRENT_TIMESTAMP(3), 'system', CURRENT_TIMESTAMP(3), 'system', 0, 0, NULL, 0);
+-- 初始化角色、权限、菜单、字典和业务基础参数统一由 10_init_data.sql 维护。

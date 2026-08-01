@@ -1,0 +1,65 @@
+-- 首个管理员安全引导模板（不会被Docker初始化目录自动执行）
+-- 1. 在受信任终端中生成BCrypt cost >= 12的随机一次性口令摘要。
+-- 2. 替换下方所有REPLACE_*值，将本文件复制到数据库服务器后手工执行。
+-- 3. 首次登录后立即轮换口令，并安全删除渲染后的临时文件。
+
+USE enterprise_platform;
+START TRANSACTION;
+
+SET @bootstrap_user_id = 50001;
+SET @bootstrap_user_role_id = 50002;
+SET @bootstrap_username = 'REPLACE_UNIQUE_ADMIN_USERNAME';
+SET @bootstrap_password_hash = 'REPLACE_BCRYPT_COST_12_OR_HIGHER_HASH';
+SET @bootstrap_real_name = '系统管理员';
+SET @bootstrap_org_code = 'ROOT001';
+
+INSERT INTO sys_user (
+    id, username, password, real_name, phone, email, org_id, employee_id,
+    status, token_version, login_fail_count, locked_until, last_login_time, last_login_ip,
+    create_time, create_by, update_time, update_by, deleted, delete_token, remark, version
+)
+SELECT @bootstrap_user_id, @bootstrap_username, @bootstrap_password_hash,
+       @bootstrap_real_name, NULL, NULL, org_row.id, NULL,
+       1, 0, 0, NULL, NULL, NULL,
+       CURRENT_TIMESTAMP(3), 'bootstrap', CURRENT_TIMESTAMP(3), 'bootstrap',
+       0, 0, '首次部署安全引导账号', 0
+FROM sys_org org_row
+WHERE org_row.org_code = @bootstrap_org_code
+  AND org_row.deleted = 0
+  AND @bootstrap_username <> 'REPLACE_UNIQUE_ADMIN_USERNAME'
+  AND @bootstrap_password_hash REGEXP '^\\$2[aby]\\$(1[2-9]|2[0-9]|3[01])\\$[./A-Za-z0-9]{53}$'
+  AND NOT EXISTS (
+      SELECT 1 FROM sys_user u
+      WHERE u.username = @bootstrap_username AND u.deleted = 0
+  );
+
+INSERT INTO sys_user_role (
+    id, user_id, role_id, create_time, create_by, update_time, update_by,
+    deleted, delete_token, remark, version
+)
+SELECT @bootstrap_user_role_id, user_row.id, role_row.id,
+       CURRENT_TIMESTAMP(3), 'bootstrap', CURRENT_TIMESTAMP(3), 'bootstrap',
+       0, 0, NULL, 0
+FROM sys_user user_row
+JOIN sys_role role_row
+  ON role_row.role_code = 'SUPER_ADMIN' AND role_row.deleted = 0
+WHERE user_row.username = @bootstrap_username
+  AND user_row.deleted = 0
+  AND NOT EXISTS (
+      SELECT 1 FROM sys_user_role ur
+      WHERE ur.user_id = user_row.id AND ur.role_id = role_row.id AND ur.deleted = 0
+  );
+
+COMMIT;
+
+-- 必须确认下面两项均为1，否则回滚现场、检查占位符或ID冲突后重新执行。
+SELECT COUNT(*) AS admin_user_count
+FROM sys_user
+WHERE username = @bootstrap_username AND status = 1 AND deleted = 0;
+
+SELECT COUNT(*) AS super_admin_binding_count
+FROM sys_user u
+JOIN sys_user_role ur ON ur.user_id = u.id AND ur.deleted = 0
+JOIN sys_role r ON r.id = ur.role_id AND r.deleted = 0
+WHERE u.username = @bootstrap_username AND u.deleted = 0
+  AND r.role_code = 'SUPER_ADMIN';

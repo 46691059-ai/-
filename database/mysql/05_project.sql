@@ -8,6 +8,32 @@ USE enterprise_platform;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+CREATE TABLE project_stage_template (
+    id BIGINT NOT NULL COMMENT '项目阶段模板ID',
+    project_type VARCHAR(50) NOT NULL DEFAULT 'ALL' COMMENT '项目类型；ALL表示通用模板',
+    stage_code VARCHAR(50) NOT NULL COMMENT '阶段编码',
+    stage_name VARCHAR(100) NOT NULL COMMENT '阶段名称',
+    stage_order INT NOT NULL COMMENT '阶段顺序',
+    requires_approval SMALLINT NOT NULL DEFAULT 0 COMMENT '是否需要审批：1是，0否',
+    status SMALLINT NOT NULL DEFAULT 1 COMMENT '1启用，0停用',
+    create_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    create_by VARCHAR(64) NULL,
+    update_time DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    update_by VARCHAR(64) NULL,
+    deleted SMALLINT NOT NULL DEFAULT 0,
+    delete_token BIGINT NOT NULL DEFAULT 0,
+    remark VARCHAR(500) NULL,
+    version INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_project_stage_template_code (project_type, stage_code, delete_token),
+    UNIQUE KEY uk_project_stage_template_order (project_type, stage_order, delete_token),
+    KEY idx_project_stage_template_status (project_type, status, deleted, stage_order),
+    CONSTRAINT chk_project_stage_template_order CHECK (stage_order > 0),
+    CONSTRAINT chk_project_stage_template_approval CHECK (requires_approval IN (0, 1)),
+    CONSTRAINT chk_project_stage_template_status CHECK (status IN (0, 1)),
+    CONSTRAINT chk_project_stage_template_deleted CHECK (deleted IN (0, 1))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目阶段模板表';
+
 CREATE TABLE project_info (
     id BIGINT NOT NULL COMMENT '项目ID',
     project_no VARCHAR(50) NOT NULL COMMENT '项目编号',

@@ -12,9 +12,11 @@ MySQL 8 全量初始化脚本位于 `mysql/` 根目录，Docker 首次创建数�
 - `07_investment.sql`：投资管理域，包含年度计划、投资事项、决策支付、股权治理、投后监管、收益和退出。
 - `08_data_asset.sql`：数据资产域，包含数据来源、资源目录、治理质量、资产评估、产品、授权交易、收益和安全审计。
 - `09_risk.sql`：风险合规域，包含风险分类、评估预警、整改闭环、内控、审计、巡察、廉洁和合同风险。
-- `V1.0.0__enterprise_platform_v1.sql`：V1.0 完整基线及最小权限菜单数据。
+- `10_init_data.sql`：幂等初始化角色、组织、权限、菜单、字典、风险分类、安全等级和项目阶段模板；不创建默认登录账号。
+- `V1.0.0__enterprise_platform_v1.sql`：V1.0 兼容基线结构，不再维护种子数据。
 - `V1.1.0__investment_data_risk_bi.sql`：投资、数据资产、风险合规和 BI 分域。
 - `migration/V2.0.0__legacy_to_v1.sql`：旧 `pm_project*` 数据迁移说明和保留表操作。
+- `mysql/manual/create_initial_admin.sql.example`：不会自动执行的首个管理员安全引导模板，必须注入唯一账号和BCrypt强摘要后手工运行。
 
 生产升级前必须完成全量备份，并在预发布环境核对外键、记录数和金额汇总。
 若部署时覆盖 `DB_NAME`，必须同步修改 `01_database.sql`，确保初始化库名与数据源一致。

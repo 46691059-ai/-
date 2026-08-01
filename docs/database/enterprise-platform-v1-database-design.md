@@ -142,6 +142,7 @@ erDiagram
 | 党建 | `party_meeting` | `meeting_type,meeting_date,host_id,participants,agenda,decision,attachment` |
 | 党建 | `party_honor` | `party_org_id,honor_name,honor_level,obtain_date,description,attachment` |
 | 项目 | `project_info` | `project_no,project_name,project_type,project_mode,source_type,customer_id,department_id,leader_id,start_date,end_date,status,budget_amount,contract_amount,expected_income,expected_profit,actual_income,actual_profit,risk_level,progress` |
+| 项目 | `project_stage_template` | `project_type,stage_code,stage_name,stage_order,requires_approval,status` |
 | 项目 | `project_stage` | `project_id,stage_code,stage_name,stage_order,start_time,end_time,actual_start_time,actual_end_time,status,responsible_person,approval_status,completion_percent` |
 | 项目 | `project_task` | `project_id,stage_id,parent_task_id,task_no,task_name,task_content,responsible_person,plan_date,plan_start,plan_end,actual_date,actual_start,actual_end,progress,priority,status` |
 | 项目 | `project_member` | `project_id,employee_id,role,responsibilities,joined_date,left_date,status` |
@@ -281,9 +282,10 @@ erDiagram
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
 [`09_risk.sql`](../../../database/mysql/09_risk.sql)、
+[`10_init_data.sql`](../../../database/mysql/10_init_data.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；
-脚本不创建默认账号或口令。旧版采用蓝绿迁移，字段映射和旧表保留操作见
+`10_init_data.sql`以业务唯一键判重，可安全重复执行；只给`SUPER_ADMIN`角色初始化全量权限，不给其他角色预置越权授权。脚本不创建默认账号或口令，首个管理员必须由受信任的部署流程使用密钥管理系统中的一次性口令创建。旧版采用蓝绿迁移，字段映射和旧表保留操作见
 [`V2.0.0__legacy_to_v1.sql`](../../../database/mysql/migration/V2.0.0__legacy_to_v1.sql)。
 无法从用户映射到员工的数据必须进入异常清单，禁止静默丢弃。

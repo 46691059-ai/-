@@ -26,9 +26,10 @@ enterprise-platform
 
 业务模块必须按 `controller / dto / entity / mapper / service` 分层，模块间通过公开服务或 DTO 交互。
 数据库先执行 `01_database.sql`、`02_sys.sql`、`03_hr.sql`、`04_party.sql`、
-`05_project.sql`、`06_operation.sql`、`07_investment.sql`、`08_data_asset.sql`、`09_risk.sql` 建立物理库以及系统、组织人事、党建治理、项目生命周期、经营管理、投资管理、数据资产和风险合规基础域，随后以
-`V1.0.0__enterprise_platform_v1.sql` 为主数据和核心业务基线，
-`V1.1.0__investment_data_risk_bi.sql` 扩展投资、数据资产、风险合规和 BI 分域；
+`05_project.sql`、`06_operation.sql`、`07_investment.sql`、`08_data_asset.sql`、`09_risk.sql` 建立物理库以及系统、组织人事、党建治理、项目生命周期、经营管理、投资管理、数据资产和风险合规基础域，
+`10_init_data.sql` 统一维护幂等基础数据并禁止内置可登录默认账号，随后执行
+`V1.0.0__enterprise_platform_v1.sql` 兼容基线和
+`V1.1.0__investment_data_risk_bi.sql` 扩展结构；
 统一使用审计字段、逻辑删除唯一键、乐观锁、复合外键和查询索引。旧版数据使用
 独立迁移目录人工升级。
 客户端退出登录调用 `POST /api/auth/logout`，服务端按 JWT `jti` 将令牌加入 Redis 撤销表直到其自然过期。
