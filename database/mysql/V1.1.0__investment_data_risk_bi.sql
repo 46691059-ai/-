@@ -309,7 +309,7 @@ CREATE TABLE IF NOT EXISTS investment_exit (
     CONSTRAINT chk_investment_exit_amount CHECK (exit_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='投资退出管理';
 
-CREATE TABLE data_resource (
+CREATE TABLE IF NOT EXISTS data_resource (
     id BIGINT NOT NULL,
     resource_code VARCHAR(64) NOT NULL,
     resource_name VARCHAR(200) NOT NULL,
@@ -337,7 +337,7 @@ CREATE TABLE data_resource (
     CONSTRAINT chk_data_resource_size CHECK (data_size >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据资源目录';
 
-CREATE TABLE data_asset (
+CREATE TABLE IF NOT EXISTS data_asset (
     id BIGINT NOT NULL,
     asset_code VARCHAR(64) NOT NULL,
     asset_name VARCHAR(200) NOT NULL,
@@ -363,7 +363,7 @@ CREATE TABLE data_asset (
     CONSTRAINT chk_data_asset_amount CHECK (evaluation_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据资产';
 
-CREATE TABLE data_product (
+CREATE TABLE IF NOT EXISTS data_product (
     id BIGINT NOT NULL,
     product_code VARCHAR(64) NOT NULL,
     product_name VARCHAR(200) NOT NULL,
@@ -387,7 +387,7 @@ CREATE TABLE data_product (
     CONSTRAINT chk_data_product_price CHECK (price >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据产品';
 
-CREATE TABLE data_authorization (
+CREATE TABLE IF NOT EXISTS data_authorization (
     id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     customer VARCHAR(200) NOT NULL,
@@ -411,7 +411,7 @@ CREATE TABLE data_authorization (
     CONSTRAINT chk_data_authorization_dates CHECK (end_date IS NULL OR start_date <= end_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据授权记录';
 
-CREATE TABLE data_income (
+CREATE TABLE IF NOT EXISTS data_income (
     id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     contract_id BIGINT NULL,
@@ -434,7 +434,7 @@ CREATE TABLE data_income (
     CONSTRAINT chk_data_income_amount CHECK (income_amount >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据收益';
 
-CREATE TABLE data_quality (
+CREATE TABLE IF NOT EXISTS data_quality (
     id BIGINT NOT NULL,
     resource_id BIGINT NOT NULL,
     completeness_score DECIMAL(5,2) NOT NULL DEFAULT 0,
@@ -462,7 +462,7 @@ CREATE TABLE data_quality (
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据质量评价';
 
-CREATE TABLE data_access_log (
+CREATE TABLE IF NOT EXISTS data_access_log (
     id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     resource_id BIGINT NOT NULL,

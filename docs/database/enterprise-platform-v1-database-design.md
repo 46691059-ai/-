@@ -186,13 +186,20 @@ erDiagram
 | 投资 | `investment_income` | `investment_id,income_type,income_date,income_amount,income_source` |
 | 投资 | `investment_exit` | `investment_id,exit_type,exit_date,exit_reason,exit_amount,income_amount,approval_status,status` |
 | 投资 | `investment_evaluation` | `investment_id,evaluation_date,economic_score,management_score,risk_score,overall_score,summary` |
-| 数据资产 | `data_resource` | `resource_code,resource_name,resource_type,source_unit,responsible_person,update_frequency,data_size,security_level` |
-| 数据资产 | `data_asset` | `asset_code,asset_name,resource_id,ownership,application_scene,value_level,evaluation_amount,status` |
-| 数据资产 | `data_product` | `product_code,product_name,asset_id,service_object,service_mode,price,status` |
-| 数据资产 | `data_authorization` | `product_id,customer,authorization_type,start_date,end_date,purpose,approval_status` |
-| 数据资产 | `data_income` | `product_id,contract_id,income_amount,income_date,customer` |
-| 数据资产 | `data_quality` | `resource_id,completeness_score,accuracy_score,timeliness_score,quality_score,evaluation_period` |
-| 数据资产 | `data_access_log` | `user_id,resource_id,access_time,operation,result,ip,trace_id` |
+| 数据资产 | `data_source` | `source_code,source_name,source_type,provider_unit,contact_person,contact_phone,authorization_status,status` |
+| 数据资产 | `data_security_level` | `level_code,level_name,description,status` |
+| 数据资产 | `data_resource` | `resource_code,resource_name,source_id,resource_type,business_domain,data_owner,responsible_person,update_frequency,data_volume,security_level,sharing_level,status` |
+| 数据资产 | `data_resource_field` | `resource_id,field_name,field_code,data_type,field_length,is_sensitive,description,sort_no` |
+| 数据资产 | `data_quality` | `resource_id,completeness_score,accuracy_score,timeliness_score,consistency_score,security_score,overall_score,evaluation_date,evaluator` |
+| 数据资产 | `data_governance_task` | `resource_id,task_name,task_type,responsible_person,start_date,end_date,result,status` |
+| 数据资产 | `data_asset` | `asset_code,asset_name,resource_id,asset_type,ownership,application_scene,value_level,evaluation_amount,evaluation_method,evaluation_date,status` |
+| 数据资产 | `data_asset_evaluation` | `asset_id,evaluation_org,evaluation_method,market_value,cost_value,income_value,evaluation_report,evaluation_date` |
+| 数据资产 | `data_product` | `product_code,product_name,asset_id,product_type,service_object,application_scene,service_mode,price,status` |
+| 数据资产 | `data_service_api` | `product_id,api_name,api_url,request_method,security_method,status` |
+| 数据资产 | `data_authorization` | `product_id,customer_name,authorization_type,purpose,start_date,end_date,approval_status,contract_id` |
+| 数据资产 | `data_trade_order` | `order_no,product_id,buyer_name,trade_amount,trade_date,status,contract_id` |
+| 数据资产 | `data_income` | `product_id,authorization_id,trade_order_id,contract_id,income_type,income_amount,income_date,customer_name` |
+| 数据资产 | `data_access_log` | `user_id,resource_id,operation_type,access_time,ip,result,trace_id` |
 | 风险 | `risk_info` | `risk_code,risk_name,risk_type,risk_level,responsible_dept,responsible_person,status` |
 | 风险 | `risk_rule` | `rule_name,business_type,rule_condition,warning_level,enabled` |
 | 风险 | `risk_rectification` | `risk_id,problem,measure,responsible_person,deadline,status` |
@@ -205,6 +212,7 @@ erDiagram
 [`05_project.sql`](../../../database/mysql/05_project.sql)、
 [`06_operation.sql`](../../../database/mysql/06_operation.sql)、
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
+[`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)
@@ -228,7 +236,7 @@ erDiagram
 - 三重一大按事项编号唯一，并按申请部门、事项类型、执行状态和投资事项建立索引。
 - 日志按用户/结果和创建时间建立组合索引；收入、成本和付款节点按主对象及业务日期索引。
 - 投资决策、支付、收益、风险和退出按投资事项与业务日期索引；投后指标按企业和指标唯一，采集数据按指标和期间唯一。
-- 数据资产链路按资源、资产、产品逐级索引；授权结束日期和数据访问时间单独建立审计索引。
+- 数据资产链路按来源、资源、资产、产品逐级索引；字段敏感性、治理截止日期、授权结束日期、交易日期和数据访问时间均建立专用索引。
 - 风险整改、审计、巡察按责任组织、状态和截止日期索引；BI 按统计日期保存唯一快照。
 
 ## 外键与安全
@@ -237,6 +245,8 @@ erDiagram
 - 任务使用 `(stage_id,project_id)` 复合外键，禁止跨项目引用阶段或父任务。
 - 身份证、手机号字段预留密文长度，应用层必须加密，接口不得直接输出。
 - 投资支付银行账户属于敏感数据，必须加密存储并在查询接口中脱敏输出。
+- 数据来源联系人电话必须加密存储；资源字段按敏感标识执行分级授权、动态脱敏和访问审计。
+- 数据服务接口只保存服务地址和认证方式，不得在业务表中明文保存密钥、令牌或数据库凭据。
 - 薪酬数据属于高敏感数据，接口必须同时执行功能权限、组织数据范围和字段脱敏控制。
 - 外键限制物理删除，业务数据统一逻辑删除，保持审计链完整。
 - 投资事项关联 `project_info`，投资治理表关联 `investment_company`；数据收益可关联
@@ -258,6 +268,7 @@ erDiagram
 [`05_project.sql`](../../../database/mysql/05_project.sql)、
 [`06_operation.sql`](../../../database/mysql/06_operation.sql)、
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
+[`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
 [`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
 和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；

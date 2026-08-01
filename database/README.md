@@ -10,6 +10,7 @@ MySQL 8 全量初始化脚本位于 `mysql/` 根目录，Docker 首次创建数�
 - `05_project.sql`：项目全生命周期域，包含机会、阶段、WBS、经营分析、验收和归档。
 - `06_operation.sql`：经营管理域，包含客户、供应商、合同、收入、成本、应收、回款、利润和经营分析。
 - `07_investment.sql`：投资管理域，包含年度计划、投资事项、决策支付、股权治理、投后监管、收益和退出。
+- `08_data_asset.sql`：数据资产域，包含数据来源、资源目录、治理质量、资产评估、产品、授权交易、收益和安全审计。
 - `V1.0.0__enterprise_platform_v1.sql`：V1.0 完整基线及最小权限菜单数据。
 - `V1.1.0__investment_data_risk_bi.sql`：投资、数据资产、风险合规和 BI 分域。
 - `migration/V2.0.0__legacy_to_v1.sql`：旧 `pm_project*` 数据迁移说明和保留表操作。
