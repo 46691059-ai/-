@@ -36,7 +36,7 @@ public class ProjectTaskController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.TaskResponse> create(
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectDtos.TaskRequest request) {
@@ -44,7 +44,7 @@ public class ProjectTaskController {
     }
 
     @PutMapping("/{taskId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.TaskResponse> update(
             @PathVariable Long projectId,
             @PathVariable Long taskId,
@@ -53,7 +53,7 @@ public class ProjectTaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<Void> delete(
             @PathVariable Long projectId,
             @PathVariable Long taskId) {

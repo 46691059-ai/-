@@ -49,14 +49,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('project:lifecycle:create')")
+    @PreAuthorize("hasAuthority('project:add')")
     public ApiResponse<ProjectDtos.DetailResponse> create(
             @Valid @RequestBody ProjectDtos.CreateRequest request) {
         return ApiResponse.success(service.create(request));
     }
 
     @PutMapping("/{projectId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.Response> update(
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectDtos.UpdateRequest request) {

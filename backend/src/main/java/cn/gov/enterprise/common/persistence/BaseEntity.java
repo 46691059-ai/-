@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 通用审计实体基类。
+ *
+ * <p>保留现有无主键设计，以兼容已存在的业务实体；新建标准实体应继承
+ * {@link BaseIdEntity}。</p>
+ */
 @Getter
 @Setter
 public abstract class BaseEntity {

@@ -35,7 +35,7 @@ public class ProjectMemberController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.MemberResponse> create(
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectDtos.MemberRequest request) {
@@ -43,7 +43,7 @@ public class ProjectMemberController {
     }
 
     @PutMapping("/{memberId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.MemberResponse> update(
             @PathVariable Long projectId,
             @PathVariable Long memberId,
@@ -52,7 +52,7 @@ public class ProjectMemberController {
     }
 
     @DeleteMapping("/{memberId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<Void> delete(
             @PathVariable Long projectId,
             @PathVariable Long memberId) {

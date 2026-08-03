@@ -1,32 +1,14 @@
-import axios from 'axios'
+import { authStorage } from './auth-storage'
+import { request } from './request'
 
-let accessToken: string | null = null
+/** 兼容已有业务模块的HTTP客户端导出。 */
+export const http = request
 
+/** @deprecated 新代码由用户Store统一维护Token。 */
 export function setAccessToken(token: string | null) {
-  accessToken = token
-}
-
-export const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  timeout: 15_000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
-http.interceptors.request.use((config) => {
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`
+  if (token) {
+    authStorage.setToken(token)
+  } else {
+    authStorage.clear()
   }
-  return config
-})
-
-http.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      setAccessToken(null)
-    }
-    return Promise.reject(error)
-  },
-)
+}

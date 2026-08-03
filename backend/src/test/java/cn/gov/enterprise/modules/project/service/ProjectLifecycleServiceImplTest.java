@@ -63,21 +63,21 @@ class ProjectLifecycleServiceImplTest {
         List<ProjectStageEntity> insertedStages = new ArrayList<>();
         List<ProjectMemberEntity> insertedMembers = new ArrayList<>();
         when(projectMapper.selectCount(any())).thenReturn(0L);
-        when(projectMapper.insert(any())).thenAnswer(invocation -> {
+        when(projectMapper.insert(any(ProjectEntity.class))).thenAnswer(invocation -> {
             ProjectEntity project = invocation.getArgument(0);
             project.setId(9001L);
             project.setVersion(0);
             insertedProject.set(project);
             return 1;
         });
-        when(stageMapper.insert(any())).thenAnswer(invocation -> {
+        when(stageMapper.insert(any(ProjectStageEntity.class))).thenAnswer(invocation -> {
             ProjectStageEntity stage = invocation.getArgument(0);
             stage.setId(9100L + insertedStages.size());
             stage.setVersion(0);
             insertedStages.add(stage);
             return 1;
         });
-        when(memberMapper.insert(any())).thenAnswer(invocation -> {
+        when(memberMapper.insert(any(ProjectMemberEntity.class))).thenAnswer(invocation -> {
             ProjectMemberEntity member = invocation.getArgument(0);
             member.setId(9201L);
             member.setVersion(0);

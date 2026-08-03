@@ -1,0 +1,29 @@
+:root {
+  --platform-primary: #176b55;
+  --platform-primary-dark: #0d493a;
+  --platform-accent: #c49a48;
+  --platform-bg: #f3f6f5;
+  --platform-surface: #ffffff;
+  --platform-text: #17241f;
+  --platform-text-secondary: #66756f;
+  --platform-border: #dde5e2;
+  --platform-radius: 8px;
+  --platform-space: 16px;
+  --el-color-primary: var(--platform-primary);
+  --el-border-radius-base: var(--platform-radius);
+  --el-font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  color: var(--platform-text);
+  background: var(--platform-bg);
+  font-family: var(--el-font-family);
+  -webkit-font-smoothing: antialiased;
+}

@@ -2,4 +2,11 @@ logging:
   level:
     root: INFO
     cn.gov.enterprise: DEBUG
+    # 禁止MyBatis在开发日志中输出密码摘要、手机号等SQL绑定参数。
+    cn.gov.enterprise.modules: INFO
+    cn.gov.enterprise.security.SecurityIdentityMapper: INFO
     com.baomidou.mybatisplus: DEBUG
+
+app:
+  datascope:
+    test-endpoint-enabled: true

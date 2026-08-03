@@ -29,7 +29,7 @@ public class ProjectStageController {
     }
 
     @PutMapping("/{stageId}")
-    @PreAuthorize("hasAuthority('project:lifecycle:update')")
+    @PreAuthorize("hasAuthority('project:edit')")
     public ApiResponse<ProjectDtos.StageResponse> update(
             @PathVariable Long projectId,
             @PathVariable Long stageId,

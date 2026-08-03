@@ -4,36 +4,38 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      redirect: '/projects',
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/login/index.vue'),
+      meta: { title: '登录', public: true },
     },
     {
-      path: '/projects',
-      component: () => import('../layouts/ProjectLayout.vue'),
+      path: '/',
+      name: 'RootLayout',
+      component: () => import('../layout/index.vue'),
+      redirect: '/home',
       children: [
         {
-          path: '',
-          name: 'ProjectList',
-          component: () => import('../views/project/ProjectListView.vue'),
-        },
-        {
-          path: 'create',
-          name: 'ProjectCreate',
-          component: () => import('../views/project/ProjectCreateView.vue'),
-        },
-        {
-          path: ':id',
-          name: 'ProjectDetail',
-          component: () => import('../views/project/ProjectDetailView.vue'),
-        },
-        {
-          path: ':id/edit',
-          name: 'ProjectEdit',
-          component: () => import('../views/project/ProjectEditView.vue'),
+          path: 'home',
+          name: 'Home',
+          component: () => import('../views/home/index.vue'),
+          meta: { title: '系统首页', menuTitle: '首页', icon: 'HomeFilled', order: 0 },
         },
       ],
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      redirect: '/home',
+      meta: { hidden: true },
+    },
   ],
+})
+
+router.afterEach((to) => {
+  document.title = to.meta.title
+    ? `${to.meta.title} - 国企数字化治理与经营赋能平台`
+    : '国企数字化治理与经营赋能平台'
 })
 
 export default router

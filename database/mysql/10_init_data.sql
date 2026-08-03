@@ -22,7 +22,7 @@ FROM (
     UNION ALL SELECT 2, '董事长', 'CHAIRMAN', '查看企业经营、投资、风险全局数据', 'ALL'
     UNION ALL SELECT 3, '党委书记', 'PARTY_SECRETARY', '负责党建、三重一大和干部治理', 'ALL'
     UNION ALL SELECT 4, '总经理', 'GENERAL_MANAGER', '负责企业经营管理', 'ALL'
-    UNION ALL SELECT 5, '部门负责人', 'DEPT_MANAGER', '负责本部门及下级组织业务', 'DEPT_AND_CHILD'
+    UNION ALL SELECT 5, '部门负责人', 'DEPT_MANAGER', '负责本部门及下级组织业务', 'ORG_AND_CHILDREN'
     UNION ALL SELECT 6, '项目经理', 'PROJECT_MANAGER', '负责授权项目全过程管理', 'SELF'
     UNION ALL SELECT 7, '普通员工', 'COMMON_USER', '普通业务人员', 'SELF'
 ) s

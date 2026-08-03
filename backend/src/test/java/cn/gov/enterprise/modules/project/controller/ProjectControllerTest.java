@@ -17,8 +17,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringJUnitConfig(ProjectControllerTest.TestConfig.class)
 @WebAppConfiguration
+@ActiveProfiles("project-controller-test")
 class ProjectControllerTest {
     @Autowired ProjectLifecycleService service;
     @Autowired WebApplicationContext applicationContext;
@@ -54,7 +57,7 @@ class ProjectControllerTest {
 
         mockMvc.perform(get("/projects").param("page", "1").param("size", "20"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.total").value(1))
                 .andExpect(jsonPath("$.data.records[0].projectNo").value("PRJ-001"));
     }
@@ -64,10 +67,11 @@ class ProjectControllerTest {
     void pageRejectsUserWithoutListPermission() throws Exception {
         mockMvc.perform(get("/projects"))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.code").value("A0301"));
+                .andExpect(jsonPath("$.code").value(403));
     }
 
-    @Configuration
+    @TestConfiguration
+    @Profile("project-controller-test")
     @EnableWebMvc
     @EnableMethodSecurity
     static class TestConfig {

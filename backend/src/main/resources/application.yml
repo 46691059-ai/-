@@ -52,7 +52,11 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 app:
+  database:
+    mapping-check:
+      enabled: ${DB_MAPPING_CHECK_ENABLED:true}
   security:
+    permission-cache-ttl-seconds: ${PERMISSION_CACHE_TTL_SECONDS:1800}
     jwt:
       secret: ${JWT_SECRET}
       expiration-seconds: ${JWT_EXPIRATION_SECONDS:7200}
