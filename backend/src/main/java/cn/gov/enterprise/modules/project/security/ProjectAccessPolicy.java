@@ -1,6 +1,7 @@
 package cn.gov.enterprise.modules.project.security;
 
 import cn.gov.enterprise.common.exception.BusinessException;
+import cn.gov.enterprise.common.datascope.annotation.DataScope;
 import cn.gov.enterprise.modules.project.entity.ProjectEntity;
 import cn.gov.enterprise.modules.project.mapper.ProjectMapper;
 import cn.gov.enterprise.security.CurrentSecurityContext;
@@ -21,6 +22,9 @@ public class ProjectAccessPolicy {
         this.securityContext = securityContext;
     }
 
+    @DataScope(
+            orgField = "project_info.department_id",
+            userField = "project_info.create_by")
     public ProjectEntity requireAccessible(Long projectId) {
         ProjectEntity project = projectMapper.selectById(projectId);
         if (project == null) {
@@ -58,24 +62,7 @@ public class ProjectAccessPolicy {
             query.eq(ProjectEntity::getDepartmentId, requestedOrgId);
         }
         if (principal.selfOnly()) {
-            query.apply("""
-                EXISTS (
-                    SELECT 1
-                    FROM sys_user scope_user
-                    WHERE scope_user.id = {0}
-                      AND scope_user.deleted = 0
-                      AND (
-                        project_info.leader_id = scope_user.employee_id
-                        OR EXISTS (
-                            SELECT 1 FROM project_member scope_member
-                            WHERE scope_member.project_id = project_info.id
-                              AND scope_member.employee_id = scope_user.employee_id
-                              AND scope_member.status = 'ACTIVE'
-                              AND scope_member.deleted = 0
-                        )
-                      )
-                )
-                """, principal.userId());
+            query.eq(ProjectEntity::getCreateBy, principal.username());
         }
     }
 
@@ -87,6 +74,6 @@ public class ProjectAccessPolicy {
             return false;
         }
         return !principal.selfOnly()
-                || projectMapper.countSelfAccessible(project.getId(), principal.userId()) > 0;
+                || principal.username().equals(project.getCreateBy());
     }
 }

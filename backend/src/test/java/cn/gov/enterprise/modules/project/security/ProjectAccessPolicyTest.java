@@ -40,13 +40,12 @@ class ProjectAccessPolicyTest {
     }
 
     @Test
-    void selfScopeRequiresManagerOrActiveMember() {
+    void selfScopeRequiresProjectCreator() {
         ProjectEntity project = new ProjectEntity();
         project.setId(1L);
         project.setDepartmentId(100L);
-        project.setLeaderId(20L);
+        project.setCreateBy("another_user");
         when(projectMapper.selectById(1L)).thenReturn(project);
-        when(projectMapper.countSelfAccessible(1L, 10L)).thenReturn(0L);
         when(securityContext.principal()).thenReturn(principal(Set.of(100L), true));
 
         assertThatThrownBy(() -> policy.requireAccessible(1L))

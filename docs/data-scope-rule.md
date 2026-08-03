@@ -17,6 +17,7 @@
 ## 2. 强制规则
 
 - 所有企业业务数据查询 Service 必须添加 `@DataScope`。
+- 业务模块存在主从表时，主表查询入口必须添加 `@DataScope`；缺少组织字段的从表只能在主表授权成功后按主表外键查询，禁止向从表拼接不存在的组织字段。
 - `orgField`、`userField` 必须是可信的数据库列名，可带固定表别名，禁止接收客户端输入。
 - Controller 不得直接调用 Mapper，前端菜单/按钮隐藏不得替代后端过滤。
 - 数据权限拦截器必须位于分页拦截器之前。
@@ -25,8 +26,8 @@
 
 ## 3. 审查与测试
 
-每个业务查询至少验证 ALL、ORG、ORG_AND_CHILDREN、SELF、CUSTOM 五类边界，以及 CUSTOM 空配置拒绝。缺少 `@DataScope`、字段类型不匹配、绕过 Service、手工拼接权限 SQL 均为代码审查阻断项。
+每个业务查询至少验证 ALL、ORG、ORG_AND_CHILDREN、SELF、CUSTOM 五类边界，以及 CUSTOM 空配置拒绝。业务查询 Service 漏标 `@DataScope`、从表查询绕过已授权主表入口、字段类型不匹配、绕过 Service、手工拼接权限 SQL 均为代码审查阻断项。
 
-V1.0.0 基础框架的五类范围单元测试通过，真实组织关系和自定义角色组织关系已核查。既有 project 查询 Service 尚未接入 `@DataScope`，必须在 Project Lifecycle 专项 Sprint 修复后才能作为生产业务查询开放。
+Sprint 1.8 已将 project 分页和统一项目主表访问入口接入 `@DataScope`。`project_stage`、`project_task`、`project_member` 没有独立组织字段，必须先通过 `project_info.department_id` 与 `project_info.create_by` 完成主表授权，再按 `project_id` 查询。
 
 详细开发示例见 `data-scope-development-rule.md`。

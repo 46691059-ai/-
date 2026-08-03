@@ -1,6 +1,7 @@
 package cn.gov.enterprise.modules.project.service;
 
 import cn.gov.enterprise.common.api.PageResponse;
+import cn.gov.enterprise.common.datascope.annotation.DataScope;
 import cn.gov.enterprise.common.exception.BusinessException;
 import cn.gov.enterprise.modules.project.dto.ProjectDtos;
 import cn.gov.enterprise.modules.project.entity.ProjectEntity;
@@ -42,6 +43,9 @@ public class ProjectLifecycleQueryService {
         this.assembler = assembler;
     }
 
+    @DataScope(
+            orgField = "project_info.department_id",
+            userField = "project_info.create_by")
     public PageResponse<ProjectDtos.Response> page(
             long page, long size, String keyword, String status,
             String stageCode, Long departmentId) {
