@@ -66,7 +66,11 @@ enterprise-platform/
 
 所有环境都必须注入随机 `JWT_SECRET`，不提供可被误用的默认签名密钥。
 
-数据库按顺序执行：
+Docker数据库初始化只有一个入口：
+
+`database/mysql/init/00_enterprise_platform.sql`
+
+该清单按顺序执行：
 
 1. `database/mysql/01_database.sql`
 2. `database/mysql/02_sys.sql`
@@ -84,8 +88,11 @@ enterprise-platform/
 14. `database/mysql/14_sprint_1_rbac_acceptance.sql`
 15. `database/mysql/15_sprint_1_menu_center.sql`
 16. `database/mysql/16_sprint_1_log_center.sql`
-17. `database/mysql/V1.0.0__enterprise_platform_v1.sql`
-18. `database/mysql/V1.1.0__investment_data_risk_bi.sql`
+17. `database/mysql/V1.1.0__investment_data_risk_bi.sql`
+
+历史聚合脚本保存在
+`database/mysql/deprecated/V1.0.0__enterprise_platform_v1.sql`，不得用于Docker初始化或生产升级。
+Project表结构唯一来源为 `database/mysql/05_project.sql`。
 
 已部署旧版环境按 `database/mysql/migration/V2.0.0__legacy_to_v1.sql`
 执行蓝绿迁移；该目录不会被 Docker 初始化流程自动执行。

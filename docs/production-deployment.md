@@ -70,7 +70,9 @@ docker compose \
 curl -fsS http://127.0.0.1/healthz
 ```
 
-首次创建 MySQL 数据卷时，`database/mysql` 下的 SQL 会按文件名顺序执行。
+首次创建MySQL数据卷时，只执行
+`database/mysql/init/00_enterprise_platform.sql`。该清单显式加载受控模块脚本，
+`manual`、`migration`、`deprecated`目录不会进入Docker初始化。
 已有数据库卷不会再次执行初始化脚本，升级时必须在备份后由 DBA 单独执行新增迁移。
 
 ## 4. 镜像与发布

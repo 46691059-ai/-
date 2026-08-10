@@ -1,0 +1,344 @@
+inventory_version: 2
+generated_at: "2026-08-08"
+scope: "repository assets plus isolated MySQL 8 acceptance evidence; no managed or production database history was queried"
+canonical_scan_root: "database/migration/{vendor}"
+
+execution_status:
+  confirmed_applied: []
+  note: "Applied status must be read from flyway_schema_history and verified against schema fingerprints. Repository presence is not execution evidence."
+
+acceptance_runs:
+  - id: "sprint-2-1-9-20260803"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    baseline_version: "2.0.0"
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3"]
+    schema_fingerprint_sha256: "b9e1d162ae88c5283ae6e6c30e9d49fa23399ab7d2dddff9902031a7a98d14b4"
+    history_success_rows: 5
+    result: "PASS_WITH_GOVERNANCE_FINDINGS"
+    report: "docs/flyway-validation-report.md"
+    note: "Acceptance evidence only. This does not assert that any managed environment has applied these versions."
+  - id: "sprint-2-1-10-promotion-20260803"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3"]
+    schema_fingerprint_sha256: "b9e1d162ae88c5283ae6e6c30e9d49fa23399ab7d2dddff9902031a7a98d14b4"
+    history_success_rows: 5
+    history_failed_rows: 0
+    idempotent_migrate: true
+    result: "PASS"
+    report: "docs/migration-promotion-report.md"
+    note: "Validated from the canonical governed scan root. Managed-environment applied status remains unconfirmed."
+  - id: "sprint-2-2-investment-bootstrap-20260803"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0"]
+    history_success_rows: 6
+    history_failed_rows: 0
+    idempotent_migrate: true
+    result: "PASS"
+    report: "docs/investment-module-bootstrap-report.md"
+    note: "Validated Investment RBAC/menu bootstrap data. No managed environment was changed."
+  - id: "sprint-2-2-1-investment-v240-20260803"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.10"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    upgrade_from: "2.1.3"
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0"]
+    schema_fingerprint_sha256: "3868573fd5237dadaea74e3d858e4b9fd8e836753f3ca31ecf92bc124b9f1e21"
+    history_success_rows: 7
+    history_failed_rows: 0
+    target_table_count: 14
+    legacy_fixture_validated: true
+    result: "PASS"
+    report: "docs/investment-migration-v240-report.md"
+    note: "Validated both a fresh foundation baseline and an existing V2.1.3 schema. No managed environment was changed."
+  - id: "sprint-2-2-4-1-investment-v242-20260804"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.1.3"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2"]
+    schema_fingerprint_sha256: "27cffea8205e6bea95dd87e5300bf1c5a60d78593530290a83db993f3ebeb53f"
+    history_success_rows: 9
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v242_flyway_checksum: -2068189189
+    permission_count: 4
+    result: "PASS_WITH_FINGERPRINT_PORTABILITY_FINDING"
+    report: "docs/investment-v242-validation-report.md"
+    note: "Validated V2.4.2 on both approved paths. No managed or production database was changed."
+  - id: "sprint-2-2-5-1-investment-v243-20260808"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.2"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3"]
+    schema_fingerprint_sha256: "27cffea8205e6bea95dd87e5300bf1c5a60d78593530290a83db993f3ebeb53f"
+    history_success_rows: 10
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v243_flyway_checksum: -657690293
+    permission_count: 2
+    result: "PASS"
+    report: "docs/investment-v243-validation-report.md"
+    note: "Validated the RBAC-only V2.4.3 from both approved paths. No managed or production database was changed."
+  - id: "sprint-2-3-2-1-investment-v246-20260808"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.3"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6"]
+    schema_fingerprint_sha256: "166ba8139c6834bd42b2c26c08b30c45d5873de4b5a14c8fb37715d581d7f91a"
+    history_success_rows: 13
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v244_flyway_checksum: -914691717
+    v245_flyway_checksum: -1465863783
+    v246_flyway_checksum: 1708717665
+    target_table_count: 3
+    workflow_owned_table_count: 0
+    result: "PASS"
+    report: "docs/investment-decision-v246-validation-report.md"
+    note: "Validated fresh and V2.4.3-upgrade paths on isolated loopback-only instances. No managed or production database was changed."
+  - id: "sprint-2-3-3-1-investment-v247-20260808"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.6"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7"]
+    schema_fingerprint_sha256: "04f3687d379373b098367c8150e52f17ed0972a1d8c88a87d5e2846fc985d77d"
+    history_success_rows: 14
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v247_flyway_checksum: 1082051033
+    target_table_count: 2
+    workflow_owned_table_count: 0
+    permission_count: 4
+    result: "PASS"
+    report: "docs/investment-workflow-v247-validation-report.md"
+    note: "Validated fresh and V2.4.6-upgrade paths on isolated loopback-only instances. No Workflow or managed/production database was created or changed."
+  - id: "sprint-2-3-4-1-investment-v248-20260808"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.7"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8"]
+    schema_fingerprint_sha256: "8eeb85652ae98cfec8214883016e3315bbc4e39ae9414c27b367715bd8104dc5"
+    history_success_rows: 15
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v248_flyway_checksum: 157769302
+    new_table_count: 0
+    new_column_count: 0
+    replaced_check_constraint_count: 1
+    workflow_owned_table_count: 0
+    permission_count: 3
+    result: "PASS"
+    report: "docs/investment-decision-v248-validation-report.md"
+    note: "Validated fresh and V2.4.7-upgrade paths on isolated loopback-only instances. No Workflow or managed/production database was created or changed."
+  - id: "sprint-2-3-6-1-workflow-v249-20260808"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.8"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8", "2.4.9"]
+    schema_fingerprint_sha256: "7a12e14388e78ad0ff7e8e59b3c3b1860a6f46f7294fae005f9ba0a847fb7be3"
+    history_success_rows: 16
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v249_flyway_checksum: -48227397
+    new_table_count: 1
+    new_column_count: 32
+    new_index_count: 8
+    new_foreign_key_count: 4
+    new_check_constraint_count: 6
+    workflow_owned_table_count: 0
+    permission_count: 1
+    result: "PASS"
+    report: "docs/workflow-reliability-v249-validation-report.md"
+    note: "Validated fresh and V2.4.8-upgrade paths on isolated loopback-only instances with the application Worker disabled. No Workflow or managed/production database was created, connected, or changed."
+
+canonical_assets:
+  - version: "2.4.9"
+    canonical_file: "database/migration/mysql/V2.4.9__enhance_workflow_reliability.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "96436a5f7b845e69a0c9a9ea55761898aeb5701b9df0eee3af132b02f968f0b8"
+    flyway_checksum: -48227397
+    scope: "Investment-side Workflow worker leases, dead-letter evidence, Inbox replay evidence, reliability audit, and replay RBAC"
+  - version: "2.4.8"
+    canonical_file: "database/migration/mysql/V2.4.8__enhance_investment_decision_approval_closure.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "eb3f6fe13dff6c9cb717000293ca6aeb188fd080ac8387297f50b630be845f81"
+    flyway_checksum: 157769302
+    scope: "Canonical investment decision approval states and approval-closure RBAC grants"
+  - version: "2.4.7"
+    canonical_file: "database/migration/mysql/V2.4.7__add_investment_decision_workflow_reliability.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "fb1df126c9d03a67460b741f7be7aa14943f64aa66affdaed8febbb0142e0d55"
+    flyway_checksum: 1082051033
+    scope: "Investment Workflow outbox/inbox reliability tables and decision RBAC grants"
+  - version: "2.4.6"
+    canonical_file: "database/migration/mysql/V2.4.6__add_investment_decision_risk_audit.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "3e7b0a6550960d012cf861f00e61248d0ec2ca1d7b59afd91783bf3a0c677f64"
+    flyway_checksum: 1708717665
+    scope: "Decision-condition risk/audit references, Workflow event evidence, and immutable Investment business audit events"
+  - version: "2.4.5"
+    canonical_file: "database/migration/mysql/V2.4.5__add_investment_workflow_binding.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "c7fd269066b5d21813d87bab2602c848f3ae70dc5f67b494b608507b17e671dc"
+    flyway_checksum: -1465863783
+    scope: "Investment-to-Workflow opaque bindings and decision-node integration; no cross-database access"
+  - version: "2.4.4"
+    canonical_file: "database/migration/mysql/V2.4.4__create_investment_decision_snapshot.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "eb827c2a052ce175dc83aab33c7c42acd7aa910d253273c39c9a178fddc622c1"
+    flyway_checksum: -914691717
+    scope: "Immutable Investment decision snapshots plus decision risk and audit references"
+  - version: "2.4.3"
+    canonical_file: "database/migration/mysql/V2.4.3__add_investment_scheme_permissions.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "0918ae589df84e9c401aa695cb1b57b83937fccaad85f1c2d0507d4260bae368"
+    flyway_checksum: -657690293
+    scope: "Investment scheme view/edit permissions, menu metadata, and SUPER_ADMIN grants"
+  - version: "2.4.2"
+    canonical_file: "database/migration/mysql/V2.4.2__add_investment_feasibility_due_diligence_permissions.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "c71ddc226a04155afe4552fd23bc826b87ba600967258675dc95b8a26d002d40"
+    flyway_checksum: -2068189189
+    scope: "Feasibility and due-diligence RBAC permissions, menu metadata, and SUPER_ADMIN grants"
+  - version: "2.4.1"
+    canonical_file: "database/migration/mysql/V2.4.1__add_investment_opportunity_workflow_permissions.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "eb73efbacbcced25c0494fbfed19f264cb10665e5dd6622cfe15cb57bdb8f2be"
+    flyway_checksum: -269537295
+    scope: "Investment opportunity create, review, and conversion RBAC permissions plus SUPER_ADMIN grants"
+  - version: "2.4.0"
+    canonical_file: "database/migration/mysql/V2.4.0__create_investment_decision_baseline.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "6a498a2065a4139a9423d0d23bb616fe66a7c91860ff6cd4c2642d629ec3ae49"
+    flyway_checksum: -717284868
+    scope: "Investment opportunity, feasibility versions, due diligence, investment scheme, decision workflow, and conditional approval baseline"
+  - version: "2.2.0"
+    canonical_file: "database/migration/mysql/V2.2.0__bootstrap_investment_module_rbac.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "ba6752751f98970da424cb84b4eec95343c06fdd08dc4791db8f5971e9513a31"
+    flyway_checksum: 487347589
+    scope: "Investment permissions, menus, and SUPER_ADMIN bootstrap grants only"
+
+promoted:
+  - version: "2.1.0"
+    canonical_file: "database/migration/mysql/V2.1.0__create_project_lifecycle_v2_structure.sql"
+    source_archive: "database/mysql/migration/V2.1.0__create_project_lifecycle_v2_structure.sql"
+    asset_status: "PROMOTED_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "8794cb84f5a7e1857aadcaf7ee29c32ac10df04fad572ce1ef048004a37e5e4f"
+    flyway_checksum: -1798385258
+  - version: "2.1.1"
+    canonical_file: "database/migration/mysql/V2.1.1__link_project_stage_lifecycle_snapshot.sql"
+    source_archive: "database/mysql/migration/V2.1.1__link_project_stage_lifecycle_snapshot.sql"
+    asset_status: "PROMOTED_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "6a8cd3095d16670d8f068f6be9ce22384be78c7babb296d88cc359044ecf01a5"
+    flyway_checksum: -491875563
+  - version: "2.1.2"
+    canonical_file: "database/migration/mysql/V2.1.2__backfill_legacy_project_lifecycle.sql"
+    source_archive: "database/mysql/migration/V2.1.2__backfill_legacy_project_lifecycle.sql"
+    asset_status: "PROMOTED_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "df4f4355f013d5dc7e0a5a1f93c4e329133049cc3395ee749ce8b7153180e65a"
+    flyway_checksum: 1777287545
+  - version: "2.1.3"
+    canonical_file: "database/migration/mysql/V2.1.3__seed_project_lifecycle_templates.sql"
+    source_archive: "database/mysql/migration/V2.1.3__seed_project_lifecycle_templates.sql"
+    asset_status: "PROMOTED_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "8f6fb5778a8b8a566b8222ff029587e0ed9ccd00f0dccb132d1f552cff4f3e51"
+    flyway_checksum: -1521439258
+
+existing_unverified:
+  - version: "2.0.0"
+    file: "database/mysql/migration/V2.0.0__legacy_to_v1.sql"
+    classification: "LEGACY_UPGRADE_ONLY"
+    automatic_scan: false
+    sha256: "acc0cb80e56b756a2a440c24050bc370dda0f37388139ab7b72a92c38c61e4fd"
+    note: "Only for a specific pm_* legacy schema; never run on a new or V1/V2 database."
+
+planned:
+  - versions: "2.4.4-2.4.x"
+    module: "investment"
+    source: "docs/investment-implementation-plan.md"
+    files_created: false
+    automatic_scan: false
+    note: "Later implementation, post-investment, backfill tightening, dictionary, and lifecycle assets remain planning only. V2.4.0 through V2.4.3 now occupy the approved baseline and RBAC extension versions."
+
+deprecated:
+  - version: "1.0.0"
+    file: "database/mysql/deprecated/V1.0.0__enterprise_platform_v1.sql"
+    classification: "DEPRECATED_AGGREGATE"
+    automatic_scan: false
+    sha256: "32f974672510c87bb62584d0b5d8bf30ebc324d6e5446f8d1df8cda1e4b1aa7a"
+
+initialization_not_migration:
+  - files: "database/mysql/01_database.sql through 16_sprint_1_log_center.sql"
+    automatic_scan: false
+  - file: "database/mysql/V1.1.0__investment_data_risk_bi.sql"
+    automatic_scan: false
+    sha256: "18a554737e89ee1d59756b696b1ddd24a323d1d42e7f7a36d2cb1d753be6f424"
+    note: "Located outside the governed scan root; must be classified before any onboarding baseline is approved."
+  - file: "database/mysql/init/00_enterprise_platform.sql"
+    automatic_scan: false
+    note: "Docker/new-install initialization asset, not a versioned migration."
+
+manual_fixtures:
+  root: "database/mysql/manual"
+  automatic_scan: false
+  note: "Acceptance fixtures and initial-admin examples must never be run by Flyway automatically."

@@ -223,10 +223,10 @@ erDiagram
 [`07_investment.sql`](../../../database/mysql/07_investment.sql)、
 [`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
 [`09_risk.sql`](../../../database/mysql/09_risk.sql)、
-[`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
-和
 [`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)
-共同作为可执行基准。
+分别作为模块结构来源。Project域唯一结构基线为
+[`05_project.sql`](../../../database/mysql/05_project.sql)。历史聚合V1.0已迁入
+`database/mysql/deprecated`，不再作为可执行基准。
 
 ## 索引设计
 
@@ -272,20 +272,9 @@ erDiagram
 
 ## 初始化与升级
 
-新环境执行
-[`01_database.sql`](../../../database/mysql/01_database.sql)、
-[`02_sys.sql`](../../../database/mysql/02_sys.sql)、
-[`03_hr.sql`](../../../database/mysql/03_hr.sql)、
-[`04_party.sql`](../../../database/mysql/04_party.sql)、
-[`05_project.sql`](../../../database/mysql/05_project.sql)、
-[`06_operation.sql`](../../../database/mysql/06_operation.sql)、
-[`07_investment.sql`](../../../database/mysql/07_investment.sql)、
-[`08_data_asset.sql`](../../../database/mysql/08_data_asset.sql)、
-[`09_risk.sql`](../../../database/mysql/09_risk.sql)、
-[`10_init_data.sql`](../../../database/mysql/10_init_data.sql)、
-[`V1.0.0__enterprise_platform_v1.sql`](../../../database/mysql/V1.0.0__enterprise_platform_v1.sql)
-和
-[`V1.1.0__investment_data_risk_bi.sql`](../../../database/mysql/V1.1.0__investment_data_risk_bi.sql)；
+新环境只通过
+[`init/00_enterprise_platform.sql`](../../../database/mysql/init/00_enterprise_platform.sql)
+显式加载受控模块脚本；
 `10_init_data.sql`以业务唯一键判重，可安全重复执行；只给`SUPER_ADMIN`角色初始化全量权限，不给其他角色预置越权授权。脚本不创建默认账号或口令，首个管理员必须由受信任的部署流程使用密钥管理系统中的一次性口令创建。旧版采用蓝绿迁移，字段映射和旧表保留操作见
 [`V2.0.0__legacy_to_v1.sql`](../../../database/mysql/migration/V2.0.0__legacy_to_v1.sql)。
 无法从用户映射到员工的数据必须进入异常清单，禁止静默丢弃。

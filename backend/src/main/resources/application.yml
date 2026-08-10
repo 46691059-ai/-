@@ -76,3 +76,28 @@ management:
 
 logging:
   config: classpath:logback-spring.xml
+
+integration:
+  workflow:
+    base-url: ${WORKFLOW_BASE_URL:http://127.0.0.1:8090}
+    service-token: ${WORKFLOW_SERVICE_TOKEN:}
+    callback-token: ${WORKFLOW_CALLBACK_TOKEN:}
+    decision-definition-key: ${WORKFLOW_DECISION_DEFINITION_KEY:investment-decision}
+    decision-definition-version: ${WORKFLOW_DECISION_DEFINITION_VERSION:1}
+    reliability:
+      worker-enabled: ${WORKFLOW_OUTBOX_WORKER_ENABLED:false}
+      batch-size: ${WORKFLOW_OUTBOX_BATCH_SIZE:100}
+      worker-threads: ${WORKFLOW_OUTBOX_WORKER_THREADS:4}
+      max-retries: ${WORKFLOW_OUTBOX_MAX_RETRIES:8}
+      lock-seconds: ${WORKFLOW_OUTBOX_LOCK_SECONDS:60}
+      base-retry-seconds: ${WORKFLOW_OUTBOX_BASE_RETRY_SECONDS:30}
+      max-retry-seconds: ${WORKFLOW_OUTBOX_MAX_RETRY_SECONDS:1800}
+      scan-delay-millis: ${WORKFLOW_OUTBOX_SCAN_DELAY_MILLIS:1000}
+      gap-scan-delay-millis: ${WORKFLOW_INBOX_GAP_SCAN_DELAY_MILLIS:5000}
+    security:
+      current-key-id: ${WORKFLOW_HMAC_CURRENT_KEY_ID:}
+      current-secret: ${WORKFLOW_HMAC_CURRENT_SECRET:}
+      previous-key-id: ${WORKFLOW_HMAC_PREVIOUS_KEY_ID:}
+      previous-secret: ${WORKFLOW_HMAC_PREVIOUS_SECRET:}
+      allowed-skew-seconds: ${WORKFLOW_HMAC_ALLOWED_SKEW_SECONDS:300}
+      nonce-ttl-seconds: ${WORKFLOW_HMAC_NONCE_TTL_SECONDS:600}

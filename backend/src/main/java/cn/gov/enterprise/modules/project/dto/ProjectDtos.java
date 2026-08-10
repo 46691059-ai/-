@@ -53,10 +53,11 @@ public final class ProjectDtos {
 
     public record Response(
             Long id, String projectNo, String projectName, String projectType, String projectMode,
-            Long leaderId, Long departmentId, String status, LocalDate startDate, LocalDate endDate,
-            LocalDate actualStartDate, LocalDate actualEndDate, BigDecimal budgetAmount,
-            BigDecimal expectedIncome, BigDecimal expectedProfit, String currentStageCode,
-            String riskLevel, BigDecimal progress, String remark,
+            String sourceType, Long customerId, Long leaderId, Long departmentId, String status,
+            LocalDate startDate, LocalDate endDate, LocalDate actualStartDate, LocalDate actualEndDate,
+            BigDecimal budgetAmount, BigDecimal contractAmount, BigDecimal expectedIncome,
+            BigDecimal expectedProfit, BigDecimal actualIncome, BigDecimal actualProfit,
+            String currentStageCode, String riskLevel, BigDecimal progress, String description, String remark,
             LocalDateTime createTime, LocalDateTime updateTime, Integer version) {
     }
 
@@ -104,9 +105,10 @@ public final class ProjectDtos {
 
     public record TaskResponse(
             Long id, Long projectId, Long stageId, Long parentTaskId, String taskNo,
-            String taskName, Long responsiblePerson, LocalDate planDate, LocalDate actualDate,
-            String status, String priority, BigDecimal progress, Integer sortNo,
-            String remark, Integer version) {
+            String taskName, String taskContent, Long responsiblePerson, LocalDate planDate,
+            LocalDate planStart, LocalDate planEnd, LocalDate actualDate, LocalDate actualStart,
+            LocalDate actualEnd, String status, String priority, BigDecimal progress,
+            Integer sortNo, String remark, Integer version) {
     }
 
     public record MemberRequest(

@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.project.controller;
 
 import cn.gov.enterprise.common.api.ApiResponse;
 import cn.gov.enterprise.common.api.PageResponse;
+import cn.gov.enterprise.modules.project.application.service.ProjectTaskApplicationService;
 import cn.gov.enterprise.modules.project.dto.ProjectDtos;
 import cn.gov.enterprise.modules.project.service.ProjectLifecycleService;
 import jakarta.validation.Valid;
@@ -20,9 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projects/{projectId}/tasks")
 public class ProjectTaskController {
     private final ProjectLifecycleService service;
+    private final ProjectTaskApplicationService taskApplicationService;
 
-    public ProjectTaskController(ProjectLifecycleService service) {
+    public ProjectTaskController(
+            ProjectLifecycleService service,
+            ProjectTaskApplicationService taskApplicationService) {
         this.service = service;
+        this.taskApplicationService = taskApplicationService;
     }
 
     @GetMapping
@@ -32,7 +37,7 @@ public class ProjectTaskController {
             @RequestParam(required = false) Long stageId,
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "20") long size) {
-        return ApiResponse.success(service.tasks(projectId, stageId, page, size));
+        return ApiResponse.success(taskApplicationService.queryTasks(projectId, stageId, page, size));
     }
 
     @PostMapping
@@ -40,7 +45,7 @@ public class ProjectTaskController {
     public ApiResponse<ProjectDtos.TaskResponse> create(
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectDtos.TaskRequest request) {
-        return ApiResponse.success(service.createTask(projectId, request));
+        return ApiResponse.success(taskApplicationService.createTask(projectId, request));
     }
 
     @PutMapping("/{taskId}")
@@ -49,7 +54,7 @@ public class ProjectTaskController {
             @PathVariable Long projectId,
             @PathVariable Long taskId,
             @Valid @RequestBody ProjectDtos.TaskRequest request) {
-        return ApiResponse.success(service.updateTask(projectId, taskId, request));
+        return ApiResponse.success(taskApplicationService.updateTask(projectId, taskId, request));
     }
 
     @DeleteMapping("/{taskId}")

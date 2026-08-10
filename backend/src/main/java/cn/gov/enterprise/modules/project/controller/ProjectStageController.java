@@ -1,6 +1,7 @@
 package cn.gov.enterprise.modules.project.controller;
 
 import cn.gov.enterprise.common.api.ApiResponse;
+import cn.gov.enterprise.modules.project.application.service.ProjectStageApplicationService;
 import cn.gov.enterprise.modules.project.dto.ProjectDtos;
 import cn.gov.enterprise.modules.project.service.ProjectLifecycleService;
 import jakarta.validation.Valid;
@@ -17,15 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projects/{projectId}/stages")
 public class ProjectStageController {
     private final ProjectLifecycleService service;
+    private final ProjectStageApplicationService stageApplicationService;
 
-    public ProjectStageController(ProjectLifecycleService service) {
+    public ProjectStageController(
+            ProjectLifecycleService service,
+            ProjectStageApplicationService stageApplicationService) {
         this.service = service;
+        this.stageApplicationService = stageApplicationService;
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('project:lifecycle:list')")
     public ApiResponse<List<ProjectDtos.StageResponse>> list(@PathVariable Long projectId) {
-        return ApiResponse.success(service.stages(projectId));
+        return ApiResponse.success(stageApplicationService.queryStages(projectId));
     }
 
     @PutMapping("/{stageId}")

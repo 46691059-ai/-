@@ -1,3 +1,5 @@
+-- DEPRECATED：历史聚合兼容快照，不得用于新环境初始化或存量库升级。
+-- Project域结构唯一基线为 database/mysql/05_project.sql。
 -- 国企数字化治理与经营赋能平台 V1.0
 -- MySQL 8.x；单一物理库 enterprise_platform，使用模块前缀实现逻辑分域。
 -- 主键由应用雪花算法生成。状态、类型字段使用 VARCHAR，便于适配达梦和人大金仓。

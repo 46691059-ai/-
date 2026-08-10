@@ -17,7 +17,8 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/my.cnf:/etc/mysql/conf.d/enterprise.cnf:ro
-      - ../database/mysql:/docker-entrypoint-initdb.d:ro
+      - ../database/mysql:/opt/enterprise/sql:ro
+      - ../database/mysql/init:/docker-entrypoint-initdb.d:ro
     networks:
       - data
     healthcheck:
@@ -116,6 +117,11 @@ services:
       JWT_ISSUER: ${JWT_ISSUER:-enterprise-platform}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-enterprise-platform-api}
       JWT_EXPIRATION_SECONDS: ${JWT_EXPIRATION_SECONDS:-7200}
+      WORKFLOW_BASE_URL: ${WORKFLOW_BASE_URL:?WORKFLOW_BASE_URL is required}
+      WORKFLOW_DECISION_DEFINITION_KEY: ${WORKFLOW_DECISION_DEFINITION_KEY:-investment-decision}
+      WORKFLOW_DECISION_DEFINITION_VERSION: ${WORKFLOW_DECISION_DEFINITION_VERSION:?WORKFLOW_DECISION_DEFINITION_VERSION is required}
+      WORKFLOW_HMAC_CURRENT_KEY_ID: ${WORKFLOW_HMAC_CURRENT_KEY_ID:?WORKFLOW_HMAC_CURRENT_KEY_ID is required}
+      WORKFLOW_OUTBOX_WORKER_ENABLED: ${WORKFLOW_OUTBOX_WORKER_ENABLED:-false}
       ALLOWED_ORIGINS: ${PUBLIC_ORIGIN:?PUBLIC_ORIGIN is required}
       DB_POOL_MIN_IDLE: ${DB_POOL_MIN_IDLE:-5}
       DB_POOL_MAX_SIZE: ${DB_POOL_MAX_SIZE:-30}
@@ -127,6 +133,12 @@ services:
         target: spring.data.redis.password
       - source: jwt_secret
         target: app.security.jwt.secret
+      - source: workflow_service_token
+        target: integration.workflow.service-token
+      - source: workflow_callback_token
+        target: integration.workflow.callback-token
+      - source: workflow_hmac_current_secret
+        target: integration.workflow.security.current-secret
     depends_on:
       mysql:
         condition: service_healthy
@@ -210,3 +222,9 @@ secrets:
     file: ./secrets/redis_password.txt
   jwt_secret:
     file: ./secrets/jwt_secret.txt
+  workflow_service_token:
+    file: ./secrets/workflow_service_token.txt
+  workflow_callback_token:
+    file: ./secrets/workflow_callback_token.txt
+  workflow_hmac_current_secret:
+    file: ./secrets/workflow_hmac_current_secret.txt

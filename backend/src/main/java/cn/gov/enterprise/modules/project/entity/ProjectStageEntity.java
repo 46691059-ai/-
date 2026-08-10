@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.project.entity;
 
 import cn.gov.enterprise.common.persistence.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
@@ -18,6 +19,8 @@ public class ProjectStageEntity extends BaseEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private Long projectId;
+    private Long lifecycleInstanceId;
+    private Long stageSnapshotId;
     private String stageCode;
     private String stageName;
     private Integer stageOrder;
@@ -29,4 +32,6 @@ public class ProjectStageEntity extends BaseEntity {
     private Long responsiblePerson;
     private String approvalStatus;
     private BigDecimal completionPercent;
+    @TableField("delete_token")
+    private Long deleteToken;
 }

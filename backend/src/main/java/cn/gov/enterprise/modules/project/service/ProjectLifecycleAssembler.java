@@ -12,13 +12,14 @@ public class ProjectLifecycleAssembler {
     public ProjectDtos.Response project(ProjectEntity entity) {
         return new ProjectDtos.Response(
                 entity.getId(), entity.getProjectNo(), entity.getProjectName(),
-                entity.getProjectType(), entity.getProjectMode(), entity.getLeaderId(),
-                entity.getDepartmentId(), entity.getStatus(), entity.getStartDate(),
-                entity.getEndDate(), entity.getActualStartDate(), entity.getActualEndDate(),
-                entity.getBudgetAmount(), entity.getExpectedIncome(), entity.getExpectedProfit(),
-                entity.getCurrentStageCode(), entity.getRiskLevel(), entity.getProgress(),
-                entity.getRemark(), entity.getCreateTime(), entity.getUpdateTime(),
-                entity.getVersion());
+                entity.getProjectType(), entity.getProjectMode(), entity.getSourceType(),
+                entity.getCustomerId(), entity.getLeaderId(), entity.getDepartmentId(),
+                entity.getStatus(), entity.getStartDate(), entity.getEndDate(),
+                entity.getActualStartDate(), entity.getActualEndDate(), entity.getBudgetAmount(),
+                entity.getContractAmount(), entity.getExpectedIncome(), entity.getExpectedProfit(),
+                entity.getActualIncome(), entity.getActualProfit(), entity.getCurrentStageCode(),
+                entity.getRiskLevel(), entity.getProgress(), entity.getDescription(),
+                entity.getRemark(), entity.getCreateTime(), entity.getUpdateTime(), entity.getVersion());
     }
 
     public ProjectDtos.StageResponse stage(ProjectStageEntity entity) {
@@ -33,10 +34,11 @@ public class ProjectLifecycleAssembler {
     public ProjectDtos.TaskResponse task(ProjectTaskEntity entity) {
         return new ProjectDtos.TaskResponse(
                 entity.getId(), entity.getProjectId(), entity.getStageId(), entity.getParentTaskId(),
-                entity.getTaskNo(), entity.getTaskName(), entity.getResponsiblePerson(),
-                entity.getPlanDate(), entity.getActualDate(), entity.getStatus(),
-                entity.getPriority(), entity.getProgress(), entity.getSortNo(),
-                entity.getRemark(), entity.getVersion());
+                entity.getTaskNo(), entity.getTaskName(), entity.getTaskContent(),
+                entity.getResponsiblePerson(), entity.getPlanDate(), entity.getPlanStart(),
+                entity.getPlanEnd(), entity.getActualDate(), entity.getActualStart(),
+                entity.getActualEnd(), entity.getStatus(), entity.getPriority(), entity.getProgress(),
+                entity.getSortNo(), entity.getRemark(), entity.getVersion());
     }
 
     public ProjectDtos.MemberResponse member(ProjectMemberEntity entity) {

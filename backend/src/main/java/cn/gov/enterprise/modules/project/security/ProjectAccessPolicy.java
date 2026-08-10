@@ -3,6 +3,7 @@ package cn.gov.enterprise.modules.project.security;
 import cn.gov.enterprise.common.exception.BusinessException;
 import cn.gov.enterprise.common.datascope.annotation.DataScope;
 import cn.gov.enterprise.modules.project.entity.ProjectEntity;
+import cn.gov.enterprise.modules.project.domain.model.project.ProjectAggregate;
 import cn.gov.enterprise.modules.project.mapper.ProjectMapper;
 import cn.gov.enterprise.security.CurrentSecurityContext;
 import cn.gov.enterprise.security.SecurityPrincipal;
@@ -44,6 +45,14 @@ public class ProjectAccessPolicy {
         }
     }
 
+    /** Rechecks the aggregate loaded after the scoped lookup to prevent authorization races. */
+    public void requireAccessible(ProjectAggregate project) {
+        SecurityPrincipal principal = securityContext.principal();
+        if (!canAccess(principal, project)) {
+            throw new AccessDeniedException("无权访问该项目");
+        }
+    }
+
     public void applyScope(LambdaQueryWrapper<ProjectEntity> query, Long requestedOrgId) {
         SecurityPrincipal principal = securityContext.principal();
         if (principal.allDataScope()) {
@@ -71,6 +80,17 @@ public class ProjectAccessPolicy {
             return true;
         }
         if (!principal.allowedOrgIds().contains(project.getDepartmentId())) {
+            return false;
+        }
+        return !principal.selfOnly()
+                || principal.username().equals(project.getCreateBy());
+    }
+
+    private boolean canAccess(SecurityPrincipal principal, ProjectAggregate project) {
+        if (principal.allDataScope()) {
+            return true;
+        }
+        if (!principal.allowedOrgIds().contains(project.getResponsibleOrgId())) {
             return false;
         }
         return !principal.selfOnly()

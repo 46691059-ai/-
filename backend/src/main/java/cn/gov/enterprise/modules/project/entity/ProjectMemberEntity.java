@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.project.entity;
 
 import cn.gov.enterprise.common.persistence.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
@@ -23,4 +24,6 @@ public class ProjectMemberEntity extends BaseEntity {
     private LocalDate joinedDate;
     private LocalDate leftDate;
     private String status;
+    @TableField("delete_token")
+    private Long deleteToken;
 }

@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.project.controller;
 
 import cn.gov.enterprise.common.api.ApiResponse;
 import cn.gov.enterprise.common.api.PageResponse;
+import cn.gov.enterprise.modules.project.application.service.ProjectApplicationService;
 import cn.gov.enterprise.modules.project.dto.ProjectDtos;
 import cn.gov.enterprise.modules.project.service.ProjectLifecycleService;
 import jakarta.validation.Valid;
@@ -24,9 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projects")
 public class ProjectController {
     private final ProjectLifecycleService service;
+    private final ProjectApplicationService applicationService;
 
-    public ProjectController(ProjectLifecycleService service) {
+    public ProjectController(
+            ProjectLifecycleService service,
+            ProjectApplicationService applicationService) {
         this.service = service;
+        this.applicationService = applicationService;
     }
 
     @GetMapping
@@ -45,14 +50,14 @@ public class ProjectController {
     @GetMapping("/{projectId}")
     @PreAuthorize("hasAuthority('project:lifecycle:list')")
     public ApiResponse<ProjectDtos.DetailResponse> detail(@PathVariable Long projectId) {
-        return ApiResponse.success(service.detail(projectId));
+        return ApiResponse.success(applicationService.queryProject(projectId));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('project:add')")
     public ApiResponse<ProjectDtos.DetailResponse> create(
             @Valid @RequestBody ProjectDtos.CreateRequest request) {
-        return ApiResponse.success(service.create(request));
+        return ApiResponse.success(applicationService.createProject(request));
     }
 
     @PutMapping("/{projectId}")

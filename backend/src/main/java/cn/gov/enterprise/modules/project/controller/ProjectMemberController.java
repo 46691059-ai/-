@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.project.controller;
 
 import cn.gov.enterprise.common.api.ApiResponse;
 import cn.gov.enterprise.common.api.PageResponse;
+import cn.gov.enterprise.modules.project.application.service.ProjectMemberApplicationService;
 import cn.gov.enterprise.modules.project.dto.ProjectDtos;
 import cn.gov.enterprise.modules.project.service.ProjectLifecycleService;
 import jakarta.validation.Valid;
@@ -20,9 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/projects/{projectId}/members")
 public class ProjectMemberController {
     private final ProjectLifecycleService service;
+    private final ProjectMemberApplicationService memberApplicationService;
 
-    public ProjectMemberController(ProjectLifecycleService service) {
+    public ProjectMemberController(
+            ProjectLifecycleService service,
+            ProjectMemberApplicationService memberApplicationService) {
         this.service = service;
+        this.memberApplicationService = memberApplicationService;
     }
 
     @GetMapping
@@ -31,7 +36,7 @@ public class ProjectMemberController {
             @PathVariable Long projectId,
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "20") long size) {
-        return ApiResponse.success(service.members(projectId, page, size));
+        return ApiResponse.success(memberApplicationService.queryMembers(projectId, page, size));
     }
 
     @PostMapping
@@ -39,7 +44,7 @@ public class ProjectMemberController {
     public ApiResponse<ProjectDtos.MemberResponse> create(
             @PathVariable Long projectId,
             @Valid @RequestBody ProjectDtos.MemberRequest request) {
-        return ApiResponse.success(service.addMember(projectId, request));
+        return ApiResponse.success(memberApplicationService.addMember(projectId, request));
     }
 
     @PutMapping("/{memberId}")
@@ -56,7 +61,7 @@ public class ProjectMemberController {
     public ApiResponse<Void> delete(
             @PathVariable Long projectId,
             @PathVariable Long memberId) {
-        service.deleteMember(projectId, memberId);
+        memberApplicationService.deleteMember(projectId, memberId);
         return ApiResponse.success(null);
     }
 }
