@@ -17,9 +17,13 @@ const query = reactive<MenuQuery>({ page: 1, size: 20 })
 const dialogVisible = ref(false)
 const mode = ref<'create' | 'edit'>('create')
 const formRef = ref<FormInstance>()
-const emptyForm = (): MenuForm => ({ menuName: '', menuType: 'C', sort: 0, status: 1 })
+const emptyForm = (): MenuForm => ({ menuCode: '', menuName: '', menuType: 'C', sort: 0, status: 1 })
 const form = reactive<MenuForm>(emptyForm())
 const rules: FormRules<MenuForm> = {
+  menuCode: [
+    { required: true, message: '请输入菜单编码', trigger: 'blur' },
+    { pattern: /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*){0,7}$/, message: '仅支持小写字母、数字、下划线和点分层级', trigger: 'blur' },
+  ],
   menuName: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
   menuType: [{ required: true, message: '请选择菜单类型', trigger: 'change' }],
 }
@@ -72,7 +76,7 @@ async function remove(row: MenuRecord) {
 }
 
 function resetQuery() {
-  Object.assign(query, { menuName: undefined, menuType: undefined, permission: undefined, status: undefined, page: 1 })
+  Object.assign(query, { menuCode: undefined, menuName: undefined, menuType: undefined, permission: undefined, status: undefined, page: 1 })
   void loadData()
 }
 
@@ -87,6 +91,7 @@ onMounted(loadData)
     </header>
     <el-card shadow="never" class="query-card">
       <el-form :inline="true" :model="query">
+        <el-form-item label="菜单编码"><el-input v-model="query.menuCode" clearable /></el-form-item>
         <el-form-item label="菜单名称"><el-input v-model="query.menuName" clearable /></el-form-item>
         <el-form-item label="菜单类型"><el-select v-model="query.menuType" clearable><el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" /></el-select></el-form-item>
         <el-form-item label="权限标识"><el-input v-model="query.permission" clearable /></el-form-item>
@@ -96,6 +101,7 @@ onMounted(loadData)
     </el-card>
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="records" row-key="id">
+        <el-table-column prop="menuCode" label="菜单编码" min-width="180"><template #default="scope"><code>{{ scope.row.menuCode }}</code></template></el-table-column>
         <el-table-column prop="menuName" label="菜单名称" min-width="150"/>
         <el-table-column label="类型" width="90"><template #default="scope"><el-tag effect="plain">{{ typeLabel(scope.row.menuType) }}</el-tag></template></el-table-column>
         <el-table-column prop="path" label="路由" min-width="140"><template #default="scope">{{ scope.row.path || '-' }}</template></el-table-column>
@@ -109,6 +115,7 @@ onMounted(loadData)
     </el-card>
     <el-dialog v-model="dialogVisible" :title="mode==='create'?'新增菜单':'编辑菜单'" width="680px" destroy-on-close>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="95px">
+        <el-form-item label="菜单编码" prop="menuCode"><el-input v-model="form.menuCode" maxlength="128" :disabled="mode==='edit'" placeholder="system.menu.create"/></el-form-item>
         <el-row :gutter="18"><el-col :span="12"><el-form-item label="菜单名称" prop="menuName"><el-input v-model="form.menuName" maxlength="100"/></el-form-item></el-col><el-col :span="12"><el-form-item label="菜单类型" prop="menuType"><el-radio-group v-model="form.menuType"><el-radio-button v-for="item in typeOptions" :key="item.value" :value="item.value">{{ item.label }}</el-radio-button></el-radio-group></el-form-item></el-col></el-row>
         <el-form-item label="上级菜单"><el-tree-select v-model="form.parentId" :data="parentTree" node-key="id" :props="{label:'menuName',children:'children'}" check-strictly clearable default-expand-all /></el-form-item>
         <el-row :gutter="18"><el-col :span="12"><el-form-item label="路由地址"><el-input v-model="form.path" :disabled="form.menuType==='B'" placeholder="/system/menu"/></el-form-item></el-col><el-col :span="12"><el-form-item label="组件路径"><el-input v-model="form.component" :disabled="form.menuType==='B'" placeholder="system/menu/index"/></el-form-item></el-col></el-row>

@@ -1,0 +1,20 @@
+package cn.gov.enterprise.modules.organization.approvalrole.infrastructure.persistence;
+
+import cn.gov.enterprise.modules.organization.approvalrole.domain.*;
+import cn.gov.enterprise.modules.organization.approvalrole.infrastructure.persistence.entity.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+final class ApprovalRoleEntityMapping {
+    private ApprovalRoleEntityMapping() { }
+    static LocalDateTime db(Instant v){return v==null?null:LocalDateTime.ofInstant(v,ZoneOffset.UTC);}
+    static Instant domain(LocalDateTime v){return v==null?null:v.toInstant(ZoneOffset.UTC);}
+    static void audit(cn.gov.enterprise.common.persistence.BaseIdEntity e,long id,String by,Instant created,String updatedBy,Instant updated,int version,long token){e.setId(id);e.setCreateBy(by);e.setCreateTime(db(created));e.setUpdateBy(updatedBy);e.setUpdateTime(db(updated));e.setDeleted(0);e.setDeleteToken(token);e.setVersion(version);}
+    static ApprovalRole toDomain(ApprovalRoleEntity e){return new ApprovalRole(e.getId(),e.getEnterpriseId(),new ApprovalRoleCode(e.getRoleCode()),e.getRoleName(),e.getRoleType(),e.getOrganizationScopeType(),ApprovalRoleStatus.valueOf(e.getStatus()),e.getDescription(),e.getCreateBy(),domain(e.getCreateTime()),e.getUpdateBy(),domain(e.getUpdateTime()),e.getVersion(),e.getDeleteToken());}
+    static ApprovalRoleEntity toEntity(ApprovalRole d){var e=new ApprovalRoleEntity();audit(e,d.id(),d.createdBy(),d.createdTime(),d.updatedBy(),d.updatedTime(),d.version(),d.deleteToken());e.setEnterpriseId(d.enterpriseId());e.setRoleCode(d.roleCode().value());e.setRoleName(d.roleName());e.setRoleType(d.roleType());e.setOrganizationScopeType(d.organizationScopeType());e.setStatus(d.status().name());e.setDescription(d.description());return e;}
+    static ApprovalRoleAssignment toDomain(ApprovalRoleAssignmentEntity e){var s=new ApprovalRoleAssignmentSource(ApprovalRoleAssignmentSourceType.valueOf(e.getSourceType()),e.getSourceSystem(),e.getSourceReference(),e.getSourceReferenceHash(),e.getEvidencePriority(),domain(e.getRecordedAt()));return new ApprovalRoleAssignment(e.getId(),e.getEnterpriseId(),e.getOrganizationId(),e.getRoleId(),new ApprovalRoleCode(e.getRoleCode()),e.getUserId(),domain(e.getEffectiveFrom()),domain(e.getEffectiveTo()),ApprovalRoleAssignmentStatus.valueOf(e.getStatus()),s,e.getAssignmentKeyHash(),e.getCreateBy(),domain(e.getCreateTime()),e.getUpdateBy(),domain(e.getUpdateTime()),e.getVersion(),e.getDeleteToken());}
+    static ApprovalRoleAssignmentEntity toEntity(ApprovalRoleAssignment d){var e=new ApprovalRoleAssignmentEntity();audit(e,d.id(),d.createdBy(),d.createdTime(),d.updatedBy(),d.updatedTime(),d.version(),d.deleteToken());e.setEnterpriseId(d.enterpriseId());e.setOrganizationId(d.organizationId());e.setRoleId(d.roleId());e.setRoleCode(d.roleCode().value());e.setUserId(d.userId());e.setEffectiveFrom(db(d.effectiveFrom()));e.setEffectiveTo(db(d.effectiveTo()));e.setStatus(d.status().name());e.setSourceType(d.source().sourceType().name());e.setSourceSystem(d.source().sourceSystem());e.setSourceReference(d.source().sourceReference());e.setSourceReferenceHash(d.source().sourceReferenceHash());e.setEvidencePriority(d.source().evidencePriority());e.setRecordedAt(db(d.source().recordedAt()));e.setAssignmentKeyHash(d.assignmentKeyHash());return e;}
+    static ApprovalRoleRevisionHead toDomain(ApprovalRoleRevisionHeadEntity e){return new ApprovalRoleRevisionHead(e.getId(),e.getEnterpriseId(),e.getOrganizationId(),new ApprovalRoleCode(e.getRoleCode()),e.getCurrentRevision(),e.getCurrentResultHash(),e.getVersion());}
+    static ApprovalRoleRevision toDomain(ApprovalRoleRevisionEntity e){return new ApprovalRoleRevision(e.getId(),e.getEnterpriseId(),e.getOrganizationId(),new ApprovalRoleCode(e.getRoleCode()),e.getRevision(),e.getResultHash(),e.getChangeType(),e.getChangeReason(),domain(e.getEffectiveFrom()),domain(e.getAffectedFrom()),domain(e.getAffectedTo()),e.getCorrectionReference(),domain(e.getPublishedAt()),e.getPublishedBy(),e.getPreviousRevision(),e.getPreviousResultHash(),domain(e.getCreateTime()),e.getDeleteToken());}
+}

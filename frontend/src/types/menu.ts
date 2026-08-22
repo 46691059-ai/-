@@ -2,6 +2,7 @@ export type MenuType = 'M' | 'C' | 'B'
 
 export interface MenuRecord {
   id: string
+  menuCode: string
   parentId?: string
   menuName: string
   menuType: MenuType
@@ -26,6 +27,7 @@ export interface MenuPage {
 }
 
 export interface MenuQuery {
+  menuCode?: string
   menuName?: string
   menuType?: MenuType
   permission?: string
@@ -38,6 +40,7 @@ export interface MenuForm {
   id?: string
   version?: number
   parentId?: string
+  menuCode: string
   menuName: string
   menuType: MenuType
   path?: string

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
 public record MenuPageQuery(
+        String menuCode,
         String menuName,
         String menuType,
         String permission,

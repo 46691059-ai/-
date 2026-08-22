@@ -35,6 +35,11 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/internal/investment/workflow/v1/events").permitAll()
+                        // Service authentication and mandatory TLS are enforced by the dedicated
+                        // ApprovalRoleDirectoryServiceAuthenticationFilter before controller dispatch.
+                        .requestMatchers("/internal/approval-role-directory/**").permitAll()
+                        // Dedicated TLS/service-auth filter protects this independent governance boundary.
+                        .requestMatchers("/internal/governance-audit-sink/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> writeError(

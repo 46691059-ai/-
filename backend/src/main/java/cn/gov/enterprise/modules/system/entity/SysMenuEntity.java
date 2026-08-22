@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 @TableName("sys_menu")
 public class SysMenuEntity extends BaseIdEntity {
+    /** 跨环境稳定的菜单业务编码，不随名称、路由或父节点调整而变化。 */
+    private String menuCode;
     private String menuName;
     private Long parentId;
     private String menuType;

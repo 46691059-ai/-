@@ -4,10 +4,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record MenuCreateRequest(
         Long parentId,
+        @NotBlank @Size(max = 128)
+        @Pattern(regexp = "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*){0,7}$") String menuCode,
         @NotBlank @Size(max = 100) String menuName,
         @NotBlank @Size(max = 20) String menuType,
         @Size(max = 200) String path,

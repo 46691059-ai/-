@@ -29,6 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // This internal service boundary owns an independent credential verifier. Service tokens
+        // must never be parsed as end-user JWTs or enter user authentication logs.
+        return request.getServletPath().startsWith("/internal/approval-role-directory/")
+                || request.getServletPath().startsWith("/internal/governance-audit-sink/");
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,

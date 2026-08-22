@@ -5,6 +5,7 @@ import java.util.List;
 
 public record MenuVO(
         Long id,
+        String menuCode,
         Long parentId,
         String menuName,
         String menuType,

@@ -1,5 +1,5 @@
 inventory_version: 2
-generated_at: "2026-08-08"
+generated_at: "2026-08-20"
 scope: "repository assets plus isolated MySQL 8 acceptance evidence; no managed or production database history was queried"
 canonical_scan_root: "database/migration/{vendor}"
 
@@ -179,8 +179,995 @@ acceptance_runs:
     result: "PASS"
     report: "docs/workflow-reliability-v249-validation-report.md"
     note: "Validated fresh and V2.4.8-upgrade paths on isolated loopback-only instances with the application Worker disabled. No Workflow or managed/production database was created, connected, or changed."
+  - id: "sprint-2-3-7-wf2-1-1-workflow-v250-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.4.9"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8", "2.4.9", "2.5.0"]
+    schema_fingerprint_sha256: "edb9693a057cdffd1c0baccbf220ec9acabd15d527905e55ff116fa102b46912"
+    workflow_schema_fingerprint_sha256: "fdde51b07e28a1261ec5c956a18f3ab2cbfd004266d3e553f9ec3ce89686d2cd"
+    history_success_rows: 17
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v250_flyway_checksum: -785031784
+    new_table_count: 3
+    workflow_column_count: 61
+    workflow_index_count: 18
+    workflow_foreign_key_count: 4
+    workflow_check_constraint_count: 22
+    negative_constraint_tests: ["unique", "foreign_key", "status_check"]
+    result: "PASS"
+    report: "docs/workflow-v250-validation-report.md"
+    note: "Validated fresh and V2.4.9-upgrade paths on isolated loopback-only MySQL instances. No managed or production database was connected or changed."
+  - id: "sprint-2-3-7-wf2-3-1-workflow-v251-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.0"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8", "2.4.9", "2.5.0", "2.5.1"]
+    schema_fingerprint_sha256: "b2b400768b6ae40b26f264cff2261b2650e73cf7527c6ed0fe82f9cdabc2eed5"
+    workflow_schema_fingerprint_sha256: "8e890ec4a08e06dd56d5f0750fc27b40413d50ef16b309450f568e4dbcb07516"
+    runtime_schema_fingerprint_sha256: "c6e53473a17a608c9d69122f40d57ae71aee138a7660a8b77a257dd282775b32"
+    history_success_rows: 18
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v251_flyway_checksum: -2076704484
+    new_table_count: 2
+    runtime_column_count: 60
+    runtime_index_count: 18
+    runtime_foreign_key_count: 4
+    runtime_check_constraint_count: 17
+    negative_constraint_tests: ["instance_unique", "instance_foreign_key", "instance_status_check", "task_unique", "task_foreign_key", "task_status_check"]
+    result: "PASS"
+    report: "docs/workflow-runtime-v251-validation-report.md"
+    note: "Validated fresh and V2.5.0-upgrade paths on newly created loopback-only MySQL instances. No managed, production, or previously accepted database was connected or changed."
+  - id: "sprint-2-3-7-wf2-4-1-workflow-v252-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.1"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8", "2.4.9", "2.5.0", "2.5.1", "2.5.2"]
+    schema_fingerprint_sha256: "d33171cce6734c21359f3c35b7ee2125536dc4d8a0f3275e265db137dee83e78"
+    workflow_schema_fingerprint_sha256: "05c345e7b276a8cdb37b28ad16462779157471c41cfc3b0919d41392c8514837"
+    task_action_schema_fingerprint_sha256: "d7ab4c894ead6aaa91c63e468d5c60b8b9a55ee676dcf6f645437b72bd5e0f80"
+    history_success_rows: 19
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v252_flyway_checksum: -586677216
+    new_table_count: 1
+    task_action_column_count: 20
+    task_action_index_count: 6
+    task_action_foreign_key_count: 2
+    task_action_check_constraint_count: 5
+    checks_enforced: true
+    negative_constraint_tests: ["duplicate_idempotency", "task_foreign_key", "instance_foreign_key", "action_type_check", "operator_check", "delete_token_check", "version_check"]
+    result: "PASS"
+    report: "docs/workflow-task-action-v252-validation-report.md"
+    note: "Validated fresh and V2.5.1-upgrade paths on newly created loopback-only MySQL instances. No managed, production, unknown, or previously accepted database was connected or changed."
+  - id: "sprint-2-3-7-wf2-5-1-workflow-v253-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.2"]
+    applied_versions: ["2.1.0", "2.1.1", "2.1.2", "2.1.3", "2.2.0", "2.4.0", "2.4.1", "2.4.2", "2.4.3", "2.4.4", "2.4.5", "2.4.6", "2.4.7", "2.4.8", "2.4.9", "2.5.0", "2.5.1", "2.5.2", "2.5.3"]
+    schema_fingerprint_sha256: "2349e283c7e69baf4dce2fd7ca8be15ac78fd0896e6c16b019022545c6f28c88"
+    rbac_data_fingerprint_sha256: "5029cdb2d09bd7b608e9dbb8ae19926f24000aca410cfc7d37d992407742ea68"
+    history_success_rows: 20
+    history_failed_rows: 0
+    idempotent_migrate: true
+    v253_flyway_checksum: -393819095
+    workflow_permission_count: 9
+    workflow_menu_count: 10
+    super_admin_permission_count: 9
+    super_admin_menu_count: 10
+    negative_constraint_tests:
+      permission_code_duplicate: "PASS_MYSQL_1062"
+      role_permission_duplicate: "PASS_MYSQL_1062"
+      role_menu_duplicate: "PASS_MYSQL_1062"
+      invalid_permission_reference: "PASS_MYSQL_1452"
+      menu_stable_key_duplicate: "FAIL_NOT_ENFORCED"
+    result: "FAIL_BLOCKING_MENU_UNIQUENESS_GAP"
+    report: "docs/workflow-rbac-v253-validation-report.md"
+    note: "Flyway and RBAC seed results matched on both isolated paths, but sys_menu has neither menu_code nor an equivalent active stable-key unique constraint. V2.5.3 remains CANDIDATE / NOT_EXECUTED and was not promoted."
+  - id: "sprint-2-3-7-wf2-5-5-workflow-v253-v254-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.2"]
+    applied_versions: ["2.5.3", "2.5.4"]
+    schema_fingerprint_sha256: "90365d2714002a12aaad61dc54eb43dc1911233420687cf9afee15f6b7ba7dd9"
+    history_success_rows: 21
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v253_flyway_checksum_observed: -393819095
+    v254_flyway_checksum_observed: 861538991
+    workflow_permission_count: 9
+    workflow_menu_count: 10
+    governed_menu_count: 71
+    super_admin_permission_count: 9
+    super_admin_menu_count: 10
+    negative_constraint_tests:
+      duplicate_menu_code: "PASS_MYSQL_1062"
+      invalid_menu_code_format: "PASS_MYSQL_3819"
+      logical_delete_compatible_key: "PASS"
+      residual_test_rows: 0
+    result: "PASS"
+    report: "docs/workflow-rbac-v254-collation-fix-validation-report.md"
+    note: "The earlier combined FAIL remains recorded. The revised V2.5.4 candidate explicitly fixes temporary and permanent mapping collation and passed both isolated paths without changing V2.5.0-V2.5.3."
+  - id: "sprint-2-3-7-wf2-7-1-workflow-v255-20260810"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.4"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5"]
+    schema_fingerprint_sha256: "75f0f4b40a939d1cec2db71845da8c6a529d5ba23002a87d004cbb0611f2fdc3"
+    workflow_schema_fingerprint_sha256: "291ec48598f72f6d837785de657a368bfecca1bca8fc3ab48b673085c380282c"
+    history_success_rows: 22
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v255_flyway_checksum: 1152171452
+    v255_sha256: "50efcb230b2cba2e7a7600fdfc3e229f05a9e85877194cf9f1eed0875d52605e"
+    workflow_version_release_column_count: 19
+    workflow_version_release_index_count: 5
+    publication_state_machine: "PASS"
+    concurrent_publish_single_winner: "PASS"
+    historical_instance_backfill: "PASS"
+    content_hash_determinism: "PASS"
+    negative_constraint_tests:
+      duplicate_publication: "PASS_MYSQL_1062"
+      invalid_content_hash: "PASS_MYSQL_3819"
+      invalid_version_reference: "PASS_MYSQL_1452"
+      immutable_release_update: "PASS_MYSQL_3819"
+      missing_version: "PASS"
+      cross_definition_version: "PASS"
+      published_node_mutation: "PASS"
+      retired_version_republish: "PASS"
+    result: "PASS"
+    report: "docs/workflow-version-release-v255-validation-report.md"
+    note: "Validated on two newly initialized loopback-only MySQL instances. Fresh and V2.5.4-upgrade structures are identical; no managed, production, unknown, or historical acceptance schema was connected."
+  - id: "sprint-2-3-7-wf3-1-1-workflow-v260-20260811"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.5.5"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0"]
+    schema_fingerprint_sha256: "b57b1a33fe4b611cb4f57e84e019173b0fb4b02ddd19f09325089b87a1c09448"
+    workflow_schema_fingerprint_sha256: "cefc503d29e4c2792ae1d573d9dcc472ae10c1fcfd77c8b13de80c9885c5c261"
+    history_success_rows: 23
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v260_flyway_checksum: 2093108182
+    v260_sha256: "76f2113573eac6af106fadb1681774e49a6f15713860a6af7b37f8d9ebc5c1fa"
+    workflow_transition_columns: 19
+    workflow_transition_indexes: 6
+    workflow_transition_foreign_keys: 3
+    workflow_transition_checks: 9
+    workflow_node_execution_columns: 26
+    workflow_node_execution_indexes: 9
+    workflow_node_execution_foreign_keys: 4
+    workflow_node_execution_checks: 8
+    negative_constraint_tests:
+      duplicate_transition_key: "PASS_MYSQL_1062"
+      invalid_source_node: "PASS_MYSQL_1452"
+      invalid_target_node: "PASS_MYSQL_1452"
+      invalid_node_execution_status: "PASS_MYSQL_3819"
+      cross_workflow_version_reference: "PASS_MYSQL_1452"
+      invalid_delete_token: "PASS_MYSQL_3819"
+      residual_test_rows: 0
+    result: "PASS"
+    report: "docs/workflow-multi-node-foundation-v260-validation-report.md"
+    note: "Validated on two newly initialized loopback-only MySQL instances. Fresh and V2.5.5-upgrade structures are identical; no production, managed, unknown, or historical acceptance schema was connected."
+  - id: "sprint-2-3-7-wf3-2-1-workflow-v261-20260811"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.0"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1"]
+    schema_fingerprint_sha256: "01e33e4f017fe5477693937bdcf8467f5e88293783a0376c76d2380d64177b35"
+    workflow_schema_fingerprint_sha256: "b6d59845bbc823751dc9b9dee7d161aba63b70543e3b19555ba5052601774b96"
+    history_success_rows: 24
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v261_flyway_checksum: 762611150
+    v261_sha256: "50314ff572253eaef6e0002acc2b1f9109fe7332a7360f8c8b14c4e8fde1a03e"
+    linear_chain: "PASS_START_A_B_END"
+    concurrent_completion: "PASS_SINGLE_WINNER_1_0"
+    negative_constraint_tests:
+      duplicate_node_execution: "PASS_MYSQL_1062"
+      invalid_transition_reference: "PASS_MYSQL_1452"
+      invalid_node_execution_status: "PASS_MYSQL_3819"
+      cross_version_execution: "PASS_MYSQL_1452"
+      duplicate_task_completion_idempotency: "PASS_MYSQL_1062"
+      invalid_optimistic_lock_version: "PASS_AFFECTED_ROWS_0"
+      invalid_delete_token: "PASS_MYSQL_3819"
+    result: "PASS"
+    report: "docs/workflow-linear-runtime-v261-validation-report.md"
+    note: "Validated on two newly initialized loopback-only MySQL instances. Fresh and V2.6.0-upgrade schemas are identical; no production, managed, unknown, or historical acceptance schema was connected."
+  - id: "sprint-2-3-7-wf3-4-1-workflow-v262-20260811"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.1"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2"]
+    schema_fingerprint_sha256: "79c9d0712e2a7bfcf744b30ee95f4a0c6af5ca27794ad468ba0e4a397d3ae626"
+    workflow_schema_fingerprint_sha256: "9792c611a62d99159cc3affdb5bf8cf11d2a27f340fe838724e3bc17367fc717"
+    history_success_rows: 25
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v262_flyway_checksum: -1498011282
+    v262_sha256: "9750454efa98402c7d22503d80e16579e07c964a01f7b4baa5da933db01a998f"
+    workflow_task_assignment_snapshot_columns: 22
+    workflow_task_assignment_snapshot_indexes: 5
+    workflow_task_assignment_snapshot_foreign_keys: 1
+    workflow_task_assignment_snapshot_checks: 8
+    negative_constraint_tests:
+      duplicate_snapshot: "PASS_MYSQL_1062"
+      invalid_task: "PASS_MYSQL_1452"
+      invalid_node_execution: "PASS_MYSQL_1452"
+      invalid_strategy: "PASS_MYSQL_3819"
+      invalid_target: "PASS_MYSQL_3819"
+      invalid_delete_token: "PASS_MYSQL_3819"
+      failed_insert_residual_rows: 0
+      valid_fixture_rows: 1
+    result: "PASS"
+    report: "docs/workflow-task-assignment-v262-validation-report.md"
+    note: "Validated on two newly initialized loopback-only MySQL instances. Fresh and V2.6.1-upgrade schemas are identical; no production, managed, unknown, or historical acceptance schema was connected."
+  - id: "sprint-2-3-7-wf3-6-4-1-workflow-v263-20260811"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.2"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3"]
+    schema_fingerprint_sha256: "3bb861a92a8919ef127512290eb66eabcbfb46182969795b06b4edb6856db6fd"
+    workflow_schema_fingerprint_sha256: "ffd0809897d0f33f9614f0b33d8379d1f1db34ffc2fb88997f11efa2177f933c"
+    history_success_rows: 26
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v263_flyway_checksum: 1481014267
+    v263_sha256: "35c4714708d51ba00f4cdc79b04bea4d897a7e6c72624ec595c9df147f1f41e6"
+    workflow_instance_columns: 41
+    workflow_instance_indexes: 13
+    workflow_instance_checks: 17
+    resolver_backfill: "PASS_EXPLICIT_USER_V1"
+    legacy_compatibility: "PASS_ALL_BINDING_FIELDS_NULL"
+    negative_constraint_tests:
+      incomplete_binding: "PASS_REJECTED"
+      linear_without_binding: "PASS_REJECTED"
+      invalid_hash_length: "PASS_MYSQL_3819"
+      uppercase_hash: "FAIL_ACCEPTED_BY_CASE_INSENSITIVE_COLLATION"
+    application_contract_tests: "PASS_10_OF_10"
+    result: "FAIL_BLOCKING_RESOLVER_HASH_CASE_CONSTRAINT"
+    report: "docs/workflow-resolver-version-binding-v263-validation-report.md"
+    note: "Both Flyway paths passed, but V2.6.3 was not promoted because utf8mb4_general_ci makes the lowercase hash REGEXP case-insensitive. No production or managed database was connected."
+  - id: "sprint-2-3-7-wf3-6-4-2-workflow-v264-20260811"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.2", "repair_failed_2.6.3_environment"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4"]
+    schema_fingerprint_sha256: "08d44c91fdfa7e9f8ebef843288c06b5144e3aeb99d0c337aa4a186c68f48442"
+    workflow_schema_fingerprint_sha256: "04fe532fbe94322dac9d3f347290a682581cd777e715167d2d97bd87e78a478f"
+    history_success_rows: 27
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v263_flyway_checksum: 1481014267
+    v264_flyway_checksum: -1847492777
+    v264_sha256: "0bb017ea621980e150870bb9bac3dd48863afbc2b63b33654ab6344aced9bb55"
+    resolver_contract_hash_type: "varchar(64)"
+    resolver_contract_hash_charset: "ascii"
+    resolver_contract_hash_collation: "ascii_bin"
+    failed_v263_value_normalized: true
+    hash_tests:
+      lowercase_sha256: "PASS_ACCEPTED"
+      uppercase_sha256: "PASS_REJECTED_MYSQL_3819"
+      mixed_case_sha256: "PASS_REJECTED_MYSQL_3819"
+      invalid_length: "PASS_REJECTED_MYSQL_3819"
+      non_hex_character: "PASS_REJECTED_MYSQL_3819"
+    result: "PASS"
+    report: "docs/workflow-resolver-contract-hash-v264-validation-report.md"
+    note: "Validated three isolated loopback-only paths. V2.6.4 repairs the failed V2.6.3 representation and makes the combined chain safe; no managed or production database was connected."
+  - id: "sprint-2-3-7-wf3-9-1-workflow-v265-20260812"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.4"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5"]
+    schema_fingerprint_sha256: "f40975793a306178dd70cf46bed8d5fe81a638850c9d84163e63af5dea5e8448"
+    workflow_schema_fingerprint_sha256: "8d41324ab001a054ab933514b246bd2147db18b3efd15524839330dae3bdf2c4"
+    binding_schema_fingerprint_sha256: "8204b041daa011ddab60f9a687f9364e2feb55985a832e44247c702e14a2bcc4"
+    history_success_rows: 28
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v265_flyway_checksum: -588626998
+    v265_sha256: "3d516374333f31554409d5d5c8f7ebaddf7ebd21dbc24916d3dc48c5b8337caf"
+    structure_checks: "PASS_3_TABLES_65_COLUMNS_25_ENFORCED_CHECKS_6_FOREIGN_KEYS"
+    negative_tests: "PASS_17"
+    runtime_chain: "PASS_NODE_A_RESOLVER_A_TO_NODE_B_RESOLVER_B"
+    legacy_contract_tests: "PASS_16"
+    concurrent_start: "PASS_TWO_SESSION_SINGLE_WINNER_FULL_AGGREGATE"
+    transaction_rollback: "PASS"
+    result: "PASS"
+    report: "docs/workflow-multi-resolver-binding-v265-validation-report.md"
+    note: "Validated on newly initialized loopback-only MySQL data directories. No production or managed database was connected."
+  - id: "sprint-2-3-7-wf4-1-1-workflow-v266-20260812"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.5"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6"]
+    schema_fingerprint_sha256: "bf3b961609484b58dec1f37973cee254c18920a9927e0b5ab7a2b0fed5f89f0e"
+    workflow_schema_fingerprint_sha256: "591dd48c4551e289d5e00c87c21c689b1e90bec7cd7fa978ade3a3ab7190f0ce"
+    candidate_pool_schema_fingerprint_sha256: "7aabbe431fce77fce1af5929d71c965e50a31c5451079e3bc82bfe4903dbdc1d"
+    history_success_rows: 29
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v266_flyway_checksum: 398007297
+    v266_sha256: "3b73653d571a5f5497d10865b3ef692e694387b8d220ec2af383bea9c82e5d4f"
+    structure_checks: "PASS_3_TABLES_84_COLUMNS_28_ENFORCED_CHECKS_8_FOREIGN_KEYS"
+    negative_tests: "PASS_22"
+    candidate_chain: "PASS_TASK_EXECUTION_INSTANCE_RESOLVER_ASSIGNMENT_POOL_MEMBERS"
+    direct_legacy: "PASS_NO_POOL_OR_MEMBER_BACKFILL"
+    transaction_rollback: "PASS_POOL_AND_MEMBERS_ATOMIC"
+    concurrent_pool_creation: "PASS_TWO_SESSION_SINGLE_WINNER"
+    application_tests: "PASS_314"
+    result: "PASS"
+    report: "docs/workflow-candidate-pool-v266-validation-report.md"
+    note: "Validated on newly initialized loopback-only MySQL data directories. No production, managed, unknown, or historical acceptance schema was connected. Claim and executable ROLE/POSITION/ORG resolution remain out of scope."
+  - id: "sprint-2-3-7-wf4-2-1-workflow-v267-20260812"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical read-only copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.6"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7"]
+    schema_fingerprint_sha256: "6bedb919b239b3fee9aeda80e4341fd310fac669ade663e2fe2106e1bc9aeed3"
+    workflow_schema_fingerprint_sha256: "0b65989672fa92ee94f08581953ec71e2a5f4a01aea0c796414ca9672e7184a9"
+    claim_schema_fingerprint_sha256: "377e99dcf24dc25eb42a1ce0fcdfd04afb3706540b4e143ca6f25cac492a441c"
+    history_success_rows: 30
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v267_flyway_checksum: 1689998435
+    v267_sha256: "800e1a5b1af67e1680a3f0233e9d5400c0b42f39349d181f1777c7ce04ac6aed"
+    migration_paths: "PASS_FRESH_AND_UPGRADE_SCHEMA_IDENTICAL"
+    legal_claim_chain: "PASS_TASK_POOL_CLAIM_AUDIT_ATOMIC_STATE"
+    application_gate_tests: "PASS_18"
+    idempotency: "PASS_REPLAY_AND_DATABASE_UNIQUENESS"
+    concurrent_claim: "PASS_TWO_SESSION_SINGLE_WINNER"
+    deadlock: "PASS_NO_MYSQL_1213"
+    transaction_rollback: "PASS_NO_PARTIAL_RESIDUE"
+    direct_legacy: "PASS_NO_CLAIM_OR_BACKFILL"
+    approval_after_claim: "PASS_CLAIM_NOT_APPROVE"
+    negative_constraint_tests:
+      passed: 14
+      failed: 3
+      missing_node_execution_fk: "FAIL_ACCEPTED"
+      mutable_cross_reference_audit: "FAIL_ACCEPTED"
+      orphan_success_audit: "FAIL_ACCEPTED"
+    result: "FAIL_BLOCKING_CLAIM_OWNERSHIP_AND_AUDIT_INTEGRITY_CONSTRAINTS"
+    report: "docs/workflow-task-claim-v267-validation-report.md"
+    note: "Both Flyway paths passed, but V2.6.7 was not promoted because MySQL accepted a Claim with an invalid node_execution_id and accepted mutable/orphan SUCCESS audit evidence. No production, managed, unknown, or historical acceptance database was connected."
+  - id: "sprint-2-3-7-wf4-2-4-workflow-v267-v268-20260812"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.6", "forward_fix_from_2.6.7"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7", "2.6.8"]
+    schema_fingerprint_sha256: "092e9ba6374d749ccd9f1b9427a386e0e7e4fe34a7a68bda20642141c1512c38"
+    workflow_schema_fingerprint_sha256: "3dbaae27e7c11f3492b28b5ba53d398ba5394cb7ff0921be5bacdf2fa418ba58"
+    claim_schema_fingerprint_sha256: "2ef7874f10c305944b1041fa4fe649d359ba8c5ed73ebc164c5188f7b5f9642a"
+    history_success_rows: 31
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v267_flyway_checksum: 1689998435
+    v268_flyway_checksum: 1316060036
+    v267_sha256: "800e1a5b1af67e1680a3f0233e9d5400c0b42f39349d181f1777c7ce04ac6aed"
+    v268_sha256: "4cfd089f4aa05f6e4fb9d9dc250159c0229b3d98eb400089e5e08a758cb4a207"
+    dirty_data_guard: "PASS_FAILS_BEFORE_PERMANENT_DDL_WITHOUT_DATA_MUTATION"
+    negative_constraint_tests: "PASS_18_OF_18"
+    p0_regression: "PASS_3_OF_3_DATABASE_REJECTED"
+    legal_claim_chain: "PASS_CLAIMED_WITHOUT_APPROVAL_SIDE_EFFECT"
+    idempotency: "PASS_SINGLE_CLAIM_AND_SINGLE_SUCCESS_AUDIT"
+    concurrent_claim: "PASS_TWO_SESSION_SINGLE_WINNER"
+    deadlock: "PASS_NO_MYSQL_1213_OR_1205"
+    transaction_rollback: "PASS_NO_PARTIAL_RESIDUE"
+    append_only: "PASS_DATABASE_TRIGGERS_REJECT_UPDATE_AND_DELETE"
+    direct_legacy: "PASS_NO_CLAIM_OR_POOL_BACKFILL"
+    application_tests: "PASS_336_FULL_SUITE_AND_142_WORKFLOW"
+    result: "PASS"
+    report: "docs/workflow-claim-integrity-v267-v268-combined-validation-report.md"
+    note: "Combined forward-fix acceptance passed on isolated loopback-only instances. The earlier V2.6.7 standalone failure remains retained as evidence; V2.6.7 is deployable only when immediately followed by V2.6.8. No production, managed, unknown, or historical acceptance database was connected."
+  - id: "sprint-2-3-7-wf5-7-1-role-runtime-v269-20260813"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation", "upgrade_from_2.6.8"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7", "2.6.8", "2.6.9"]
+    schema_fingerprint_sha256: "156dec0801b0bd0db613832360b5da06b51f7d2d0e53fdad340b53e2a62dfe1d"
+    workflow_schema_fingerprint_sha256: "f08561138e1dc07dc6450783b00b74c6daeb0c2f692465318ed63d18eac38d61"
+    role_runtime_schema_fingerprint_sha256: "db15d1042f81079bfc80ae18ce10eba792ac707004c2681f5f444d2bda132f2b"
+    history_success_rows: 32
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v269_flyway_checksum: 1523438049
+    v269_sha256: "fbe41e2a354e616ee4b369c57980009057c75ced46a2eb9e48d1eb8354beb0d2"
+    negative_tests: "PASS_7_OF_12"
+    blocking_findings: ["BLANK_RESOLVER_VERSION_ACCEPTED", "SNAPSHOT_UPDATE_ACCEPTED", "SNAPSHOT_DELETE_ACCEPTED", "APPROVAL_UPDATE_ACCEPTED", "PENDING_APPROVAL_SNAPSHOT_ACCEPTED"]
+    result: "FAIL_BLOCKING_ROLE_RUNTIME_PERSISTENCE_INTEGRITY"
+    report: "docs/workflow-role-runtime-persistence-v269-validation-report.md"
+    note: "Fresh/Upgrade Flyway and schema convergence passed, but database insert-only and Approval ownership gates failed. V2.6.9 remains a candidate, ROLE Runtime remains disabled, and no production, managed, unknown, or pre-existing database was connected."
+  - id: "sprint-2-3-7-wf5-7-3-role-runtime-v269-v2610-20260813"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation_to_2.6.10", "upgrade_from_2.6.8", "forward_fix_from_2.6.9"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7", "2.6.8", "2.6.9", "2.6.10"]
+    schema_fingerprint_sha256: "5e5293bdd366e155b5b30dcb0c8f551a236cdccaf174cf0701454497e5a11eb7"
+    workflow_schema_fingerprint_sha256: "c69b3c784e0f3a50287bd7e2b8323f3eaa4d54f8c15b37cf428045b1b31f9f59"
+    role_runtime_schema_fingerprint_sha256: "6cd8382a280d04426ceecceee6e770c7cb871c8eee781f73257fc73179b618ab"
+    history_success_rows: 33
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v269_flyway_checksum: 1523438049
+    v2610_flyway_checksum: 936550308
+    v269_sha256: "fbe41e2a354e616ee4b369c57980009057c75ced46a2eb9e48d1eb8354beb0d2"
+    v2610_sha256: "2fad3f67a4a487568f5fc29f40cec73894d89fff65564212a75be98da186f7d6"
+    post_migration_negative_tests: "PASS_15_OF_15"
+    dirty_data_guard_contract_mismatch: "FAIL_ACCEPTED_AND_PERMANENT_DDL_APPLIED"
+    dirty_data_guard_invalid_snapshot_hash: "FAIL_ACCEPTED_AND_PERMANENT_DDL_APPLIED"
+    result: "FAIL_BLOCKING_PRE_DDL_GUARD_COVERAGE"
+    report: "docs/workflow-role-runtime-persistence-v269-v2610-combined-validation-report.md"
+    note: "All three normal migration paths, strict validate, no-op, fingerprints, and post-migration integrity tests passed. Promotion remains blocked because V2.6.10 accepted historical Approval/Snapshot contract mismatch and invalid Snapshot hash before creating six permanent governance objects. ROLE Runtime remains disabled; no production, managed, unknown, or pre-existing database was connected."
+  - id: "sprint-2-3-7-wf5-7-4-role-runtime-v269-v2610-v2611-20260813"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation_to_2.6.11", "upgrade_from_2.6.8", "forward_fix_from_2.6.10"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7", "2.6.8", "2.6.9", "2.6.10", "2.6.11"]
+    schema_fingerprint_sha256: "b6c5061eae8d704dc76d82b30ffead959a63d3054dd344751a2f213229f8885b"
+    workflow_schema_fingerprint_sha256: "b5036e29809b3c90f31326b428bb7fb9ef8088ca6a28a22d04a04480f07f258d"
+    role_runtime_schema_fingerprint_sha256: "3b8e74374d55467e48066c4d0025e79872b330f5e51e45b0ba0d8dc06dff47d9"
+    history_success_rows: 34
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v269_flyway_checksum: 1523438049
+    v2610_flyway_checksum: 936550308
+    v2611_flyway_checksum: 1342469954
+    v269_sha256: "fbe41e2a354e616ee4b369c57980009057c75ced46a2eb9e48d1eb8354beb0d2"
+    v2610_sha256: "2fad3f67a4a487568f5fc29f40cec73894d89fff65564212a75be98da186f7d6"
+    v2611_sha256: "ee16801af2f989449b1372ff82d76bd9850950a51ea7badff0125804c0815b06"
+    guard_results: ["ILLEGAL_RESOLVER_VERSION_FAIL_ACCEPTED", "CONTRACT_MISMATCH_PASS_3819", "INVALID_BINDING_HASH_PASS_3819", "CANONICAL_DRIFT_PASS_3819"]
+    trigger_negative_tests: "PASS_5_OF_5"
+    legal_evidence_chain: "PASS"
+    concurrent_snapshot_insert: "PASS_SINGLE_WINNER_0_1_NO_1213_NO_1205"
+    migration_sha: "PASS_33_OF_33"
+    result: "FAIL_BLOCKING_CASE_INSENSITIVE_RESOLVER_VERSION_GUARD"
+    report: "docs/workflow-role-runtime-persistence-v269-v2610-v2611-combined-validation-report.md"
+    note: "Normal Fresh/Upgrade/Forward paths, strict validate/no-op, fingerprints, contract/hash/canonical guards, triggers, legal evidence and concurrency passed. Promotion was blocked because the V2.6.11 resolver-version REGEXP inherited utf8mb4_general_ci and accepted lowercase historical data; the later V2.6.12 forward fix closes this finding."
+  - id: "sprint-2-3-7-wf5-7-6-role-runtime-v269-v2612-20260813"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation_to_2.6.12", "upgrade_from_2.6.8", "forward_fix_from_2.6.11", "failed_guard_recovery"]
+    applied_versions: ["2.5.0", "2.5.1", "2.5.2", "2.5.3", "2.5.4", "2.5.5", "2.6.0", "2.6.1", "2.6.2", "2.6.3", "2.6.4", "2.6.5", "2.6.6", "2.6.7", "2.6.8", "2.6.9", "2.6.10", "2.6.11", "2.6.12"]
+    schema_fingerprint_sha256: "4f5082397adc177cde53e9a0f689c003b1eed499e8f47894e3fdbac4ecdfd2db"
+    workflow_schema_fingerprint_sha256: "1b2d40c88d4d60bab786aeeb542d5e30a94fa2e62fb0320326f6cf3186f85ba8"
+    role_runtime_schema_fingerprint_sha256: "40344f50f488a5b7ef107fe382bbc3546b0f17089596ad26422c1ac3b22f87e3"
+    history_success_rows: 35
+    history_failed_rows: 0
+    idempotent_migrate: true
+    strict_validate: true
+    v269_flyway_checksum: 1523438049
+    v2610_flyway_checksum: 936550308
+    v2611_flyway_checksum: 1342469954
+    v2612_flyway_checksum: -1172180638
+    v269_sha256: "fbe41e2a354e616ee4b369c57980009057c75ced46a2eb9e48d1eb8354beb0d2"
+    v2610_sha256: "2fad3f67a4a487568f5fc29f40cec73894d89fff65564212a75be98da186f7d6"
+    v2611_sha256: "ee16801af2f989449b1372ff82d76bd9850950a51ea7badff0125804c0815b06"
+    v2612_sha256: "55513b47c278d2e7d8f5d7656115b1383c3c50494bd221d95f58c66f972ec67e"
+    resolver_version_negative_tests: "PASS_6_OF_6"
+    append_only_tests: "PASS_4_OF_4"
+    failed_guard_recovery: "PASS_3819_NO_V2612_DDL_DRIFT"
+    canonical_hash_sensitivity: "PASS"
+    concurrent_reads: "PASS_2_OF_2_NO_1213_NO_1205"
+    migration_sha: "PASS_34_OF_34"
+    result: "PASS"
+    report: "docs/workflow-role-runtime-persistence-v269-v2612-combined-validation-report.md"
+    note: "All four isolated paths passed. V2.6.12 changed both ROLE Runtime resolver_version columns to ASCII/ascii_bin, rejected lowercase/mixed-case/blank/null evidence, failed dirty history before V2.6.12 permanent DDL, preserved append-only triggers, and left ROLE Runtime disabled. No production, managed, unknown, or pre-existing database was connected."
+
+  - id: "sprint-org-dir-1-approval-role-directory-v2617-20260820"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_to_2.6.17", "upgrade_from_2.6.16"]
+    history_success_rows: 40
+    history_failed_rows: 0
+    strict_validate: true
+    idempotent_migrate: true
+    v2617_sha256: "d5fdf54be071a1f4c347b61a447771bb0c849f2ff8d4113e9bedc7ae4d145b65"
+    v2617_flyway_checksum: -1602960257
+    full_schema_fingerprint_sha256: "5bb8b13a993e805b6e3699785665a8908146bfe8dcbb47e8436ad0edbdf76d48"
+    organization_schema_fingerprint_sha256: "34f0afdd005c3e443d5763a84a6c42b63b3f9d8da518313820df8b2fc3d31041"
+    approval_role_directory_fingerprint_sha256: "17ab828c6201a64c2f818da74b8892e5d4678fb9be5cf61fe31152de18e20f9b"
+    negative_matrix: "PASS"
+    revision_concurrency: "PASS_TWO_SESSIONS_MONOTONIC_NO_1213_NO_1205"
+    assignment_concurrency: "PASS_SINGLE_WINNER_NO_1213_NO_1205"
+    result: "PASS"
+    report: "docs/approval-role-directory-v1-implementation-validation-report.md"
+    note: "Validated Organization/Governance Approval Role Directory V1 only. Workflow ROLE_DIRECTORY_V1 remains PREPARED/non-executable and Directory connectivity remains blocked."
+
+candidate_assets: []
+
+failed_candidate_archive:
+  - version: "2.6.16"
+    archived_file: "database/migration/archive/failed-candidates/V2.6.16__create_role_realtime_eligibility_evidence__failed_1d7d4223.sql"
+    asset_status: "FAILED_CANDIDATE_ARCHIVED"
+    source_sha256: "1d7d422316c92d5d01bdbb4ee86d4ef7d249525d601b665e3230687dad03e85f"
+    archived_text_sha256: "1d7d422316c92d5d01bdbb4ee86d4ef7d249525d601b665e3230687dad03e85f"
+    observed_flyway_checksum: -2021432017
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATION_FAILED"
+    failure: "Lifecycle trigger selected MAX(event_hash)/MAX(event_type) instead of the event at the greatest sequence_no, so a valid ordered event chain could be rejected"
+    evidence_root: "D:/codex-validation-v2616-20260820-144912/evidence"
+  - version: "2.6.15"
+    archived_file: "database/migration/archive/failed-candidates/V2.6.15__create_role_runtime_execution_admission_persistence__failed_7887bfb1.sql"
+    asset_status: "FAILED_CANDIDATE_ARCHIVED"
+    source_sha256: "7887bfb1d5bb9aacba378bc62618ba92fdd58fb1a85007053da4899d1fe9d412"
+    archived_text_sha256: "7887bfb1d5bb9aacba378bc62618ba92fdd58fb1a85007053da4899d1fe9d412"
+    observed_flyway_checksum: -1956070127
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATION_FAILED"
+    failure: "MySQL accepted final approval with zero Evidence and with NOT_READY capability evidence; Slot DELETE was not guarded, so the candidate was not promoted"
+    report: "docs/workflow-role-runtime-execution-admission-persistence-v2615-revalidation-report.md"
+  - version: "2.6.15"
+    archived_file: "database/migration/archive/failed-candidates/V2.6.15__create_role_runtime_execution_admission_persistence__failed_405fb7fc.sql"
+    asset_status: "FAILED_CANDIDATE_ARCHIVED"
+    source_sha256: "405fb7fc3bc928fc84643bcbf5583cd9f9555dad8209ad6b4d962529ce969887"
+    archived_text_sha256: "246c6a8d42e1ea36538213d6421882fc1d2b9acc1f478f4ca843f027bbe8ea56"
+    observed_flyway_checksum: 1424227542
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATION_FAILED"
+    failure: "MySQL 8.4.9 error 6125: fk_role_admission_slot_candidate referenced (id,snapshot_id,delete_token) without an exact parent unique key; implicit DDL commits left Candidate columns plus Admission/Evidence/Event but no Slot or triggers"
+    report: "docs/workflow-role-runtime-execution-admission-persistence-v2615-validation-report.md"
+  - version: "2.6.14"
+    archived_file: "database/migration/archive/failed-candidates/V2.6.14__create_role_runtime_binding_persistence_foundation__failed_bcbcbb6b.sql"
+    asset_status: "ARCHIVED_FAILED_CANDIDATE"
+    source_sha256: "bcbcbb6b9f7e58b5b03297621682f88c73744e2893058d0519198203e6150b15"
+    archived_text_sha256: "27d1f6ebd330e2416d11756dd1c3e32a5676cf51eee12b00a6c0c815334cffa2"
+    observed_flyway_checksum: 1106609314
+    failure: "Pre-DDL Guard accepted a PERSISTED Activation Request without the required Approval/Evidence chain and created all three permanent tables"
+    report: "docs/workflow-role-runtime-binding-persistence-v2614-validation-report.md"
+  - version: "2.6.13"
+    archived_file: "database/migration/archive/failed-candidates/V2.6.13__create_role_runtime_activation_evidence__failed_7ec6ec64.sql"
+    asset_status: "FAILED_CANDIDATE_ARCHIVED"
+    sha256: "7ec6ec6441006dc7f114b92adfc60efdfb2cc8f66bda3a6a7a52d9fcbf3168e6"
+    observed_flyway_checksum: 1627294290
+    failure: "MySQL 8.4.9 error 6125 on incomplete activation_id parent uniqueness"
+    report: "docs/workflow-role-runtime-activation-evidence-v2613-validation-report.md"
 
 canonical_assets:
+  - version: "2.6.20"
+    canonical_file: "database/migration/mysql/V2.6.20__create_approval_role_directory_provider_audit.sql"
+    module: "organization/approval-role-directory"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "160f0b649ac85cc177d82c2ff0aa5070639b29c7f2dda72b02438041bd063201"
+    flyway_checksum: 1721966129
+    depends_on: ["2.6.19"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only TEST instances"
+    validation_paths: ["fresh_to_2.6.20", "upgrade_from_2.6.19", "real_https_provider_to_mysql"]
+    schema_fingerprint_sha256: "c8aeccbe16f7172d91ec87dfc741306aa5312734533524ebb6d18872219049bb"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "PII-minimized persistent append-only Approval Role Directory Provider audit; ROLE Runtime and Canary remain disabled"
+    report: "docs/approval-role-directory-provider-persistent-audit-p0-closure-report.md"
+    evidence_roots:
+      - "D:/codex-validation-v2620-20260821-122042/evidence"
+      - "D:/codex-validation-org-dir-2-20260821-125102/evidence"
+  - version: "2.6.19"
+    canonical_file: "database/migration/mysql/V2.6.19__create_governance_external_audit_sink.sql"
+    module: "governance-audit/workflow-adapter"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "5bcc02c3447af2e6a8af5b258d24e4a1148b333352bc39728623b3d4da4d5f6a"
+    flyway_checksum: 1332327310
+    depends_on: ["2.6.18"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only TEST instances"
+    validation_paths: ["fresh_to_2.6.19", "upgrade_from_2.6.18"]
+    schema_fingerprint_sha256: "708a0d4bb3dab6212bb5c11ad7825333432e3e1bd3d2e6f894e27991b41e916d"
+    audit_schema_fingerprint_sha256: "4a1809c4ce93f3ed6bf33ae3449b3ece4da811f698768ca2c5f3f0789ebe39ce"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "Independent Governance External Audit Sink event/receipt facts, immutable Workflow payload envelope, Claim admission binding and versioned Platform SoD controls; ROLE Runtime remains disabled"
+    report: "docs/workflow-role-runtime-external-audit-final-canary-gate-report.md"
+    evidence_roots:
+      - "D:/codex-validation-wf-audit-final-20260821-112734/evidence"
+      - "D:/codex-validation-wf-audit-https-20260821-114535"
+  - version: "2.6.18"
+    canonical_file: "database/migration/mysql/V2.6.18__create_role_runtime_production_capability_governance.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "feca0f252d44a61938552ed37764aecc2d0cf78aa9e35d81b71d5bf73d1d3542"
+    flyway_checksum: 1856348077
+    depends_on: ["2.6.17"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only instances"
+    validation_paths: ["fresh_to_2.6.18", "upgrade_from_2.6.17"]
+    schema_fingerprint_sha256: "16134c8087d2fe9319ba9867f3bffe380f9c8302d5456d9b28ab40120bc3474d"
+    workflow_schema_fingerprint_sha256: "4e307033a866111a19a4af1f24ba8ebdd51bca70d5899648a5c4d2e2247bfb83"
+    capability_schema_fingerprint_sha256: "d01127549bd0ebcfe42f9616be1cd7ecef3f1b2ec860563351c3ef393013fb4c"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "ROLE runtime versioned governance controls and reliable external audit outbox/receipt only; runtime remains disabled"
+    report: "docs/workflow-role-runtime-production-capability-final-validation-report.md"
+  - version: "2.6.17"
+    canonical_file: "database/migration/mysql/V2.6.17__create_approval_role_directory.sql"
+    module: "organization-governance"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "d5fdf54be071a1f4c347b61a447771bb0c849f2ff8d4113e9bedc7ae4d145b65"
+    flyway_checksum: -1602960257
+    depends_on: ["2.6.16"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only instances"
+    validation_paths: ["fresh_to_2.6.17", "upgrade_from_2.6.16"]
+    schema_fingerprint_sha256: "5bb8b13a993e805b6e3699785665a8908146bfe8dcbb47e8436ad0edbdf76d48"
+    organization_schema_fingerprint_sha256: "34f0afdd005c3e443d5763a84a6c42b63b3f9d8da518313820df8b2fc3d31041"
+    approval_role_directory_fingerprint_sha256: "17ab828c6201a64c2f818da74b8892e5d4678fb9be5cf61fe31152de18e20f9b"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "Organization/Governance Approval Role definition, effective-dated assignment, mutable revision head and append-only revision ledger; no Workflow runtime enablement"
+    report: "docs/approval-role-directory-v1-implementation-validation-report.md"
+    note: "Real MySQL validated half-open historical membership, constraints, append-only governance, rollback and two-session revision/assignment concurrency."
+  - version: "2.6.16"
+    canonical_file: "database/migration/mysql/V2.6.16__create_role_realtime_eligibility_evidence.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "d5d0b154eaea4c17dc8b11d7bebda0627c9f31fd96b13043545356a5a2286084"
+    flyway_checksum: -1570425240
+    depends_on: ["2.6.15"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / Java 21.0.12 / Maven 3.9.9 / isolated loopback-only instances"
+    validation_paths: ["fresh_to_2.6.16", "upgrade_from_2.6.15"]
+    schema_fingerprint_sha256: "08c2002afa1e01f1de2b82cfb9adf36f1c0a8e0b788c9bacc03109c21888e5c0"
+    workflow_schema_fingerprint_sha256: "b55ca8d904f920db2d10ea5f8eb24e3c4f040288d48f44d00688e80f8b97b6ea"
+    realtime_eligibility_schema_fingerprint_sha256: "0e8bac7935499b6290276283b594e5ff8b22a5581beebf8f0e81e57573c93e3b"
+    strict_validate: true
+    idempotent_migrate: true
+    negative_matrix: "PASS_15_OF_15"
+    concurrent_idempotency: "ONE_WINNER_NO_1213_NO_1205"
+    application_tests: "PASS_530_OF_530"
+    scope: "Append-only ROLE realtime eligibility aggregate, 27 validator evidence, 10 capability evidence, three-layer canonical hashes, lifecycle, single-use Evidence-to-Claim binding; ROLE Runtime remains disabled"
+    report: "docs/workflow-role-runtime-realtime-eligibility-evidence-v2616-validation-report.md"
+    implementation_report: "docs/workflow-role-runtime-realtime-eligibility-evidence-persistence-implementation-report.md"
+    note: "The first unpromoted candidate was archived after detecting unordered lifecycle predecessor lookup. The repaired same-version candidate passed a complete clean revalidation; no later Migration masked the defect and no real Directory availability was asserted."
+  - version: "2.6.15"
+    canonical_file: "database/migration/mysql/V2.6.15__create_role_runtime_execution_admission_persistence.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "db1aff944bc4bd1be037292f4cee6502929687b25a1f637301efe80bb768fa44"
+    flyway_checksum: 538981271
+    depends_on: ["2.6.14"]
+    scope: "ROLE execution admission append-only decision, exact validator/capability evidence, database-recomputed capability root, lifecycle terminal guards, and token/version CAS slot; ROLE Runtime remains disabled"
+    report: "docs/workflow-role-runtime-execution-admission-v2615-final-revalidation-report.md"
+    implementation_report: "docs/workflow-role-runtime-execution-admission-v2615-final-approval-integrity-implementation-report.md"
+    note: "Fresh and V2.6.14 Upgrade passed strict Flyway validation/no-op with equal fingerprints. Real MySQL rejected incomplete/non-PASS/non-READY evidence, wrong root/persistence, illegal slot mutation and duplicate terminals; legal chain, Java/DB canonical root, transaction rollback and three two-session single-winner cases passed. Historical failed candidates remain archived. ROLE Runtime remains disabled."
+  - version: "2.6.14"
+    canonical_file: "database/migration/mysql/V2.6.14__create_role_runtime_binding_persistence_foundation.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "a232501633eb86d98374b99859f43b092ed5692461fa5e673924d02d0e1ca442"
+    flyway_checksum: -1734980808
+    depends_on: ["2.6.13"]
+    scope: "Guard-hardened append-only pre-runtime ROLE promotion, candidate binding snapshot, lifecycle evidence and composite ownership; ROLE Runtime remains disabled"
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / Java 21.0.12 / Maven 3.9.9 / isolated loopback-only instances"
+    validation_paths: ["fresh_foundation_to_2.6.14", "upgrade_from_2.6.13", "guard_failure_matrix_12_of_12", "complete_activation_evidence_chain"]
+    schema_fingerprint_sha256: "927a1b9d218d22d17c4ae6218e5306f4181d70d19af00b349d0f6e8b7322ef7a"
+    workflow_schema_fingerprint_sha256: "ff51fa7b6fee13896f924b301b079dc72d6b77843f090c3b999a3238253b2b6d"
+    role_binding_schema_fingerprint_sha256: "350782da49ae006a13d30a25955726ea7a821ae567d6b24f1446b93a33b477fd"
+    schema_counts: {tables: 3, columns: 89, indexes: 17, foreign_keys: 4, checks: 18, triggers: 9}
+    strict_validate: true
+    idempotent_migrate: true
+    guard_failure_matrix: "PASS_12_OF_12_ZERO_PERMANENT_DDL"
+    legal_evidence_chain: "PASS"
+    ownership_negative_tests: "PASS"
+    append_only_tests: "PASS_6_OF_6"
+    hash_collation_tests: "PASS"
+    concurrency: "PASS_3_OF_3_SINGLE_WINNER_NO_1213_NO_1205"
+    transaction_rollback: "PASS_ZERO_RESIDUAL"
+    migration_sha: "PASS_36_OF_36"
+    result: "PASS"
+    report: "docs/workflow-role-runtime-binding-persistence-v2614-revalidation-report.md"
+  - version: "2.6.13"
+    canonical_file: "database/migration/mysql/V2.6.13__create_role_runtime_activation_evidence.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "da80b7d3483ba3f3ee6b4f938515e94730695e28fc9842b9e488eb8daa68fd17"
+    flyway_checksum: 1882937893
+    depends_on: ["2.6.12"]
+    scope: "Append-only ROLE Runtime activation request, strongly-owned RACI decisions, approval-bound hash-only evidence, and Request-Approval-Evidence hash integrity; ROLE Runtime remains disabled"
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only instances"
+    validation_paths: ["fresh_foundation_to_2.6.13", "upgrade_from_2.6.12", "forward_from_2.6.8"]
+    schema_fingerprint_sha256: "f62b80c19ddf928bb9ed6db65c5792091dfbff56cc74d229c187927b3e5ffb1b"
+    workflow_schema_fingerprint_sha256: "2b31cdbc9c7d9863893b2dc0d357c792cdfbc51185fce9961bd3602a354c1385"
+    role_runtime_schema_fingerprint_sha256: "2dd606e66d8eca899f2cb96e60f649ba480ba1fe4df2f0c9909ebabf2a197573"
+    schema_counts: {tables: 3, columns: 60, indexes: 16, foreign_keys: 3, checks: 17, triggers: 8}
+    strict_validate: true
+    idempotent_migrate: true
+    transaction_rollback: "PASS_ZERO_RESIDUAL"
+    concurrency: "PASS_ONE_WINNER_ONE_1062_NO_1213_NO_1205"
+    result: "PASS"
+    report: "docs/workflow-role-runtime-activation-evidence-v2613-final-validation-report.md"
+  - version: "2.6.12"
+    canonical_file: "database/migration/mysql/V2.6.12__fix_role_runtime_resolver_version_collation.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "55513b47c278d2e7d8f5d7656115b1383c3c50494bd221d95f58c66f972ec67e"
+    flyway_checksum: -1172180638
+    depends_on: ["2.6.11"]
+    scope: "Forward-only case-sensitive ROLE Runtime resolver_version guard, ASCII/ascii_bin column governance, and strict Resolver Version CHECK constraints only"
+  - version: "2.6.11"
+    canonical_file: "database/migration/mysql/V2.6.11__repair_role_runtime_historical_integrity_guard.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "VALIDATED_WITH_V2612"
+    automatic_scan: true
+    sha256: "ee16801af2f989449b1372ff82d76bd9850950a51ea7badff0125804c0815b06"
+    flyway_checksum: 1342469954
+    depends_on: ["2.6.10"]
+    scope: "Historical ROLE Runtime evidence and canonical binding hash governance, validated with the V2.6.12 collation forward fix"
+  - version: "2.6.10"
+    canonical_file: "database/migration/mysql/V2.6.10__harden_role_runtime_persistence_integrity.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "VALIDATED_WITH_V2611_V2612"
+    automatic_scan: true
+    sha256: "2fad3f67a4a487568f5fc29f40cec73894d89fff65564212a75be98da186f7d6"
+    flyway_checksum: 936550308
+    depends_on: ["2.6.9"]
+    scope: "ROLE Runtime resolver identity, append-only, approved ownership, hash and immutability governance, validated with V2.6.11 and V2.6.12"
+  - version: "2.6.9"
+    canonical_file: "database/migration/mysql/V2.6.9__create_role_runtime_snapshot.sql"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "VALIDATED_WITH_V2610_V2611_V2612"
+    automatic_scan: true
+    sha256: "fbe41e2a354e616ee4b369c57980009057c75ced46a2eb9e48d1eb8354beb0d2"
+    flyway_checksum: 1523438049
+    depends_on: ["2.6.8"]
+    scope: "ROLE Runtime approval and immutable binding/directory evidence snapshots, validated through the V2.6.10-V2.6.12 forward-fix chain"
+  - version: "2.6.8"
+    canonical_file: "database/migration/mysql/V2.6.8__strengthen_workflow_claim_integrity.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "4cfd089f4aa05f6e4fb9d9dc250159c0229b3d98eb400089e5e08a758cb4a207"
+    flyway_checksum: 1316060036
+    depends_on: ["2.6.7"]
+    scope: "Forward-only Claim aggregate composite ownership, SUCCESS Audit strong binding, pre-DDL dirty-data guards, and append-only audit protection only"
+    note: "Promoted after Fresh, V2.6.6 Upgrade, and V2.6.7 Forward-Fix paths matched; 18 database negative checks, all three historical P0 regressions, concurrency, rollback, append-only, and full application regression passed."
+  - version: "2.6.7"
+    canonical_file: "database/migration/mysql/V2.6.7__create_workflow_task_claim.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED_WITH_V268"
+    automatic_scan: true
+    sha256: "800e1a5b1af67e1680a3f0233e9d5400c0b42f39349d181f1777c7ce04ac6aed"
+    flyway_checksum: 1689998435
+    depends_on: ["2.6.6"]
+    scope: "Candidate Pool Claim fact/audit persistence, assignment-mode claim constraint, fixed ownership keys, and single-winner database guards only"
+    note: "The standalone validation failure is retained in acceptance_runs. This asset is not an independently complete integrity endpoint and must be deployed in one governed chain immediately followed by V2.6.8."
+  - version: "2.6.6"
+    canonical_file: "database/migration/mysql/V2.6.6__create_workflow_candidate_pool.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "3b73653d571a5f5497d10865b3ef692e694387b8d220ec2af383bea9c82e5d4f"
+    flyway_checksum: 398007297
+    depends_on: ["2.6.5"]
+    scope: "Candidate Pool and immutable Candidate Member persistence, task assignment-mode governance, and read-only evidence only; no Claim or executable ROLE/POSITION/ORG resolver"
+    note: "Promoted after Fresh and V2.6.5 Upgrade paths matched, strict validation/no-op passed, and structure, data-chain, 22 negative, DIRECT/Legacy, transaction and two-session concurrency checks passed."
+  - version: "2.6.5"
+    canonical_file: "database/migration/mysql/V2.6.5__create_workflow_multi_resolver_binding.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "3d516374333f31554409d5d5c8f7ebaddf7ebd21dbc24916d3dc48c5b8337caf"
+    flyway_checksum: -588626998
+    depends_on: ["2.6.4"]
+    scope: "Create instance resolver binding set, exact resolver bindings, and immutable node resolver binding snapshots; no Legacy backfill"
+    note: "Promoted after Fresh and V2.6.4 Upgrade paths matched, strict validation/no-op passed, and structure, negative, runtime, Legacy, transaction and two-session concurrency checks passed."
+  - version: "2.6.4"
+    canonical_file: "database/migration/mysql/V2.6.4__fix_resolver_contract_hash_collation.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "0bb017ea621980e150870bb9bac3dd48863afbc2b63b33654ab6344aced9bb55"
+    flyway_checksum: -1847492777
+    depends_on: ["2.6.3"]
+    scope: "Normalize existing resolver contract hashes to lowercase and enforce ASCII binary collation without changing Resolver routing behavior"
+    note: "Promoted after Fresh, V2.6.2-chain, and failed-V2.6.3 repair paths produced identical schemas and passed all five hash tests."
+  - version: "2.6.3"
+    canonical_file: "database/migration/mysql/V2.6.3__freeze_workflow_instance_resolver_version.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED_WITH_V264"
+    automatic_scan: true
+    sha256: "35c4714708d51ba00f4cdc79b04bea4d897a7e6c72624ec595c9df147f1f41e6"
+    flyway_checksum: 1481014267
+    depends_on: ["2.6.2"]
+    scope: "Freeze EXPLICIT_USER resolver code, version, and contract hash on linear Workflow instances; assignment snapshots remain unchanged"
+    note: "The standalone V2.6.3 validation failure remains recorded. Promoted only as the immutable predecessor of validated V2.6.4, which closes its case-insensitive hash constraint gap."
+  - version: "2.6.2"
+    canonical_file: "database/migration/mysql/V2.6.2__create_workflow_task_assignment_snapshot.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "9750454efa98402c7d22503d80e16579e07c964a01f7b4baa5da933db01a998f"
+    flyway_checksum: -1498011282
+    depends_on: ["2.6.1"]
+    scope: "Immutable USER task-assignment snapshot, task/execution ownership, and read-only assignment evidence only"
+    note: "Promoted after isolated Fresh and V2.6.1-upgrade MySQL 8.4.9 acceptance; strict validation, no-op rerun, structure, six negative constraints, and matching schema fingerprints passed."
+  - version: "2.6.1"
+    canonical_file: "database/migration/mysql/V2.6.1__enable_workflow_linear_runtime.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "50314ff572253eaef6e0002acc2b1f9109fe7332a7360f8c8b14c4e8fde1a03e"
+    flyway_checksum: 762611150
+    depends_on: ["2.6.0"]
+    scope: "MULTI_NODE_LINEAR_V1 engine/hash markers, authoritative instance execution cursor, and task-to-node-execution ownership only"
+    note: "Promoted after isolated Fresh and V2.6.0-upgrade MySQL 8.4.9 acceptance; strict validation, no-op rerun, constraints, linear A-to-B-to-END execution, single-winner concurrency, and matching schema fingerprints passed."
+  - version: "2.6.0"
+    canonical_file: "database/migration/mysql/V2.6.0__create_workflow_multi_node_foundation.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "76f2113573eac6af106fadb1681774e49a6f15713860a6af7b37f8d9ebc5c1fa"
+    flyway_checksum: 2093108182
+    depends_on: ["2.5.5"]
+    scope: "Workflow transition graph and node-execution trajectory foundation only; no automatic advancement, countersign, condition evaluation, or Investment changes"
+    note: "Promoted after isolated Fresh and V2.5.5-upgrade MySQL 8.4.9 acceptance; strict validation, no-op re-run, constraints, cleanup, and matching schema fingerprints all passed."
+  - version: "2.5.5"
+    canonical_file: "database/migration/mysql/V2.5.5__implement_workflow_version_release.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "50efcb230b2cba2e7a7600fdfc3e229f05a9e85877194cf9f1eed0875d52605e"
+    flyway_checksum: 1152171452
+    depends_on: ["2.5.4"]
+    scope: "Workflow version publication audit and frozen instance definition-content hash snapshot only"
+    note: "Promoted after isolated Fresh and V2.5.4-upgrade MySQL 8.4.9 acceptance; schema fingerprints matched and the second migrate was a no-op on both paths."
+  - version: "2.5.4"
+    canonical_file: "database/migration/mysql/V2.5.4__govern_rbac_menu_unique_key.sql"
+    module: "system-rbac"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "dea9284682001d3e3ab8a667a4ec863d5e66a33a61771628f64044ce004768a7"
+    flyway_checksum: null
+    depends_on: ["2.5.3"]
+    scope: "Reviewed 71-row sys_menu stable business-key backfill, explicit utf8mb4_0900_ai_ci mapping collation, menu_code NOT NULL, format CHECK, and (menu_code, delete_token) uniqueness; no strict delete-token CHECK"
+    historical_validation_note: "The first combined acceptance failed with MySQL 1267 before permanent DDL. The unpromoted candidate was revised under Sprint 2-3.7-WF2.5.5 and subsequently passed Fresh and V2.5.2-upgrade acceptance."
+  - version: "2.5.3"
+    canonical_file: "database/migration/mysql/V2.5.3__initialize_workflow_rbac.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "6d6904da8028830cdc8fa7b9125994d37d2c916a09277ae9d4526f5646144e26"
+    flyway_checksum: null
+    depends_on: ["2.5.2"]
+    scope: "Workflow permission, menu, SUPER_ADMIN role-permission, and role-menu seed data only"
+    historical_validation_note: "Standalone V2.5.3 acceptance was blocked by the missing menu stable key. The formal V2.5.3 -> V2.5.4 combined chain passed after the V2.5.4 candidate collation fix; the earlier FAIL record is retained."
+  - version: "2.5.2"
+    canonical_file: "database/migration/mysql/V2.5.2__create_workflow_task_action.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "00ad19ad16dec01228f5ec45eb48ad0f8a9f887b4dfe27c797c4b5e56f508302"
+    flyway_checksum: -586677216
+    depends_on: ["2.5.1"]
+    scope: "Workflow-owned immutable task action evidence; no Investment data access and no BPM engine"
+  - version: "2.5.1"
+    canonical_file: "database/migration/mysql/V2.5.1__create_workflow_runtime.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "e52ca6bdd00426bc7fee1c9b92cd3dc3fecd5084e3533f955c89c4867ceb4469"
+    flyway_checksum: -2076704484
+    depends_on: ["2.5.0"]
+    scope: "Workflow-owned runtime instance and task schema; no approval action log or Investment data access"
+  - version: "2.5.0"
+    canonical_file: "database/migration/mysql/V2.5.0__create_workflow_definition_domain.sql"
+    module: "workflow"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "5b41f9b787bbf4bdf0927b5f30dc487c6d88085d81aedf19e784d44474c02926"
+    flyway_checksum: -785031784
+    depends_on: ["2.4.9"]
+    scope: "Workflow-owned definition, immutable version, and node-template schema; no Investment data access"
   - version: "2.4.9"
     canonical_file: "database/migration/mysql/V2.4.9__enhance_workflow_reliability.sql"
     asset_status: "CANONICAL_IMMUTABLE"

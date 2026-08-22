@@ -64,6 +64,38 @@ app:
       audience: ${JWT_AUDIENCE:enterprise-platform-api}
   web:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+  approval-role-directory:
+    provider:
+      enabled: ${APPROVAL_ROLE_DIRECTORY_PROVIDER_ENABLED:false}
+      provider-code: ${APPROVAL_ROLE_DIRECTORY_PROVIDER_CODE:ORG_GOV_APPROVAL_ROLE_DIRECTORY}
+      provider-version: ${APPROVAL_ROLE_DIRECTORY_PROVIDER_VERSION:1.0.0}
+      service-identity: ${APPROVAL_ROLE_DIRECTORY_SERVICE_IDENTITY:enterprise-platform-approval-role-directory}
+      environment-identity: ${APPROVAL_ROLE_DIRECTORY_ENVIRONMENT:TEST}
+      accepted-client-identity: ${APPROVAL_ROLE_DIRECTORY_CLIENT_IDENTITY:workflow-role-directory-client}
+      # Secret is injected only by TEST/PREPROD secret environment; never commit a value.
+      service-token: ${APPROVAL_ROLE_DIRECTORY_SERVICE_TOKEN:}
+  governance-audit-sink:
+    enabled: ${GOVERNANCE_AUDIT_SINK_ENABLED:false}
+    provider-code: ${GOVERNANCE_AUDIT_PROVIDER_CODE:GOVERNANCE_AUDIT_SINK}
+    provider-version: ${GOVERNANCE_AUDIT_PROVIDER_VERSION:1.0.0}
+    service-identity: ${GOVERNANCE_AUDIT_SERVICE_IDENTITY:governance-audit-sink}
+    environment-identity: ${GOVERNANCE_AUDIT_ENVIRONMENT:TEST}
+    accepted-client-identity: ${GOVERNANCE_AUDIT_CLIENT_IDENTITY:workflow-role-audit-client}
+    # Injected only by TEST/PREPROD secret storage; never commit a value.
+    service-token: ${GOVERNANCE_AUDIT_SERVICE_TOKEN:}
+  workflow-external-audit:
+    enabled: ${WORKFLOW_EXTERNAL_AUDIT_ENABLED:false}
+    endpoint: ${WORKFLOW_EXTERNAL_AUDIT_ENDPOINT:}
+    service-token: ${WORKFLOW_EXTERNAL_AUDIT_SERVICE_TOKEN:}
+    service-identity: ${WORKFLOW_EXTERNAL_AUDIT_SERVICE_IDENTITY:workflow-role-audit-client}
+    expected-environment: ${WORKFLOW_EXTERNAL_AUDIT_ENVIRONMENT:TEST}
+    expected-provider: ${WORKFLOW_EXTERNAL_AUDIT_PROVIDER:GOVERNANCE_AUDIT_SINK}
+    batch-size: ${WORKFLOW_EXTERNAL_AUDIT_BATCH_SIZE:20}
+    scan-delay-millis: ${WORKFLOW_EXTERNAL_AUDIT_SCAN_DELAY_MILLIS:1000}
+  workflow-role-directory-technical-gate:
+    # Qualification is non-executable and cannot mutate ResolverRegistry or enable runtime.
+    status: ${WORKFLOW_ROLE_DIRECTORY_TECHNICAL_GATE:EXECUTION_ELIGIBLE}
+    runtime-active: false
 
 management:
   endpoints:

@@ -67,6 +67,7 @@ public class MenuManagementServiceImpl implements MenuManagementService {
         String type = normalizeType(query.menuType(), false);
         Page<SysMenuEntity> result = menuMapper.selectPage(new Page<>(query.currentPage(), query.pageSize()),
                 new LambdaQueryWrapper<SysMenuEntity>()
+                        .like(StringUtils.hasText(query.menuCode()), SysMenuEntity::getMenuCode, trim(query.menuCode()))
                         .like(StringUtils.hasText(query.menuName()), SysMenuEntity::getMenuName, trim(query.menuName()))
                         .eq(type != null, SysMenuEntity::getMenuType, type)
                         .like(StringUtils.hasText(query.permission()), SysMenuEntity::getPermission, trim(query.permission()))
@@ -81,9 +82,10 @@ public class MenuManagementServiceImpl implements MenuManagementService {
     public Long create(MenuCreateRequest request) {
         String type = normalizeType(request.menuType(), true);
         validateParent(request.parentId(), type, null);
-        assertPermissionUnique(request.permission(), null);
+        assertMenuCodeUnique(request.menuCode(), null);
         assertPermissionResourceExists(request.permission());
         SysMenuEntity menu = new SysMenuEntity();
+        menu.setMenuCode(trim(request.menuCode()));
         apply(menu, request.parentId(), request.menuName(), type, request.path(), request.component(),
                 request.permission(), request.icon(), request.sort(), request.status());
         menuMapper.insert(menu);
@@ -94,9 +96,11 @@ public class MenuManagementServiceImpl implements MenuManagementService {
     @Transactional
     public void update(MenuUpdateRequest request) {
         SysMenuEntity menu = requireMenu(request.id());
+        if (!Objects.equals(menu.getMenuCode(), trim(request.menuCode()))) {
+            throw new BusinessException("B0409", "菜单业务编码创建后不可修改");
+        }
         String type = normalizeType(request.menuType(), true);
         validateParent(request.parentId(), type, request.id());
-        assertPermissionUnique(request.permission(), request.id());
         assertPermissionResourceExists(request.permission());
         if (managementMapper.countRoleBindings(request.id()) > 0
                 && !Objects.equals(blankToNull(menu.getPermission()), blankToNull(request.permission()))) {
@@ -176,12 +180,11 @@ public class MenuManagementServiceImpl implements MenuManagementService {
         return false;
     }
 
-    private void assertPermissionUnique(String permission, Long excludedId) {
-        if (!StringUtils.hasText(permission)) return;
+    private void assertMenuCodeUnique(String menuCode, Long excludedId) {
         long count = menuMapper.selectCount(new LambdaQueryWrapper<SysMenuEntity>()
-                .eq(SysMenuEntity::getPermission, trim(permission))
+                .eq(SysMenuEntity::getMenuCode, trim(menuCode))
                 .ne(excludedId != null, SysMenuEntity::getId, excludedId));
-        if (count > 0) throw new BusinessException("B0409", "菜单权限标识已存在");
+        if (count > 0) throw new BusinessException("B0409", "菜单业务编码已存在");
     }
 
     private void assertPermissionResourceExists(String permission) {
@@ -209,7 +212,7 @@ public class MenuManagementServiceImpl implements MenuManagementService {
     }
 
     private MenuVO toVO(SysMenuEntity menu, List<MenuVO> children) {
-        return new MenuVO(menu.getId(), menu.getParentId(), menu.getMenuName(), menu.getMenuType(), menu.getPath(),
+        return new MenuVO(menu.getId(), menu.getMenuCode(), menu.getParentId(), menu.getMenuName(), menu.getMenuType(), menu.getPath(),
                 menu.getComponent(), menu.getPermission(), menu.getIcon(), menu.getSortNo(), menu.getVisible(),
                 menu.getStatus(), menu.getCreateTime(), menu.getUpdateTime(), menu.getVersion(), children);
     }

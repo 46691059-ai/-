@@ -1,0 +1,53 @@
+param([string]$OutputRoot="D:\codex-validation-wf-cap-final-$((Get-Date).ToString('yyyyMMdd-HHmmss'))",[int]$BasePort=36980)
+$ErrorActionPreference='Stop'
+$workspace=(Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+$mysqlHome='C:\Program Files\MySQL\MySQL Server 8.4';$mysqld=Join-Path $mysqlHome 'bin\mysqld.exe';$mysql=Join-Path $mysqlHome 'bin\mysql.exe';$mysqladmin=Join-Path $mysqlHome 'bin\mysqladmin.exe'
+$flyway='C:\Users\WUKONG\AppData\Local\Temp\enterprise-v246-acceptance-68bf692b16d34ee191946695ae0bef9b\flyway-fresh\flyway-13.0.0\flyway.cmd'
+$migrationRoot=Join-Path $workspace 'database\migration\mysql';$baselineRoot=Join-Path $workspace 'database\mysql';$fingerprintSql=Join-Path $baselineRoot 'verification\schema_fingerprint.sql'
+$baselineFiles=@('01_database.sql','02_sys.sql','03_hr.sql','04_party.sql','05_project.sql','06_operation.sql','07_investment.sql','08_data_asset.sql','09_risk.sql','10_init_data.sql','11_sprint_1_user_permissions.sql','12_sprint_1_org_permissions.sql','13_sprint_1_role_permissions.sql','14_sprint_1_rbac_acceptance.sql','15_sprint_1_menu_center.sql','16_sprint_1_log_center.sql','V1.1.0__investment_data_risk_bi.sql')
+foreach($a in @($mysqld,$mysql,$mysqladmin,$flyway,$fingerprintSql)){if(!(Test-Path -LiteralPath $a)){throw "Missing validation asset: $a"}}
+if(Test-Path -LiteralPath $OutputRoot){throw "Disposable root exists: $OutputRoot"};if(!$OutputRoot.StartsWith('D:\codex-validation-wf-cap-final-')){throw 'Unsafe validation root'}
+$evidence=Join-Path $OutputRoot evidence;$full=Join-Path $OutputRoot migrations-full;$to2617=Join-Path $OutputRoot migrations-to-2617;$baseline=Join-Path $OutputRoot baseline
+New-Item -ItemType Directory -Path $evidence,$full,$to2617,$baseline -Force|Out-Null
+Get-ChildItem $migrationRoot -Filter 'V*.sql' -File|Copy-Item -Destination $full
+Get-ChildItem $migrationRoot -Filter 'V*.sql' -File|Where-Object Name -ne 'V2.6.18__create_role_runtime_production_capability_governance.sql'|Copy-Item -Destination $to2617
+foreach($n in $baselineFiles){Copy-Item (Join-Path $baselineRoot $n) (Join-Path $baseline $n)}
+$servers=@();$checks=[Collections.Generic.List[object]]::new();$failures=[Collections.Generic.List[string]]::new()
+function Add($name,[bool]$pass,$proof=''){$checks.Add([ordered]@{name=$name;pass=$pass;proof=$proof});if(!$pass){$failures.Add("$name :: $proof")}}
+function New-Server($name,$port){if(Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue|Where-Object State -ne TimeWait){throw "Port in use $port"};$root=Join-Path $OutputRoot $name;$data=Join-Path $root data;$logs=Join-Path $root logs;New-Item -ItemType Directory $data,$logs -Force|Out-Null;$ini=Join-Path $root my.ini;[IO.File]::WriteAllText($ini,@"
+[mysqld]
+basedir=C:/Program Files/MySQL/MySQL Server 8.4
+datadir=$($data.Replace('\','/'))
+port=$port
+bind-address=127.0.0.1
+mysqlx=0
+skip-log-bin
+character-set-server=utf8mb4
+collation-server=utf8mb4_general_ci
+log-error=$((Join-Path $logs 'mysql.err').Replace('\','/'))
+pid-file=$((Join-Path $root 'mysql.pid').Replace('\','/'))
+secure-file-priv=""
+"@,[Text.UTF8Encoding]::new($false));&$mysqld "--defaults-file=$ini" --initialize-insecure;if($LASTEXITCODE){throw "init failed $name"};$p=Start-Process $mysqld -ArgumentList "--defaults-file=$ini" -WindowStyle Hidden -PassThru;$script:servers+=$p;foreach($i in 1..100){$old=$ErrorActionPreference;$ErrorActionPreference='Continue';&$mysqladmin --protocol=TCP --host=127.0.0.1 --port=$port --user=root ping 2>$null|Out-Null;$c=$LASTEXITCODE;$ErrorActionPreference=$old;if(!$c){return @{Name=$name;Port=$port}};Start-Sleep -Milliseconds 300};throw "not ready $name"}
+function DB($s,$sql,[switch]$raw){$a=@('--protocol=TCP','--host=127.0.0.1',"--port=$($s.Port)",'--user=root','--database=enterprise_platform');if($raw){$a+=@('--batch','--raw','--skip-column-names')};$old=$ErrorActionPreference;$ErrorActionPreference='Continue';$o=&$mysql @a "--execute=$sql" 2>&1;$c=$LASTEXITCODE;$ErrorActionPreference=$old;@{ExitCode=$c;Output=($o-join"`n")}}
+function Baseline($s){foreach($n in $baselineFiles){$f=Join-Path $baseline $n;$a=@('--protocol=TCP','--host=127.0.0.1',"--port=$($s.Port)",'--user=root','--default-character-set=utf8mb4');if($n-ne'01_database.sql'){$a+='--database=enterprise_platform'};&$mysql @a "--execute=source $($f.Replace('\','/'))"|Out-Null;if($LASTEXITCODE){throw "baseline failed $n"}}}
+function Fly($s,$loc,$command,$target=''){$a=@("-url=jdbc:mysql://127.0.0.1:$($s.Port)/enterprise_platform",'-user=root','-password=',"-locations=filesystem:$($loc.Replace('\','/'))",'-baselineOnMigrate=true','-baselineVersion=2.0.0','-validateMigrationNaming=true','-cleanDisabled=true');if($target){$a+="-target=$target"};$a+=$command;$o=&$flyway @a 2>&1;$c=$LASTEXITCODE;$o|Set-Content (Join-Path $evidence "$($s.Name)-$command-$([DateTime]::UtcNow.Ticks).log");if($c){throw ($o-join"`n")};($o-join"`n")}
+function Reject($s,$name,$sql,$expected=''){$r=DB $s $sql;$ok=$r.ExitCode-ne0-and(!$expected-or$r.Output.Contains($expected));Add $name $ok $r.Output}
+function FP($s){$a=@('--protocol=TCP','--host=127.0.0.1',"--port=$($s.Port)",'--user=root','--database=enterprise_platform','--batch','--raw','--skip-column-names');$rows=Get-Content $fingerprintSql -Raw|&$mysql @a;$tr=&$mysql @a '--execute=SELECT CONCAT("TRIGGER|",trigger_name,"|",event_manipulation,"|",event_object_table,"|",action_timing,"|",REPLACE(REPLACE(action_statement,CHAR(13)," "),CHAR(10)," ")) FROM information_schema.triggers WHERE trigger_schema=DATABASE() ORDER BY trigger_name';$all=@($rows)+@($tr);$wf=$all|Where-Object{$_-match'workflow_'};$cap=$all|Where-Object{$_-match'workflow_role_runtime_governance_control|workflow_role_external_audit'};$o=@{};foreach($p in @(@('full',$all),@('workflow',$wf),@('capability',$cap))){$f=Join-Path $evidence "$($s.Name)-$($p[0]).txt";[IO.File]::WriteAllText($f,(($p[1]-join"`n")+"`n"),[Text.UTF8Encoding]::new($false));$o[$p[0]]=(Get-FileHash $f -Algorithm SHA256).Hash.ToLower()};$o}
+try{
+ $fresh=New-Server fresh ($BasePort+1);$upgrade=New-Server upgrade ($BasePort+2);Baseline $fresh;Baseline $upgrade
+ $null=Fly $fresh $full migrate;$null=Fly $fresh $full validate;$noop=Fly $fresh $full migrate;Add FRESH $true;Add FRESH_NOOP ($noop-match'No migration necessary') $noop
+ $null=Fly $upgrade $to2617 migrate '2.6.17';$before=(DB $upgrade "SELECT COUNT(*) FROM flyway_schema_history WHERE success=1" -raw).Output.Trim();$null=Fly $upgrade $full migrate;$null=Fly $upgrade $full validate;$noop2=Fly $upgrade $full migrate;$after=(DB $upgrade "SELECT COUNT(*) FROM flyway_schema_history WHERE success=1" -raw).Output.Trim();Add UPGRADE_ONLY_V2618 (([int]$after-[int]$before)-eq1) "$before->$after";Add UPGRADE_NOOP ($noop2-match'No migration necessary') $noop2
+ $ff=FP $fresh;$uf=FP $upgrade;foreach($k in @('full','workflow','capability')){Add "FINGERPRINT_$($k.ToUpper())" ($ff[$k]-eq$uf[$k]) "$($ff[$k])/$($uf[$k])"}
+ $checksum=(DB $fresh "SELECT checksum FROM flyway_schema_history WHERE version='2.6.18' AND success=1" -raw).Output.Trim()
+ $tables=(DB $fresh "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('workflow_role_runtime_governance_control','workflow_role_external_audit_outbox','workflow_role_external_audit_receipt')" -raw).Output.Trim();Add STRUCTURE_TABLES ($tables-eq'3') $tables
+ $triggers=(DB $fresh "SELECT COUNT(*) FROM information_schema.triggers WHERE trigger_schema=DATABASE() AND trigger_name LIKE 'trg_role_%' AND event_object_table IN ('workflow_role_runtime_governance_control','workflow_role_external_audit_outbox','workflow_role_external_audit_receipt')" -raw).Output.Trim();Add STRUCTURE_TRIGGERS ($triggers-eq'6') $triggers
+ $insert="INSERT INTO workflow_role_runtime_governance_control(id,control_type,scope_type,scope_key,enterprise_id,decision,config_version,effective_from,policy_payload_hash,evidence_hash,changed_by,approved_by,reason,created_by,updated_by) VALUES(990001,'FEATURE_FLAG','WORKFLOW_DEFINITION','WORKFLOW_DEFINITION|E1|DEF:1|VER:1|NODE:1','E1','ON',1,'2026-01-01',REPEAT('a',64),REPEAT('b',64),'release','audit','controlled TEST canary','release','release')";$r=DB $fresh $insert;Add CONTROL_INSERT ($r.ExitCode-eq0) $r.Output
+ Reject $fresh CONTROL_DUPLICATE $insert
+ Reject $fresh CONTROL_UPDATE "UPDATE workflow_role_runtime_governance_control SET decision='OFF' WHERE id=990001" 'ROLE_RUNTIME_CONTROL_APPEND_ONLY'
+ Reject $fresh CONTROL_DELETE "DELETE FROM workflow_role_runtime_governance_control WHERE id=990001" 'ROLE_RUNTIME_CONTROL_APPEND_ONLY'
+ Reject $fresh CONTROL_BAD_HASH "INSERT INTO workflow_role_runtime_governance_control(id,control_type,scope_type,scope_key,decision,config_version,effective_from,policy_payload_hash,evidence_hash,changed_by,approved_by,reason,created_by,updated_by) VALUES(990002,'CANARY','NODE','X','ALLOW',1,'2026-01-01',REPEAT('A',64),REPEAT('b',64),'x','x','x','x','x')"
+ Reject $fresh OUTBOX_ORPHAN "INSERT INTO workflow_role_external_audit_outbox(id,audit_event_id,claim_id,claim_audit_id,provider_code,provider_version,payload_hash,created_by,updated_by) VALUES(990010,'E',999999,999999,'P','V1',REPEAT('a',64),'x','x')"
+ Reject $fresh RECEIPT_ORPHAN "INSERT INTO workflow_role_external_audit_receipt(id,outbox_id,audit_event_id,external_receipt_id,provider_code,provider_version,received_at,payload_hash,receipt_hash,status,created_by,updated_by) VALUES(990011,999999,'E','R','P','V1',NOW(3),REPEAT('a',64),REPEAT('b',64),'ACCEPTED','x','x')"
+ $history=(DB $fresh "SELECT installed_rank,version,description,checksum,success FROM flyway_schema_history ORDER BY installed_rank" -raw).Output;$history|Set-Content (Join-Path $evidence history.txt)
+ $summary=[ordered]@{result=if($failures.Count){'FAIL'}else{'PASS'};outputRoot=$OutputRoot;mysql=(&$mysql --version);flyway=((&$flyway -v 2>&1)-join' ');sha256=(Get-FileHash (Join-Path $migrationRoot 'V2.6.18__create_role_runtime_production_capability_governance.sql') -Algorithm SHA256).Hash.ToLower();flywayChecksum=$checksum;freshFingerprint=$ff;upgradeFingerprint=$uf;checks=$checks;failures=$failures};$summary|ConvertTo-Json -Depth 8|Set-Content (Join-Path $evidence summary.json);$summary|ConvertTo-Json -Depth 8;if($failures.Count){exit 2}
+}finally{foreach($s in @($fresh,$upgrade)){if($null-ne$s){$old=$ErrorActionPreference;$ErrorActionPreference='Continue';&$mysqladmin --protocol=TCP --host=127.0.0.1 --port=$s.Port --user=root shutdown 2>$null|Out-Null;$ErrorActionPreference=$old}};foreach($p in $servers){if(!$p.HasExited){Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue}}}

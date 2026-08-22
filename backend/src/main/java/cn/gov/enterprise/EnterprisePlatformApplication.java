@@ -8,6 +8,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @MapperScan({
         "cn.gov.enterprise.modules.project.mapper",
         "cn.gov.enterprise.modules.investment.infrastructure.persistence.mapper",
+        "cn.gov.enterprise.modules.workflow.infrastructure.persistence.mapper",
+        "cn.gov.enterprise.modules.workflow.infrastructure.eligibility",
+        "cn.gov.enterprise.modules.organization.approvalrole.infrastructure.persistence.mapper",
         "cn.gov.enterprise.modules.system.mapper",
         "cn.gov.enterprise.modules.system.user.mapper",
         "cn.gov.enterprise.modules.system.org.mapper",

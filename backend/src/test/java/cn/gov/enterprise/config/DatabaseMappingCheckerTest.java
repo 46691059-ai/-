@@ -25,7 +25,7 @@ class DatabaseMappingCheckerTest {
         assertColumns(SysRoleEntity.class,
                 "role_name", "role_code", "description", "data_scope_type", "status");
         assertColumns(SysMenuEntity.class,
-                "menu_name", "parent_id", "menu_type", "path", "component", "permission", "icon",
+                "menu_code", "menu_name", "parent_id", "menu_type", "path", "component", "permission", "icon",
                 "sort_no", "visible", "status");
         assertColumns(SysOrgEntity.class,
                 "org_code", "org_name", "org_type", "parent_id", "leader_id", "tree_path", "tree_level",

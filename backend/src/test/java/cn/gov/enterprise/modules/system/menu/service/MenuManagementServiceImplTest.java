@@ -53,12 +53,13 @@ class MenuManagementServiceImplTest {
         when(menuMapper.selectCount(any())).thenReturn(0L);
         when(permissionMapper.selectCount(any())).thenReturn(1L);
 
-        service.create(new MenuCreateRequest(940L, "菜单新增", "b", "/ignored", "ignored",
+        service.create(new MenuCreateRequest(940L, "system.menu.create", "菜单新增", "b", "/ignored", "ignored",
                 "menu:add", null, 1, 1));
 
         ArgumentCaptor<SysMenuEntity> captor = ArgumentCaptor.forClass(SysMenuEntity.class);
         verify(menuMapper).insert(captor.capture());
         assertThat(captor.getValue().getMenuType()).isEqualTo("B");
+        assertThat(captor.getValue().getMenuCode()).isEqualTo("system.menu.create");
         assertThat(captor.getValue().getVisible()).isZero();
         assertThat(captor.getValue().getPath()).isNull();
         assertThat(captor.getValue().getComponent()).isNull();
@@ -80,19 +81,31 @@ class MenuManagementServiceImplTest {
         current.setVersion(0);
         when(menuMapper.selectById(940L)).thenReturn(current);
         when(menuMapper.selectById(900L)).thenReturn(menu(900L, "M", "system:view"));
-        when(menuMapper.selectCount(any())).thenReturn(0L);
         when(permissionMapper.selectCount(any())).thenReturn(1L);
         when(managementMapper.countRoleBindings(940L)).thenReturn(1L);
 
         assertThatThrownBy(() -> service.update(new MenuUpdateRequest(
-                940L, 0, 900L, "菜单管理", "C", "/system/menu", "system/menu/index",
+                940L, 0, "system.menu.view", 900L, "菜单管理", "C", "/system/menu", "system/menu/index",
                 "system:menu:changed", "Menu", 4, 1)))
                 .isInstanceOf(BusinessException.class).hasMessageContaining("不能修改权限标识");
+    }
+
+    @Test
+    void updateRejectsStableMenuCodeChange() {
+        SysMenuEntity current = menu(940L, "C", "system:menu:view");
+        current.setVersion(0);
+        when(menuMapper.selectById(940L)).thenReturn(current);
+
+        assertThatThrownBy(() -> service.update(new MenuUpdateRequest(
+                940L, 0, "system.menu.changed", 900L, "菜单管理", "C",
+                "/system/menu", "system/menu/index", "system:menu:view", "Menu", 4, 1)))
+                .isInstanceOf(BusinessException.class).hasMessage("菜单业务编码创建后不可修改");
     }
 
     private SysMenuEntity menu(Long id, String type, String permission) {
         SysMenuEntity menu = new SysMenuEntity();
         menu.setId(id); menu.setMenuName(permission); menu.setMenuType(type);
+        menu.setMenuCode(permission.replace(':', '.'));
         menu.setPermission(permission); menu.setStatus(1); menu.setSortNo(1); menu.setVisible(1);
         return menu;
     }

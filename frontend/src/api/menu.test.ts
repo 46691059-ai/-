@@ -17,8 +17,8 @@ describe('menu api', () => {
 
     await getMenuTree()
     await getMenuPage({ page: 1, size: 20 })
-    await createMenu({ menuName: '菜单', menuType: 'C', path: '/menu', sort: 1, status: 1 })
-    await updateMenu({ id: '940', version: 0, menuName: '菜单', menuType: 'C', path: '/menu', sort: 1, status: 1 })
+    await createMenu({ menuCode: 'system.menu', menuName: '菜单', menuType: 'C', path: '/menu', sort: 1, status: 1 })
+    await updateMenu({ id: '940', version: 0, menuCode: 'system.menu', menuName: '菜单', menuType: 'C', path: '/menu', sort: 1, status: 1 })
     await deleteMenu('940')
 
     expect(request.get).toHaveBeenCalledWith('/system/menu/tree')
