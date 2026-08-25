@@ -50,7 +50,20 @@ final class WorkflowResolverBindingEntityMapper {
         entity.setId(value.id()); entity.setBindingSetId(value.bindingSetId());
         entity.setResolverBindingId(value.resolverBindingId()); entity.setInstanceId(value.instanceId());
         entity.setDefinitionVersionId(value.definitionVersionId()); entity.setNodeId(value.nodeId());
-        entity.setNodeCodeSnapshot(value.nodeCodeSnapshot()); entity.setStrategyType(value.strategyType().name());
+        entity.setNodeCodeSnapshot(value.nodeCodeSnapshot());
+        entity.setVersionBindingId(value.versionBindingId());
+        entity.setVersionBindingOrder(value.versionBindingOrder());
+        entity.setVersionBindingHash(value.versionBindingHash());
+        entity.setResolverContractHashSnapshot(value.resolverContractHashSnapshot() == null
+                ? null : value.resolverContractHashSnapshot().value());
+        entity.setRoleCode(value.roleCode());
+        entity.setOrganizationScopeType(value.organizationScopeType() == null
+                ? null : value.organizationScopeType().name());
+        entity.setResolvedOrganizationId(value.resolvedOrganizationId());
+        entity.setEffectiveTimePolicy(value.effectiveTimePolicy() == null
+                ? null : value.effectiveTimePolicy().name());
+        entity.setBindingSchemaVersion(value.bindingSchemaVersion());
+        entity.setStrategyType(value.strategyType().name());
         entity.setResolverMode(value.resolverMode().name()); entity.setTargetType(value.targetType().name());
         entity.setTargetValueSnapshot(value.targetValueSnapshot()); entity.setRuleVersion(value.ruleVersion());
         entity.setRuleSnapshot(value.ruleSnapshot()); entity.setRuleHash(value.ruleSnapshotHash());
@@ -65,6 +78,16 @@ final class WorkflowResolverBindingEntityMapper {
                 AssignmentStrategy.Type.valueOf(entity.getStrategyType()), ResolverMode.valueOf(entity.getResolverMode()),
                 AssignmentStrategy.Type.valueOf(entity.getTargetType()), entity.getTargetValueSnapshot(),
                 entity.getRuleVersion(), entity.getRuleSnapshot(), entity.getRuleHash(), entity.getNodeBindingHash(),
+                entity.getVersionBindingId(), entity.getVersionBindingOrder(), entity.getVersionBindingHash(),
+                entity.getResolverContractHashSnapshot() == null ? null
+                        : ResolverContractHash.of(entity.getResolverContractHashSnapshot()),
+                entity.getRoleCode(), entity.getOrganizationScopeType() == null ? null
+                        : cn.gov.enterprise.modules.workflow.domain.binding.OrganizationScopeType.valueOf(
+                                entity.getOrganizationScopeType()),
+                entity.getResolvedOrganizationId(), entity.getEffectiveTimePolicy() == null ? null
+                        : cn.gov.enterprise.modules.workflow.domain.binding.EffectiveTimePolicy.valueOf(
+                                entity.getEffectiveTimePolicy()),
+                entity.getBindingSchemaVersion(),
                 WorkflowResolverBindingSet.Status.valueOf(entity.getBindingStatus()), entity.getFrozenTime(),
                 entity.getAuditInfo(), entity.getVersion());
     }

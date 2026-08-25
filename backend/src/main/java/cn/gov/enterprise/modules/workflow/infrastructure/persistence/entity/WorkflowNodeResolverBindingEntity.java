@@ -15,6 +15,16 @@ public class WorkflowNodeResolverBindingEntity extends WorkflowAuditedEntity {
     private Long definitionVersionId;
     private Long nodeId;
     private String nodeCodeSnapshot;
+    private Long versionBindingId;
+    private Integer versionBindingOrder;
+    private Integer versionBindingSlot;
+    private String versionBindingHash;
+    private String resolverContractHashSnapshot;
+    private String roleCode;
+    private String organizationScopeType;
+    private Long resolvedOrganizationId;
+    private String effectiveTimePolicy;
+    private String bindingSchemaVersion;
     private String strategyType;
     private String resolverMode;
     private String targetType;

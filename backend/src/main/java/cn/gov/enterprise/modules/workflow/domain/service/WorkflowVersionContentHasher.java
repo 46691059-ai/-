@@ -4,11 +4,7 @@ import cn.gov.enterprise.modules.workflow.domain.model.WorkflowDefinition;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowNode;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowVersion;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowTransition;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,12 +53,7 @@ public final class WorkflowVersionContentHasher {
     }
 
     private String digest(StringBuilder canonical) {
-        try {
-            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
-                    .digest(canonical.toString().getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256 is unavailable", exception);
-        }
+        return WorkflowCanonicalHashSupport.sha256(canonical.toString());
     }
 
     private void appendNode(StringBuilder target, WorkflowNode node) {

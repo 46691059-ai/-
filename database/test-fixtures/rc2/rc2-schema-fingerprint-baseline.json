@@ -1,0 +1,12 @@
+{
+  "contract": "RC2_SCHEMA_FINGERPRINT_BASELINE_V2",
+  "canonicalVersion": "RC2_SCHEMA_STRUCTURAL_CANONICAL_V2",
+  "mysqlVersion": "8.4.9",
+  "latestMigration": "2.6.23",
+  "migrationShaCount": 45,
+  "structuralFingerprint": "92ea9f4d006233f672b22c3c335663c04121dbb652ce657aac07d7b04518171d",
+  "metadataFingerprint": "2d01817ef3853231cc32f4275577984138c67a9461664fbf28d98c8a6e5e0c03",
+  "previousStructuralFingerprint": "154c19d739393a00b2dd84631be3753c8adfe4c9557059616331e142716f77c2",
+  "rootCauseClassification": "EXPECTED_BASELINE_GENERATED_WITH_OLD_ALGORITHM",
+  "changeReason": "The previous unversioned mock baseline had no reproducible canonical text. V2 is derived from two independent Fresh databases and one V2.6.22-to-V2.6.23 Upgrade database using the audited runtime-structural field set."
+}

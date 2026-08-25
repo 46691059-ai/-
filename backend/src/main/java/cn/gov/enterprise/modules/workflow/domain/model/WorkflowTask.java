@@ -108,6 +108,29 @@ public record WorkflowTask(
                 null, null, null, 0, AssignmentMode.DIRECT);
     }
 
+    /** Materializes an unclaimed ROLE Candidate Pool task after a Node is ACTIVE. */
+    public static WorkflowTask pendingCandidatePool(
+            Long id, String taskNo, WorkflowInstance instance,
+            WorkflowNodeExecution execution, String candidateSnapshot,
+            LocalDateTime dueTime) {
+        if (instance.engineMode() != WorkflowEngineMode.MULTI_NODE_LINEAR_V1
+                || !instance.id().equals(execution.instanceId())
+                || !instance.versionId().equals(execution.versionId())
+                || execution.status() != WorkflowNodeExecution.Status.ACTIVE
+                || execution.activatedTime() == null) {
+            throw new IllegalArgumentException(
+                    "Candidate Pool task requires a matching ACTIVE execution");
+        }
+        String participantKey = execution.nodeCodeSnapshot() + ":"
+                + execution.visitNo() + ":ROLE_POOL";
+        return new WorkflowTask(id, taskNo, instance.id(), instance.versionId(),
+                execution.nodeId(), execution.id(), execution.nodeCodeSnapshot(),
+                execution.nodeNameSnapshot(), 1, participantKey, null,
+                required(candidateSnapshot, "candidateSnapshot", 65535), Status.PENDING,
+                "CLAIM,APPROVE,REJECT", null, dueTime, null, null, null, 0,
+                AssignmentMode.CANDIDATE_POOL);
+    }
+
     public WorkflowTask approve(Long operatorUserId, LocalDateTime actionTime) {
         requireProcessable("APPROVE");
         return complete(Status.APPROVED, "APPROVED", operatorUserId, actionTime);

@@ -1,5 +1,5 @@
 inventory_version: 2
-generated_at: "2026-08-20"
+generated_at: "2026-08-24"
 scope: "repository assets plus isolated MySQL 8 acceptance evidence; no managed or production database history was queried"
 canonical_scan_root: "database/migration/{vendor}"
 
@@ -761,6 +761,61 @@ acceptance_runs:
     report: "docs/approval-role-directory-v1-implementation-validation-report.md"
     note: "Validated Organization/Governance Approval Role Directory V1 only. Workflow ROLE_DIRECTORY_V1 remains PREPARED/non-executable and Directory connectivity remains blocked."
 
+  - id: "workflow-v1-rc2-s5-1-v2622-20260824"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation_to_2.6.22", "upgrade_from_2.6.21"]
+    history_success_rows: 45
+    history_failed_rows: 0
+    strict_validate: true
+    idempotent_migrate: true
+    v2622_sha256: "658b4939a7e92295527ef3a5116d20814b0d17e4c34e46f3955e4c21c67dcc05"
+    v2622_flyway_checksum: 410640379
+    full_schema_fingerprint_sha256: "bd4a35a7471e0e880c2c30640cdfa18014a43d48dbe1e65c266330b25da17d18"
+    role_user_combination_matrix: "PASS"
+    fixed_org_matrix: "PASS"
+    multi_binding_schema: "PASS"
+    snapshot_immutability: "PASS"
+    legacy_user_compatibility: "PASS"
+    migration_sha: "PASS_44_OF_44"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    result: "PASS"
+    report: "docs/workflow-v2622-real-mysql-validation-report.md"
+    note: "Validated Version ROLE binding provenance freeze only. ROLE Runtime remains disabled, Canary remains unauthorized, RC1 TEST database was not touched, and the separate S4 real-MySQL concurrency debt remains open."
+
+  - id: "workflow-v1-rc2-s7-v2623-20260824"
+    environment: "EPHEMERAL_LOCAL_MYSQL"
+    database: "MySQL Community Server 8.4.9"
+    flyway: "13.0.0"
+    java: "21.0.12"
+    maven: "3.9.9"
+    scan_root: "byte-identical isolated copy of database/migration/mysql"
+    baseline_version: "2.0.0"
+    validation_paths: ["fresh_foundation_to_2.6.23", "upgrade_from_2.6.22"]
+    history_success_rows: 46
+    history_failed_rows: 0
+    strict_validate: true
+    idempotent_migrate: true
+    v2623_sha256: "874427e1df075042485c9098ad2f1b79dbc632200f01614f85529b30765c169d"
+    v2623_flyway_checksum: 445023774
+    full_schema_fingerprint_sha256: "ffcd3b9c031c6a8521fe4cbdb1d3c248e49c50e2ccfa4860ce9aea04b5caacd0"
+    target_table_count: 3
+    added_column_count: 3
+    real_mapper_null_remark: "PASS"
+    real_mapper_non_null_remark: "PASS"
+    workflow_mapping_drift_count: 0
+    migration_sha: "PASS_45_OF_45"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    result: "PASS"
+    report: "docs/workflow-v2623-realtime-eligibility-remark-validation-report.md"
+    evidence_root: "D:/codex-rc2-v2623-20260824-111106/evidence"
+    note: "Adds only nullable remark columns to the three audited realtime eligibility evidence tables. ROLE Runtime and Canary remain disabled; RC1 TEST database was not touched; S4 real-MySQL concurrency debt remains open."
+
 candidate_assets: []
 
 failed_candidate_archive:
@@ -808,6 +863,62 @@ failed_candidate_archive:
     report: "docs/workflow-role-runtime-activation-evidence-v2613-validation-report.md"
 
 canonical_assets:
+  - version: "2.6.23"
+    canonical_file: "database/migration/mysql/V2.6.23__add_workflow_realtime_eligibility_remark.sql"
+    module: "workflow/realtime-eligibility-mapping-contract"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "874427e1df075042485c9098ad2f1b79dbc632200f01614f85529b30765c169d"
+    flyway_checksum: 445023774
+    depends_on: ["2.6.22"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only disposable instances"
+    validation_paths: ["fresh_foundation_to_2.6.23", "upgrade_from_2.6.22"]
+    schema_fingerprint_sha256: "ffcd3b9c031c6a8521fe4cbdb1d3c248e49c50e2ccfa4860ce9aea04b5caacd0"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "Adds nullable WorkflowAuditedEntity remark columns to exactly three realtime eligibility evidence tables; no indexes, triggers, hashes or runtime behavior changed"
+    report: "docs/workflow-v2623-realtime-eligibility-remark-validation-report.md"
+    evidence_roots:
+      - "D:/codex-rc2-v2623-20260824-111106/evidence"
+  - version: "2.6.22"
+    canonical_file: "database/migration/mysql/V2.6.22__extend_workflow_instance_role_resolver_binding.sql"
+    module: "workflow/instance-resolver-binding-freeze"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "658b4939a7e92295527ef3a5116d20814b0d17e4c34e46f3955e4c21c67dcc05"
+    flyway_checksum: 410640379
+    depends_on: ["2.6.21"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only disposable instances"
+    validation_paths: ["fresh_foundation_to_2.6.22", "upgrade_from_2.6.21"]
+    schema_fingerprint_sha256: "bd4a35a7471e0e880c2c30640cdfa18014a43d48dbe1e65c266330b25da17d18"
+    strict_validate: true
+    idempotent_migrate: true
+    scope: "Freezes published Version ROLE resolver provenance into Instance and Node snapshots; Directory, Candidate, Task, Claim, ROLE Runtime and Canary remain outside"
+    report: "docs/workflow-v2622-real-mysql-validation-report.md"
+  - version: "2.6.21"
+    canonical_file: "database/migration/mysql/V2.6.21__create_workflow_version_resolver_binding.sql"
+    module: "workflow/definition-resolver-binding"
+    asset_status: "CANONICAL_IMMUTABLE"
+    execution_status: "EPHEMERAL_MYSQL8_VALIDATED"
+    automatic_scan: true
+    sha256: "cb9555ba5f81c292654286fe8c7396cdead4b71c9387c4b73d09139d4147296e"
+    flyway_checksum: -698735620
+    depends_on: ["2.6.20"]
+    validation_environment: "MySQL Community Server 8.4.9 / Flyway 13.0.0 / isolated loopback-only disposable instances"
+    validation_paths: ["fresh_to_2.6.21", "upgrade_from_2.6.20"]
+    schema_fingerprint_sha256: "25c12ff7e7d50a4c44f7c261b92e29817914a324262b57c225294cefa62fd4ff"
+    strict_validate: true
+    idempotent_migrate: true
+    negative_matrix: "PASS"
+    immutability_trigger_matrix: "PASS"
+    legacy_compatibility: true
+    publish_sequence_feasible: true
+    scope: "Version-level ROLE resolver binding, immutable publication manifest, and Version/Release binding snapshots only; ROLE Runtime and Canary remain disabled"
+    report: "docs/workflow-v2621-real-mysql-validation-report.md"
+    evidence_roots:
+      - "D:/codex-rc2-v2621-20260822-165045/evidence"
   - version: "2.6.20"
     canonical_file: "database/migration/mysql/V2.6.20__create_approval_role_directory_provider_audit.sql"
     module: "organization/approval-role-directory"

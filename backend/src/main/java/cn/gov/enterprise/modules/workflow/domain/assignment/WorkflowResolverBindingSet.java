@@ -14,7 +14,7 @@ public record WorkflowResolverBindingSet(
     public WorkflowResolverBindingSet {
         positive(id, "id"); positive(instanceId, "instanceId");
         positive(definitionId, "definitionId"); positive(definitionVersionId, "definitionVersionId");
-        manifestVersion = required(manifestVersion, "manifestVersion", 32);
+        manifestVersion = required(manifestVersion, "manifestVersion", 64);
         sha256(bindingSetHash, "bindingSetHash");
         if (bindingCount <= 0) throw new IllegalArgumentException("bindingCount must be positive");
         Objects.requireNonNull(status, "status");

@@ -6,8 +6,18 @@ import cn.gov.enterprise.modules.workflow.application.command.CreateWorkflowVers
 import cn.gov.enterprise.modules.workflow.application.command.ReplaceWorkflowNodesCommand;
 import cn.gov.enterprise.modules.workflow.application.command.PublishWorkflowVersionCommand;
 import cn.gov.enterprise.modules.workflow.application.vo.WorkflowDefinitionDetail;
+import cn.gov.enterprise.modules.workflow.domain.assignment.AssignmentResolverDescriptor;
+import cn.gov.enterprise.modules.workflow.domain.assignment.AssignmentResolverRegistryException;
+import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverRegistry;
+import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverStatus;
+import cn.gov.enterprise.modules.workflow.domain.binding.ResolverBindingManifest;
+import cn.gov.enterprise.modules.workflow.domain.binding.ResolverBindingManifestCanonical;
+import cn.gov.enterprise.modules.workflow.domain.binding.ResolverBindingManifestComputation;
+import cn.gov.enterprise.modules.workflow.domain.binding.VersionNodeResolverBinding;
+import cn.gov.enterprise.modules.workflow.domain.binding.VersionNodeResolverBindingComputation;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowDefinition;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowNode;
+import cn.gov.enterprise.modules.workflow.domain.model.ResolverBindingModel;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowVersion;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowVersionRelease;
 import cn.gov.enterprise.modules.workflow.domain.repository.WorkflowDefinitionRepository;
@@ -16,9 +26,13 @@ import cn.gov.enterprise.modules.workflow.domain.repository.WorkflowNodeReposito
 import cn.gov.enterprise.modules.workflow.domain.repository.WorkflowVersionRepository;
 import cn.gov.enterprise.modules.workflow.domain.repository.WorkflowVersionReleaseRepository;
 import cn.gov.enterprise.modules.workflow.domain.repository.WorkflowTransitionRepository;
+import cn.gov.enterprise.modules.workflow.domain.repository.ResolverBindingManifestRepository;
+import cn.gov.enterprise.modules.workflow.domain.repository.VersionNodeResolverBindingRepository;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowEngineMode;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowTransition;
 import cn.gov.enterprise.modules.workflow.domain.service.WorkflowLinearGraphValidator;
+import cn.gov.enterprise.modules.workflow.domain.service.ResolverBindingCoveragePolicy;
+import cn.gov.enterprise.modules.workflow.domain.service.WorkflowCombinedContentHasher;
 import cn.gov.enterprise.modules.workflow.domain.service.WorkflowVersionContentHasher;
 import cn.gov.enterprise.security.CurrentSecurityContext;
 import cn.gov.enterprise.security.SecurityPrincipal;
@@ -42,9 +56,16 @@ public class WorkflowDefinitionApplicationService {
     private final WorkflowIdentityGenerator identityGenerator;
     private final WorkflowVersionReleaseRepository releaseRepository;
     private final WorkflowTransitionRepository transitionRepository;
+    private final VersionNodeResolverBindingRepository bindingRepository;
+    private final ResolverBindingManifestRepository manifestRepository;
+    private final ResolverRegistry resolverRegistry;
     private final CurrentSecurityContext securityContext;
     private final WorkflowVersionContentHasher contentHasher = new WorkflowVersionContentHasher();
     private final WorkflowLinearGraphValidator graphValidator = new WorkflowLinearGraphValidator();
+    private final ResolverBindingCoveragePolicy bindingCoveragePolicy =
+            new ResolverBindingCoveragePolicy();
+    private final WorkflowCombinedContentHasher combinedContentHasher =
+            new WorkflowCombinedContentHasher();
 
     @Autowired
     public WorkflowDefinitionApplicationService(
@@ -54,6 +75,9 @@ public class WorkflowDefinitionApplicationService {
             WorkflowIdentityGenerator identityGenerator,
             WorkflowVersionReleaseRepository releaseRepository,
             WorkflowTransitionRepository transitionRepository,
+            VersionNodeResolverBindingRepository bindingRepository,
+            ResolverBindingManifestRepository manifestRepository,
+            ResolverRegistry resolverRegistry,
             CurrentSecurityContext securityContext) {
         this.definitionRepository = definitionRepository;
         this.versionRepository = versionRepository;
@@ -61,6 +85,9 @@ public class WorkflowDefinitionApplicationService {
         this.identityGenerator = identityGenerator;
         this.releaseRepository = releaseRepository;
         this.transitionRepository = transitionRepository;
+        this.bindingRepository = bindingRepository;
+        this.manifestRepository = manifestRepository;
+        this.resolverRegistry = resolverRegistry;
         this.securityContext = securityContext;
     }
 
@@ -73,7 +100,8 @@ public class WorkflowDefinitionApplicationService {
             WorkflowVersionReleaseRepository releaseRepository,
             CurrentSecurityContext securityContext) {
         this(definitionRepository, versionRepository, nodeRepository, identityGenerator,
-                releaseRepository, null, securityContext);
+                releaseRepository, null, null, null, ResolverRegistry.explicitUserOnly(),
+                securityContext);
     }
 
     @Transactional
@@ -196,9 +224,29 @@ public class WorkflowDefinitionApplicationService {
                 ? requireTransitionRepository().findByVersionId(versionId) : List.of();
         validatePublishable(definition, target, nodes, transitions);
         LocalDateTime publishedTime = LocalDateTime.now();
-        String contentHash = target.engineMode() == WorkflowEngineMode.MULTI_NODE_LINEAR_V1
+
+        WorkflowVersion prepared = target;
+        ResolverBindingManifestComputation manifestComputation = null;
+        if (target.resolverBindingModel()
+                == ResolverBindingModel.VERSION_RESOLVER_BINDING_CAPABLE) {
+            List<VersionNodeResolverBinding> bindings = requireBindingRepository()
+                    .findByVersionId(versionId);
+            validateBindings(definition, target, nodes, bindings);
+            manifestComputation = ResolverBindingManifestCanonical.compute(bindings);
+            persistComputedBindingHashes(manifestComputation);
+            prepared = target.prepareResolverBindingSnapshot(
+                    manifestComputation.manifestHash(), manifestComputation.bindingCount(),
+                    manifestComputation.canonicalVersion());
+            if (!versionRepository.prepareResolverBindingSnapshot(prepared, target.version())) {
+                throw concurrentChange("workflow version resolver binding snapshot");
+            }
+        }
+
+        String graphHash = target.engineMode() == WorkflowEngineMode.MULTI_NODE_LINEAR_V1
                 ? contentHasher.hashGraph(definition, target, nodes, transitions)
                 : contentHasher.hash(definition, target, nodes);
+        String contentHash = combinedContentHasher.compute(
+                target.resolverBindingModel(), graphHash, manifestComputation).contentHash();
 
         WorkflowVersion previous = null;
         if (definition.currentVersionId() != null) {
@@ -208,15 +256,25 @@ public class WorkflowDefinitionApplicationService {
             if (previous.status() != WorkflowVersion.Status.PUBLISHED) {
                 throw new BusinessException("B2503", "workflow definition current version is not PUBLISHED");
             }
-            WorkflowVersion retired = previous.retire(publishedTime);
-            if (!versionRepository.updateState(retired, WorkflowVersion.Status.PUBLISHED, previous.version())) {
-                throw concurrentChange("current workflow version");
-            }
         }
 
-        WorkflowVersion published = target.publish(contentHash, principal.userId(), publishedTime);
-        if (!versionRepository.updateState(published, WorkflowVersion.Status.DRAFT, target.version())) {
+        if (manifestComputation != null) {
+            requireManifestRepository().append(new ResolverBindingManifest(
+                    identityGenerator.nextId(), definitionId, versionId,
+                    manifestComputation.canonicalVersion(), manifestComputation.bindingCount(),
+                    manifestComputation.manifestHash(), principal.userId(), publishedTime));
+        }
+
+        WorkflowVersion published = prepared.publish(contentHash, principal.userId(), publishedTime);
+        if (!versionRepository.updateState(published, WorkflowVersion.Status.DRAFT, prepared.version())) {
             throw concurrentChange("workflow version");
+        }
+        if (previous != null) {
+            WorkflowVersion retired = previous.retire(publishedTime);
+            if (!versionRepository.updateState(
+                    retired, WorkflowVersion.Status.PUBLISHED, previous.version())) {
+                throw concurrentChange("current workflow version");
+            }
         }
         WorkflowDefinition activated = definition.activateVersion(published.id());
         if (!definitionRepository.updateCurrentVersion(activated, definition.version())) {
@@ -227,9 +285,54 @@ public class WorkflowDefinitionApplicationService {
                 principal.userId(), principal.orgId(), publishedTime, MDC.get("traceId"),
                 published.engineMode().name() + " validated; previous="
                         + (previous == null ? "NONE" : previous.id())
+                        + "; resolverBindingModel=" + published.resolverBindingModel().name()
+                        + "; bindingCount=" + published.resolverBindingCount()
+                        + (published.resolverBindingManifestHash() == null ? ""
+                        : "; manifestHash=" + published.resolverBindingManifestHash())
+                        + "; contentHash=" + published.contentHash()
                         + (command.reason() == null ? "" : "; reason=" + command.reason().trim()),
-                published.engineMode(), published.contentHashAlgorithm()));
+                published.engineMode(), published.contentHashAlgorithm(),
+                published.resolverBindingModel(), published.resolverBindingManifestHash(),
+                published.resolverBindingCount(), published.resolverBindingCanonicalVersion()));
         return new WorkflowDefinitionDetail.VersionDetail(published, nodes);
+    }
+
+    private void validateBindings(
+            WorkflowDefinition definition, WorkflowVersion version,
+            List<WorkflowNode> nodes, List<VersionNodeResolverBinding> bindings) {
+        try {
+            bindingCoveragePolicy.validate(definition.id(), version.id(), nodes, bindings);
+        } catch (IllegalStateException exception) {
+            throw invalid(exception);
+        }
+        for (VersionNodeResolverBinding binding : bindings) {
+            try {
+                AssignmentResolverDescriptor descriptor = requireResolverRegistry()
+                        .requireDescriptor(binding.resolverCode(), binding.resolverVersion());
+                if (!descriptor.contractHash().equals(binding.resolverContractHash())) {
+                    throw new BusinessException("B2624", "resolver contract drift blocks publication");
+                }
+                if (descriptor.strategyType() != binding.strategyType()
+                        || descriptor.mode() != binding.resolverMode()
+                        || (descriptor.status() != ResolverStatus.PREPARED
+                        && descriptor.status() != ResolverStatus.ACTIVE)) {
+                    throw new BusinessException("B2620", "resolver descriptor is incompatible with binding");
+                }
+            } catch (AssignmentResolverRegistryException exception) {
+                throw new BusinessException("B2624", "resolver does not exist for Version binding");
+            }
+        }
+    }
+
+    private void persistComputedBindingHashes(
+            ResolverBindingManifestComputation manifest) {
+        for (VersionNodeResolverBindingComputation computation : manifest.orderedBindings()) {
+            VersionNodeResolverBinding binding = computation.binding();
+            if (!computation.bindingHash().equals(binding.bindingHash())) {
+                requireBindingRepository().update(
+                        binding.withBindingHash(computation.bindingHash()));
+            }
+        }
     }
 
     private WorkflowDefinition requireDefinition(Long id) {
@@ -281,6 +384,27 @@ public class WorkflowDefinitionApplicationService {
             throw new BusinessException("B2500", "workflow transition repository is unavailable");
         }
         return transitionRepository;
+    }
+
+    private VersionNodeResolverBindingRepository requireBindingRepository() {
+        if (bindingRepository == null) {
+            throw new BusinessException("B2620", "Version resolver binding repository is unavailable");
+        }
+        return bindingRepository;
+    }
+
+    private ResolverBindingManifestRepository requireManifestRepository() {
+        if (manifestRepository == null) {
+            throw new BusinessException("B2620", "resolver binding manifest repository is unavailable");
+        }
+        return manifestRepository;
+    }
+
+    private ResolverRegistry requireResolverRegistry() {
+        if (resolverRegistry == null) {
+            throw new BusinessException("B2620", "resolver registry is unavailable");
+        }
+        return resolverRegistry;
     }
 
     private void requireManagementScope(WorkflowDefinition definition, SecurityPrincipal principal) {

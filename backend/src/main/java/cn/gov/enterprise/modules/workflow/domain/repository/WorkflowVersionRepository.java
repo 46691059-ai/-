@@ -10,5 +10,6 @@ public interface WorkflowVersionRepository {
     List<WorkflowVersion> findByDefinitionId(Long definitionId);
     int nextVersionNo(Long definitionId);
     void save(WorkflowVersion version);
+    boolean prepareResolverBindingSnapshot(WorkflowVersion version, int expectedVersion);
     boolean updateState(WorkflowVersion version, WorkflowVersion.Status expectedStatus, int expectedVersion);
 }

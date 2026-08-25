@@ -45,11 +45,24 @@ public class WorkflowVersionRepositoryImpl implements WorkflowVersionRepository 
     }
 
     @Override
+    public boolean prepareResolverBindingSnapshot(
+            WorkflowVersion workflowVersion, int expectedVersion) {
+        return mapper.prepareResolverBindingSnapshot(
+                workflowVersion.id(), workflowVersion.resolverBindingManifestHash(),
+                workflowVersion.resolverBindingCount(),
+                workflowVersion.resolverBindingCanonicalVersion(),
+                audit.operator(), expectedVersion) == 1;
+    }
+
+    @Override
     public boolean updateState(WorkflowVersion workflowVersion, WorkflowVersion.Status expectedStatus,
                                int expectedVersion) {
         return mapper.updateState(workflowVersion.id(), workflowVersion.status().name(),
                 workflowVersion.contentHash(), workflowVersion.effectiveFrom(), workflowVersion.effectiveTo(),
-                workflowVersion.publishedBy(), workflowVersion.publishedTime(), audit.operator(),
+                workflowVersion.publishedBy(), workflowVersion.publishedTime(),
+                workflowVersion.resolverBindingModel().name(),
+                workflowVersion.resolverBindingManifestHash(), workflowVersion.resolverBindingCount(),
+                workflowVersion.resolverBindingCanonicalVersion(), audit.operator(),
                 expectedStatus.name(), expectedVersion) == 1;
     }
 }

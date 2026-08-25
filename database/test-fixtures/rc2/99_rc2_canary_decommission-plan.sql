@@ -1,0 +1,8 @@
+-- GOVERNED_STATE_TRANSITION plan; this file is intentionally non-executable documentation SQL.
+-- Approval assignments MUST be ended through ApprovalRoleCommandService.endAssignment so a new
+-- canonical Directory Revision and CAS head are appended. The role MUST then be deactivated through
+-- ApprovalRoleCommandService.deactivateRole. Never DELETE revision, manifest, release, or audit facts.
+-- After Directory governance succeeds, the fixture seeder performs version/definition/user/org CAS
+-- state transitions. Physical DELETE, TRUNCATE, INSERT IGNORE, REPLACE and upsert are forbidden.
+-- Historical workflow_version_release, workflow_version_resolver_binding_manifest,
+-- approval_role_revision and provider audit evidence remain immutable and queryable.

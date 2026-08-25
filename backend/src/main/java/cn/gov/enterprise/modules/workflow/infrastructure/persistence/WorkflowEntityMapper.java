@@ -11,6 +11,8 @@ import cn.gov.enterprise.modules.workflow.domain.model.WorkflowTransition;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowNodeExecution;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowEngineMode;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowContentHashAlgorithm;
+import cn.gov.enterprise.modules.workflow.domain.model.ResolverBindingModel;
+import cn.gov.enterprise.modules.workflow.domain.model.WorkflowVersionRelease;
 import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverCode;
 import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverContractHash;
 import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverVersion;
@@ -23,6 +25,7 @@ import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.Work
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowTaskActionEntity;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowTransitionEntity;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowNodeExecutionEntity;
+import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowVersionReleaseEntity;
 
 final class WorkflowEntityMapper {
     private WorkflowEntityMapper() {}
@@ -59,7 +62,10 @@ final class WorkflowEntityMapper {
                     entity.getContentHash(), entity.getChangeNote(), entity.getEffectiveFrom(),
                     entity.getEffectiveTo(), entity.getPublishedBy(), entity.getPublishedTime(),
                     entity.getSourceVersionId(), WorkflowEngineMode.valueOf(entity.getEngineMode()),
-                    WorkflowContentHashAlgorithm.valueOf(entity.getContentHashAlgorithm()), entity.getVersion());
+                    WorkflowContentHashAlgorithm.valueOf(entity.getContentHashAlgorithm()),
+                    ResolverBindingModel.valueOf(entity.getResolverBindingModel()),
+                    entity.getResolverBindingManifestHash(), entity.getResolverBindingCount(),
+                    entity.getResolverBindingCanonicalVersion(), entity.getVersion());
         } catch (RuntimeException exception) {
             throw corrupt("workflow_version", exception);
         }
@@ -74,6 +80,10 @@ final class WorkflowEntityMapper {
         entity.setSchemaVersion(domain.schemaVersion());
         entity.setEngineMode(domain.engineMode().name());
         entity.setContentHashAlgorithm(domain.contentHashAlgorithm().name());
+        entity.setResolverBindingModel(domain.resolverBindingModel().name());
+        entity.setResolverBindingManifestHash(domain.resolverBindingManifestHash());
+        entity.setResolverBindingCount(domain.resolverBindingCount());
+        entity.setResolverBindingCanonicalVersion(domain.resolverBindingCanonicalVersion());
         entity.setContentHash(domain.contentHash());
         entity.setChangeNote(domain.changeNote());
         entity.setEffectiveFrom(domain.effectiveFrom());
@@ -81,6 +91,45 @@ final class WorkflowEntityMapper {
         entity.setPublishedBy(domain.publishedBy());
         entity.setPublishedTime(domain.publishedTime());
         entity.setSourceVersionId(domain.sourceVersionId());
+        return entity;
+    }
+
+    static WorkflowVersionRelease toDomain(WorkflowVersionReleaseEntity entity) {
+        try {
+            return new WorkflowVersionRelease(
+                    entity.getId(), entity.getDefinitionId(), entity.getPreviousVersionId(),
+                    entity.getPublishedVersionId(), entity.getPublishedVersionNo(), entity.getContentHash(),
+                    entity.getOperatorUserId(), entity.getOperatorOrgId(), entity.getPublishedTime(),
+                    entity.getTraceId(), entity.getValidationSummary(),
+                    WorkflowEngineMode.valueOf(entity.getEngineMode()),
+                    WorkflowContentHashAlgorithm.valueOf(entity.getContentHashAlgorithm()),
+                    ResolverBindingModel.valueOf(entity.getResolverBindingModel()),
+                    entity.getResolverBindingManifestHash(), entity.getResolverBindingCount(),
+                    entity.getResolverBindingCanonicalVersion());
+        } catch (RuntimeException exception) {
+            throw corrupt("workflow_version_release", exception);
+        }
+    }
+
+    static WorkflowVersionReleaseEntity toEntity(WorkflowVersionRelease domain) {
+        WorkflowVersionReleaseEntity entity = new WorkflowVersionReleaseEntity();
+        entity.setId(domain.id());
+        entity.setDefinitionId(domain.definitionId());
+        entity.setPreviousVersionId(domain.previousVersionId());
+        entity.setPublishedVersionId(domain.publishedVersionId());
+        entity.setPublishedVersionNo(domain.publishedVersionNo());
+        entity.setContentHash(domain.contentHash());
+        entity.setEngineMode(domain.engineMode().name());
+        entity.setContentHashAlgorithm(domain.contentHashAlgorithm().name());
+        entity.setResolverBindingModel(domain.resolverBindingModel().name());
+        entity.setResolverBindingManifestHash(domain.resolverBindingManifestHash());
+        entity.setResolverBindingCount(domain.resolverBindingCount());
+        entity.setResolverBindingCanonicalVersion(domain.resolverBindingCanonicalVersion());
+        entity.setOperatorUserId(domain.operatorUserId());
+        entity.setOperatorOrgId(domain.operatorOrgId());
+        entity.setPublishedTime(domain.publishedTime());
+        entity.setTraceId(domain.traceId());
+        entity.setValidationSummary(domain.validationSummary());
         return entity;
     }
 

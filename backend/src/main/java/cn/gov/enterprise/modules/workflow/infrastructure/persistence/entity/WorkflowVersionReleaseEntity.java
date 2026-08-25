@@ -18,6 +18,10 @@ public class WorkflowVersionReleaseEntity extends WorkflowAuditedEntity {
     private String contentHash;
     private String engineMode;
     private String contentHashAlgorithm;
+    private String resolverBindingModel;
+    private String resolverBindingManifestHash;
+    private Integer resolverBindingCount;
+    private String resolverBindingCanonicalVersion;
     private Long operatorUserId;
     private Long operatorOrgId;
     private LocalDateTime publishedTime;

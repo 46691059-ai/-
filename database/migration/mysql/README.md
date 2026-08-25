@@ -789,3 +789,54 @@ no missing or malformed hash evidence. SHA-256 is
 `160f0b649ac85cc177d82c2ff0aa5070639b29c7f2dda72b02438041bd063201`
 and Flyway checksum is `1721966129`; status is `CANONICAL_IMMUTABLE /
 EPHEMERAL_MYSQL8_VALIDATED`. ROLE Runtime and Canary remain disabled.
+
+Workflow V1 RC2-S1 adds V2.6.21 for Version-level
+ROLE resolver configuration and its immutable publication manifest. It creates
+`workflow_version_node_resolver_binding` and
+`workflow_version_resolver_binding_manifest`, and adds backward-compatible
+`LEGACY_USER_ONLY` binding snapshots to `workflow_version` and
+`workflow_version_release`. Existing Versions and Releases are not rehashed or
+backfilled with ROLE bindings. Composite Workflow-owned foreign keys prevent
+cross-Definition and cross-Version node ownership; no physical Approval Role
+Directory foreign key is introduced. Nine triggers make Binding rows writable
+only while their Version is DRAFT and make Manifest/Release evidence
+append-only. SHA-256 is
+`cb9555ba5f81c292654286fe8c7396cdead4b71c9387c4b73d09139d4147296e`;
+Flyway checksum is `-698735620`. Isolated MySQL 8.4.9/Flyway 13.0.0 Fresh and
+V2.6.20 Upgrade paths passed strict validate, second-migrate no-op, identical
+Schema fingerprints, ownership/CHECK/UNIQUE negative tests, DRAFT and
+PUBLISHED/RETIRED immutability triggers, Legacy compatibility, and the legal
+Manifest-before-Publish transaction sequence. Status is `CANONICAL_IMMUTABLE /
+EPHEMERAL_MYSQL8_VALIDATED`. ROLE Runtime and Canary remain disabled, and the
+RC1 validation assets retain their 2.6.20 baseline.
+
+Workflow V1 RC2-S5/S5.1 adds and validates V2.6.22 for freezing a
+published Version ROLE resolver contract into the existing Instance Resolver
+Binding Set and Node Resolver Binding Snapshot structures. It adds stable
+Version Binding provenance, supports multiple bindings per node, preserves
+Legacy USER + DIRECT rows, allows only ROLE + ROLE + CANDIDATE_POOL with
+FIXED_ORG for the new evidence, and makes Node snapshots append-only. SHA-256
+is `658b4939a7e92295527ef3a5116d20814b0d17e4c34e46f3955e4c21c67dcc05`;
+Flyway checksum is `410640379`. Isolated MySQL 8.4.9/Flyway 13.0.0 Fresh and
+V2.6.21 Upgrade paths passed strict validate, second-migrate no-op, identical
+Schema fingerprint
+`bd4a35a7471e0e880c2c30640cdfa18014a43d48dbe1e65c266330b25da17d18`,
+the complete ROLE/USER and FIXED_ORG negative matrices, multi-Binding order
+uniqueness, append-only triggers, and Legacy USER compatibility. Status is
+`CANONICAL_IMMUTABLE / EPHEMERAL_MYSQL8_VALIDATED`. Directory revision,
+candidates, tasks, claims, ROLE Runtime and Canary remain outside this
+Migration; the persistent RC1 TEST database was not touched.
+
+Workflow V1 RC2-S7 adds V2.6.23 as a narrow mapping-contract forward fix. It
+adds `remark VARCHAR(500) NULL` after `delete_token` to exactly the three
+Realtime Eligibility capability, event and validator evidence tables so their
+schema matches the inherited `WorkflowAuditedEntity` contract. Isolated MySQL
+8.4.9/Flyway 13.0.0 Fresh and V2.6.22 Upgrade paths passed strict validate,
+second-migrate no-op and the identical schema fingerprint
+`ffcd3b9c031c6a8521fe4cbdb1d3c248e49c50e2ccfa4860ce9aea04b5caacd0`.
+Real MyBatis Mapper inserts and readback passed for both NULL and non-NULL
+remarks. SHA-256 is
+`874427e1df075042485c9098ad2f1b79dbc632200f01614f85529b30765c169d`
+and Flyway checksum is `445023774`; status is `CANONICAL_IMMUTABLE /
+EPHEMERAL_MYSQL8_VALIDATED`. No runtime logic was changed, ROLE Runtime and
+Canary remain disabled, and the persistent RC1 TEST database was not touched.

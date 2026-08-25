@@ -1,0 +1,47 @@
+{
+  "fixtureContract": "RC2_CONTROLLED_CANARY_FIXTURE_V1",
+  "classification": ["TEST_ONLY", "NON_PRODUCTION", "DETERMINISTIC", "FAIL_CLOSED"],
+  "environmentIdentity": "RC2_TEST",
+  "requiredMigration": "2.6.23",
+  "requiredSchemaFingerprint": "92ea9f4d006233f672b22c3c335663c04121dbb652ce657aac07d7b04518171d",
+  "requiredMigrationShaCount": 45,
+  "runtimeSafety": {
+    "roleRuntime": "DISABLED",
+    "canary": "NOT_AUTHORIZED_NOT_ENABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "directoryProvider": "DISABLED"
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "candidateUserIds": [990201, 990202],
+    "approvalRoleId": 990301,
+    "revisionHeadId": 990302,
+    "assignmentIds": [990303, 990304],
+    "revisionId": 990305,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "roleNodeId": 990404,
+    "versionBindingId": 990405,
+    "bindingManifestId": 990406,
+    "versionReleaseId": 990407,
+    "roleCode": "RC1_TEST_CANARY_APPROVER",
+    "definitionCode": "RC2_TEST_CANARY_ROLE_APPROVAL",
+    "organizationCode": "RC2_TEST_CANARY_ORG"
+  },
+  "effectiveWindow": {
+    "directoryEffectiveAt": "2026-01-01T00:00:00Z",
+    "assignmentEffectiveTo": "2099-12-31T00:00:00Z"
+  },
+  "workflow": {
+    "topology": "SINGLE_APPROVAL_NODE",
+    "schemaVersion": "1.0",
+    "engineMode": "SINGLE_NODE_LEGACY",
+    "resolverBindingModel": "VERSION_RESOLVER_BINDING_CAPABLE",
+    "resolverCode": "ROLE_DIRECTORY",
+    "resolverVersion": "ROLE_DIRECTORY_V1",
+    "organizationScopeType": "FIXED_ORG",
+    "effectiveTimePolicy": "NODE_ACTIVATED_AT"
+  },
+  "decommissionMode": "GOVERNED_STATE_TRANSITION"
+}

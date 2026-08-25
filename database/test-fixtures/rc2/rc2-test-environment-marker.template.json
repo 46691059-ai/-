@@ -1,0 +1,17 @@
+{
+  "contract": "EPHEMERAL_RC2_TEST_IDENTITY_V1",
+  "environment": "RC2_TEST",
+  "environmentType": "EPHEMERAL_RC2_TEST",
+  "host": "127.0.0.1",
+  "port": 0,
+  "database": "enterprise_platform",
+  "dataDir": "<ABSOLUTE_RC2_DATADIR>",
+  "releaseVersion": "2.6.23",
+  "schemaFingerprint": "92ea9f4d006233f672b22c3c335663c04121dbb652ce657aac07d7b04518171d",
+  "migrationShaCount": 45,
+  "createdByValidationScript": true,
+  "roleRuntime": "DISABLED",
+  "canary": "NOT_AUTHORIZED_NOT_ENABLED",
+  "killSwitch": "STOP_NEW_AND_CLAIM",
+  "directoryProvider": "DISABLED"
+}

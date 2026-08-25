@@ -13,6 +13,8 @@ import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.Work
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowTransitionEntity;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowNodeExecutionEntity;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowTaskAssignmentSnapshotEntity;
+import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowVersionNodeResolverBindingEntity;
+import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowVersionResolverBindingManifestEntity;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
@@ -32,6 +34,10 @@ class WorkflowEntityMappingTest {
         assertTable(WorkflowTransitionEntity.class, "workflow_transition");
         assertTable(WorkflowNodeExecutionEntity.class, "workflow_node_execution");
         assertTable(WorkflowTaskAssignmentSnapshotEntity.class, "workflow_task_assignment_snapshot");
+        assertTable(WorkflowVersionNodeResolverBindingEntity.class,
+                "workflow_version_node_resolver_binding");
+        assertTable(WorkflowVersionResolverBindingManifestEntity.class,
+                "workflow_version_resolver_binding_manifest");
         assertThat(field("deleted").getAnnotation(TableLogic.class)).isNotNull();
         assertThat(field("version").getAnnotation(Version.class)).isNotNull();
         assertThat(field("createdBy")).isNotNull();

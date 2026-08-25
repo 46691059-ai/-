@@ -31,6 +31,9 @@ class WorkflowVersionReleaseRepositoryTest {
         assertThat(captor.getValue().getPreviousVersionId()).isEqualTo(3L);
         assertThat(captor.getValue().getPublishedVersionId()).isEqualTo(4L);
         assertThat(captor.getValue().getContentHash()).isEqualTo("a".repeat(64));
+        assertThat(captor.getValue().getResolverBindingModel()).isEqualTo("LEGACY_USER_ONLY");
+        assertThat(captor.getValue().getResolverBindingCount()).isZero();
+        assertThat(captor.getValue().getResolverBindingManifestHash()).isNull();
         verify(audit).initialize(captor.getValue());
     }
 }

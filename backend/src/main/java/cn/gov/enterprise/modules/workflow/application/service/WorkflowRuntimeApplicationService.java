@@ -12,6 +12,7 @@ import cn.gov.enterprise.modules.workflow.domain.model.WorkflowVersion;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowEngineMode;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowNodeExecution;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowTransition;
+import cn.gov.enterprise.modules.workflow.domain.model.ResolverBindingModel;
 import cn.gov.enterprise.modules.workflow.domain.assignment.AssignmentContext;
 import cn.gov.enterprise.modules.workflow.domain.assignment.AssignmentResolver;
 import cn.gov.enterprise.modules.workflow.domain.assignment.AssignmentResolutionResult;
@@ -66,6 +67,7 @@ public class WorkflowRuntimeApplicationService {
     private final WorkflowTaskAssignmentSnapshotRepository assignmentSnapshotRepository;
     private final WorkflowAssignmentResolverApplicationService resolverService;
     private final WorkflowResolverBindingApplicationService bindingService;
+    private final VersionResolverBindingInstanceFreezer versionBindingFreezer;
     private final NodeExecutionService executionService = new NodeExecutionService();
     private final ExplicitUserAssignment assignment = new ExplicitUserAssignment();
     private final ExplicitUserAssignmentStrategy assignmentStrategy = new ExplicitUserAssignmentStrategy();
@@ -85,7 +87,8 @@ public class WorkflowRuntimeApplicationService {
             WorkflowTransitionRepository transitionRepository,
             WorkflowTaskAssignmentSnapshotRepository assignmentSnapshotRepository,
             WorkflowAssignmentResolverApplicationService resolverService,
-            WorkflowResolverBindingApplicationService bindingService) {
+            WorkflowResolverBindingApplicationService bindingService,
+            VersionResolverBindingInstanceFreezer versionBindingFreezer) {
         this.definitionRepository = definitionRepository;
         this.versionRepository = versionRepository;
         this.nodeRepository = nodeRepository;
@@ -98,6 +101,7 @@ public class WorkflowRuntimeApplicationService {
         this.assignmentSnapshotRepository = assignmentSnapshotRepository;
         this.resolverService = resolverService;
         this.bindingService = bindingService;
+        this.versionBindingFreezer = versionBindingFreezer;
     }
 
     /** Compatibility constructor retained for WF3.6.4 tests. */
@@ -115,7 +119,7 @@ public class WorkflowRuntimeApplicationService {
             WorkflowAssignmentResolverApplicationService resolverService) {
         this(definitionRepository, versionRepository, nodeRepository, instanceRepository,
                 taskRepository, identityGenerator, securityContext, executionRepository,
-                transitionRepository, assignmentSnapshotRepository, resolverService, null);
+                transitionRepository, assignmentSnapshotRepository, resolverService, null, null);
     }
 
     /** Compatibility constructor retained for WF3.6.1 callers. */
@@ -133,7 +137,7 @@ public class WorkflowRuntimeApplicationService {
         this(definitionRepository, versionRepository, nodeRepository, instanceRepository,
                 taskRepository, identityGenerator, securityContext, executionRepository,
                 transitionRepository, assignmentSnapshotRepository,
-                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null);
+                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null, null);
     }
 
     /** Compatibility constructor retained for pre-V2.6.2 tests. */
@@ -150,7 +154,7 @@ public class WorkflowRuntimeApplicationService {
         this(definitionRepository, versionRepository, nodeRepository, instanceRepository,
                 taskRepository, identityGenerator, securityContext, executionRepository,
                 transitionRepository, null,
-                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null);
+                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null, null);
     }
 
     /** Compatibility constructor for legacy runtime tests. */
@@ -164,7 +168,7 @@ public class WorkflowRuntimeApplicationService {
             CurrentSecurityContext securityContext) {
         this(definitionRepository, versionRepository, nodeRepository, instanceRepository,
                 taskRepository, identityGenerator, securityContext, null, null, null,
-                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null);
+                new WorkflowAssignmentResolverApplicationService(ResolverRegistry.explicitUserOnly()), null, null);
     }
 
     @Transactional
@@ -242,16 +246,23 @@ public class WorkflowRuntimeApplicationService {
         }
         List<WorkflowTransition> transitions = transitionRepository.findByVersionId(workflowVersion.id());
         WorkflowNode entry;
+        String graphHash;
         try {
             entry = graphValidator.validateAndFindEntry(workflowVersion.id(), nodes, transitions);
-            String runtimeHash = contentHasher.hashGraph(definition, workflowVersion, nodes, transitions);
-            if (!runtimeHash.equals(workflowVersion.contentHash())) {
+            graphHash = contentHasher.hashGraph(definition, workflowVersion, nodes, transitions);
+            if (workflowVersion.resolverBindingModel() == ResolverBindingModel.LEGACY_USER_ONLY
+                    && !graphHash.equals(workflowVersion.contentHash())) {
                 throw new IllegalStateException("published workflow graph hash does not match runtime graph");
             }
         } catch (IllegalStateException exception) {
             throw invalid(exception);
         }
         Long instanceId = identityGenerator.nextId();
+        if (workflowVersion.resolverBindingModel()
+                == ResolverBindingModel.VERSION_RESOLVER_BINDING_CAPABLE) {
+            return freezeRoleInstance(command, principal, definition, workflowVersion,
+                    nodes, entry, graphHash, requestHash, now, instanceId);
+        }
         ResolverVersionBinding resolverBinding = resolverService.freeze(instanceId,
                 ExplicitUserResolver.CODE, ExplicitUserResolver.RESOLVER_VERSION,
                 ExplicitUserResolver.CONTRACT_HASH);
@@ -306,6 +317,40 @@ public class WorkflowRuntimeApplicationService {
         executionRepository.save(execution);
         taskRepository.save(task);
         saveAssignmentSnapshot(assignmentSnapshot);
+        WorkflowInstance active = instance.pointTo(entry.id(), execution.id());
+        instanceRepository.update(active);
+        return active;
+    }
+
+    private WorkflowInstance freezeRoleInstance(
+            StartWorkflowCommand command, SecurityPrincipal principal,
+            WorkflowDefinition definition, WorkflowVersion workflowVersion,
+            List<WorkflowNode> nodes, WorkflowNode entry, String graphHash,
+            String requestHash, LocalDateTime now, Long instanceId) {
+        if (bindingService == null || versionBindingFreezer == null) {
+            throw new BusinessException("B2650", "Version resolver binding freeze is unavailable");
+        }
+        WorkflowInstance instance;
+        WorkflowNodeExecution execution;
+        WorkflowResolverBindingApplicationService.FrozenBindings frozen;
+        try {
+            instance = WorkflowInstance.runningLinear(instanceId, "WFI-" + instanceId,
+                    definition, workflowVersion, command.businessType(), command.businessId(),
+                    command.businessKey(), command.enterpriseId(), command.snapshotRef(),
+                    command.snapshotHash(), command.attemptNo(), principal.userId(), principal.orgId(),
+                    entry.id(), command.variablesSnapshot(), command.idempotencyKey(), requestHash,
+                    MDC.get("traceId"), now);
+            frozen = versionBindingFreezer.prepare(instance, definition, workflowVersion,
+                    nodes, graphHash, now, "{\"reasonCode\":\"INSTANCE_START_ROLE_FREEZE\"}");
+            Long executionId = identityGenerator.nextId();
+            execution = executionService.enter(executionId, "WFNE-" + executionId,
+                    instance, entry, 1, null, null, MDC.get("traceId"), now);
+        } catch (IllegalArgumentException | IllegalStateException | NullPointerException exception) {
+            throw invalid(exception);
+        }
+        instanceRepository.save(instance);
+        bindingService.save(frozen);
+        executionRepository.save(execution);
         WorkflowInstance active = instance.pointTo(entry.id(), execution.id());
         instanceRepository.update(active);
         return active;

@@ -17,6 +17,10 @@ public class WorkflowVersionEntity extends WorkflowAuditedEntity {
     private String schemaVersion;
     private String engineMode;
     private String contentHashAlgorithm;
+    private String resolverBindingModel;
+    private String resolverBindingManifestHash;
+    private Integer resolverBindingCount;
+    private String resolverBindingCanonicalVersion;
     private String contentHash;
     private String changeNote;
     private LocalDateTime effectiveFrom;
