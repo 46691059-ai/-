@@ -8,7 +8,7 @@ import java.time.Instant;
 public interface RoleClaimCommitCapabilityGate {
     Decision verify(Facts facts);
     record Facts(long instanceId,long enterpriseId,long definitionId,long definitionVersionId,long nodeId,
-            String businessType,String businessKey,long initiatorUserId,long initiatorOrgId,
+            String businessType,String businessKey,String organizationId,String roleCode,long initiatorUserId,long initiatorOrgId,
             SecurityPrincipal principal,Instant checkedAt) { }
     record Decision(boolean allowed,String reasonCode,String evidenceHash) { }
 }

@@ -17,11 +17,13 @@ public final class RoleRuntimeProductionCapabilityFactory {
     private final DataPermissionService dataScope; private final SysUserMapper users; private final SysOrgMapper orgs;
     private final WorkflowInstanceMapper instances; private final WorkflowTaskActionMapper actions;
     private final RoleRuntimeGovernanceControlStore controls; private final ExternalAuditOutboxWriter audit;
+    private final cn.gov.enterprise.modules.workflow.domain.canary.CanaryRuntimeGate canary;
     private final RoleRuntimeCapabilityMetrics metrics;
     public RoleRuntimeProductionCapabilityFactory(DataPermissionService dataScope,SysUserMapper users,SysOrgMapper orgs,
             WorkflowInstanceMapper instances,WorkflowTaskActionMapper actions,
-            RoleRuntimeGovernanceControlStore controls,ExternalAuditOutboxWriter audit,RoleRuntimeCapabilityMetrics metrics){
-        this.dataScope=dataScope;this.users=users;this.orgs=orgs;this.instances=instances;this.actions=actions;this.controls=controls;this.audit=audit;this.metrics=metrics;
+            RoleRuntimeGovernanceControlStore controls,ExternalAuditOutboxWriter audit,RoleRuntimeCapabilityMetrics metrics,
+            cn.gov.enterprise.modules.workflow.domain.canary.CanaryRuntimeGate canary){
+        this.dataScope=dataScope;this.users=users;this.orgs=orgs;this.instances=instances;this.actions=actions;this.controls=controls;this.audit=audit;this.metrics=metrics;this.canary=canary;
     }
 
     public RoleRuntimeProductionCapabilityBundle create(RoleDirectoryPort productionDirectory){
@@ -36,7 +38,7 @@ public final class RoleRuntimeProductionCapabilityFactory {
         var kill=new ProductionRealtimeCapabilityAdapters.GovernedCapability(controls,
                 ProductionRealtimeCapabilityAdapters.GovernedCapability.Kind.KILL_SWITCH);
         var canary=new ProductionRealtimeCapabilityAdapters.GovernedCapability(controls,
-                ProductionRealtimeCapabilityAdapters.GovernedCapability.Kind.CANARY);
+                ProductionRealtimeCapabilityAdapters.GovernedCapability.Kind.CANARY,this.canary);
         var role=new ProductionRealtimeCapabilityAdapters.RoleMembership(productionDirectory);
         var user=new ProductionRealtimeCapabilityAdapters.UserStatus(users);
         var org=new ProductionRealtimeCapabilityAdapters.OrganizationMembership(users,orgs);

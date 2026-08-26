@@ -7,6 +7,7 @@ import cn.gov.enterprise.modules.system.entity.SysUserEntity;
 import cn.gov.enterprise.modules.system.mapper.SysOrgMapper;
 import cn.gov.enterprise.modules.system.mapper.SysUserMapper;
 import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverContractHash;
+import cn.gov.enterprise.modules.workflow.domain.canary.*;
 import cn.gov.enterprise.modules.workflow.domain.role.RoleDirectoryMember;
 import cn.gov.enterprise.modules.workflow.domain.role.RoleDirectoryPort;
 import cn.gov.enterprise.modules.workflow.domain.role.RoleDirectoryQuery;
@@ -131,15 +132,22 @@ public final class ProductionRealtimeCapabilityAdapters {
             RealtimeEligibilityCapabilities.RealtimeKillSwitchPort,
             RealtimeEligibilityCapabilities.RealtimeCanaryPort {
         public enum Kind { BUSINESS_SOD, FEATURE_FLAG, KILL_SWITCH, CANARY }
-        private final RoleRuntimeGovernanceControlStore store; private final Kind kind;
-        public GovernedCapability(RoleRuntimeGovernanceControlStore store, Kind kind){this.store=store;this.kind=kind;}
+        private final RoleRuntimeGovernanceControlStore store; private final Kind kind; private final CanaryRuntimeGate canary;
+        public GovernedCapability(RoleRuntimeGovernanceControlStore store, Kind kind){this(store,kind,null);}
+        public GovernedCapability(RoleRuntimeGovernanceControlStore store, Kind kind,CanaryRuntimeGate canary){this.store=store;this.kind=kind;this.canary=canary;}
         @Override public RealtimeCapabilityResult check(RealtimeEligibilityQuery q) {
+            if(kind==Kind.CANARY){
+                try{
+                    boolean allowed=canary!=null&&canary.allows(CanaryScope.fromRuntime(q.enterpriseId(),q.organizationId(),q.roleCode(),q.businessScopeReference()),q.claimAt());
+                    return result(allowed?PASS:DENY,allowed?"exact Canary scope allows execution":"exact Canary scope denied", "CANARY_EXACT_SCOPE_V2",q.claimAt(),q.businessScopeReference(),q.roleCode(),q.organizationId());
+                }catch(RuntimeException ex){return result(INDETERMINATE,"exact Canary scope unavailable","CANARY_EXACT_SCOPE_V2",q.claimAt(),q.businessScopeReference());}
+            }
             List<String> scopes = switch(kind) {
                 case FEATURE_FLAG -> List.of("GLOBAL","ENTERPRISE|"+q.enterpriseId(),
                         "WORKFLOW_DEFINITION|"+q.enterpriseId()+"|"+q.businessScopeReference());
                 case KILL_SWITCH -> List.of("GLOBAL","ENTERPRISE|"+q.enterpriseId(),
                         "DEFINITION_VERSION|"+q.enterpriseId()+"|"+q.businessScopeReference());
-                case CANARY -> List.of("CANARY|"+q.enterpriseId()+"|"+q.businessScopeReference());
+                case CANARY -> throw new IllegalStateException("handled above");
                 case BUSINESS_SOD -> List.of("BUSINESS_SOD|"+q.enterpriseId()+"|"+q.businessScopeReference());
             };
             var controls=scopes.stream().map(scope->store.latest(kind.name(),scope,q.claimAt())).toList();

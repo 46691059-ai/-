@@ -1,5 +1,14 @@
 # MySQL Governed Migrations
 
+Workflow V1 RC2-S11.1 adds the unexecuted V2.6.24 candidate for an exact
+six-dimensional, append-only Canary governance ledger. It separates
+`PROPOSED`, `APPROVED_NOT_ENABLED`, `ENABLED`, `SUSPENDED`, and `REVOKED`,
+uses revision/predecessor uniqueness for CAS, and treats all legacy generic
+`CANARY/ALLOW` controls as non-authorizing because runtime readers now use the
+new exact scope authority. The candidate has not undergone real MySQL/Flyway
+validation and must remain `CANDIDATE / NOT_EXECUTED`. ROLE Runtime and Canary
+remain disabled.
+
 Sprint 2-3.7-WF4.2.4 completed the combined V2.6.7 + V2.6.8 acceptance on
 three newly initialized, loopback-only MySQL Community Server 8.4.9 instances:
 Fresh, V2.6.6 Upgrade, and V2.6.7 Forward-Fix. Flyway 13.0.0 strict validate,

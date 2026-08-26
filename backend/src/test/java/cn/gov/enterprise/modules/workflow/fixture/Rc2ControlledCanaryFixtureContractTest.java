@@ -193,14 +193,14 @@ class Rc2ControlledCanaryFixtureContractTest {
     }
 
     @Test
-    void fixtureDoesNotCreateMigrationOrAuthorizeCanary() throws Exception {
+    void fixtureDoesNotAuthorizeCanaryAndPostRc2CandidateSeedsNoScope() throws Exception {
         assertThat(manifest.path("requiredMigrationShaCount").asInt()).isEqualTo(45);
         assertThat(manifest.path("runtimeSafety").path("roleRuntime").asText()).isEqualTo("DISABLED");
         assertThat(manifest.path("runtimeSafety").path("canary").asText())
                 .isEqualTo("NOT_AUTHORIZED_NOT_ENABLED");
-        assertThat(Files.list(ROOT.resolve("database/migration/mysql"))
-                .filter(path -> path.getFileName().toString().startsWith("V2.6.24__")))
-                .isEmpty();
+        String candidate=Files.readString(ROOT.resolve(
+                "database/migration/mysql/V2.6.24__create_exact_canary_scope_governance.sql"));
+        assertThat(candidate).doesNotContain("INSERT INTO workflow_role_canary_scope_governance");
     }
 
     private static String text(String name) throws Exception {

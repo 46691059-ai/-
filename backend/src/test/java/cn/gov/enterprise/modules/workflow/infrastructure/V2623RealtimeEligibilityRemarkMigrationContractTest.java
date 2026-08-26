@@ -57,7 +57,7 @@ class V2623RealtimeEligibilityRemarkMigrationContractTest {
     void historicalMigrationHashesRemainUnchangedAndCandidateIsGoverned() throws Exception {
         List<String> lines = Files.readAllLines(ROOT.resolve("SHA256SUMS"),
                 StandardCharsets.UTF_8);
-        assertThat(lines).hasSize(45);
+        assertThat(lines).hasSize(46);
         assertThat(lines).contains(
                 "cb9555ba5f81c292654286fe8c7396cdead4b71c9387c4b73d09139d4147296e"
                         + "  V2.6.21__create_workflow_version_resolver_binding.sql",

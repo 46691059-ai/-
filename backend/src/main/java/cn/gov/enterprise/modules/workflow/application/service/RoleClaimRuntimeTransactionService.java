@@ -85,7 +85,7 @@ public class RoleClaimRuntimeTransactionService {
         if(!admission.allowed())throw error("B5244",admission.reasonCode());
         if(!runtimeGate.allows(new RoleClaimRuntimeGate.RoleClaimGateContext(instance.id(),instance.enterpriseId(),
                 instance.definitionId(),instance.versionId(),task.nodeId(),header.organizationId(),
-                pool.resolverCode(),pool.resolverVersion())))throw error("B5240","ROLE_RUNTIME_DISABLED_OR_OUTSIDE_CANARY");
+                header.roleCode(),pool.resolverCode(),pool.resolverVersion())))throw error("B5240","ROLE_RUNTIME_DISABLED_OR_OUTSIDE_CANARY");
         var stored=evidence.findByIdForUpdate(header.id()).orElse(null);
         if(stored==null){evidence.insert(bundle);stored=header;}
         else if(!stored.persistenceHash().equals(header.persistenceHash()))throw error("B5242","eligibility evidence idempotency payload mismatch");
@@ -98,7 +98,7 @@ public class RoleClaimRuntimeTransactionService {
         var sod=sodPolicy.evaluate(ctx);if(!sod.allowed())throw error("B2676",sod.reasonCode());
         var currentCapabilities=commitCapabilityGate.verify(new RoleClaimCommitCapabilityGate.Facts(instance.id(),
                 instance.enterpriseId(),instance.definitionId(),instance.versionId(),task.nodeId(),instance.businessType(),
-                instance.businessKey(),instance.initiatorUserId(),instance.initiatorOrgId(),principal,instant));
+                instance.businessKey(),header.organizationId(),header.roleCode(),instance.initiatorUserId(),instance.initiatorOrgId(),principal,instant));
         if(!currentCapabilities.allowed())throw error("B5245",currentCapabilities.reasonCode());
         CandidatePool claimedPool=pool.claimed(now);WorkflowTask claimedTask=task.claim(principal.userId(),now);
         long claimId=ids.nextId();TaskClaim claim=TaskClaim.roleClaimed(claimId,task.id(),pool.id(),member.id(),instance.id(),

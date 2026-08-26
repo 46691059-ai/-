@@ -7,6 +7,8 @@ import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverContractHash
 import cn.gov.enterprise.modules.workflow.domain.candidate.CandidateMemberStatus;
 import cn.gov.enterprise.modules.workflow.domain.candidate.CandidatePool;
 import cn.gov.enterprise.modules.workflow.domain.candidate.CandidatePoolMember;
+import cn.gov.enterprise.modules.workflow.domain.canary.CanaryRuntimeGate;
+import cn.gov.enterprise.modules.workflow.domain.canary.CanaryScope;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowNodeExecution;
 import cn.gov.enterprise.modules.workflow.domain.model.WorkflowTask;
 import cn.gov.enterprise.modules.workflow.domain.repository.CandidatePoolMemberRepository;
@@ -33,6 +35,7 @@ public class RoleCandidatePoolTransactionService {
     private final CandidatePoolMemberRepository members;
     private final WorkflowNodeExecutionRepository executions;
     private final WorkflowIdentityGenerator ids;
+    private final CanaryRuntimeGate runtimeGate;
 
     public RoleCandidatePoolTransactionService(
             WorkflowTaskRepository tasks,
@@ -40,17 +43,24 @@ public class RoleCandidatePoolTransactionService {
             CandidatePoolRepository pools,
             CandidatePoolMemberRepository members,
             WorkflowNodeExecutionRepository executions,
-            WorkflowIdentityGenerator ids) {
+            WorkflowIdentityGenerator ids,
+            CanaryRuntimeGate runtimeGate) {
         this.tasks = tasks;
         this.assignments = assignments;
         this.pools = pools;
         this.members = members;
         this.executions = executions;
         this.ids = ids;
+        this.runtimeGate = runtimeGate;
     }
 
     @Transactional
     public CandidatePool freeze(PreparedRoleCandidatePool prepared) {
+        var context=prepared.context();
+        if(!runtimeGate.allows(new CanaryScope(context.enterpriseId(),context.resolvedOrganizationId(),
+                context.definitionId(),context.definitionVersionId(),context.nodeId(),context.roleCode()),context.effectiveAt())) {
+            throw blocked("ROLE_RUNTIME_DISABLED_OR_OUTSIDE_EXACT_CANARY");
+        }
         WorkflowNodeExecution current = executions.findByIdForUpdate(
                         prepared.execution().id())
                 .orElseThrow(() -> blocked("node execution does not exist"));

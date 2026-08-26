@@ -1,0 +1,13 @@
+{
+  "contract": "RC2_CANARY_GOVERNANCE_SCHEMA_FINGERPRINT_BASELINE_V1",
+  "canonicalVersion": "RC2_CANARY_GOVERNANCE_STRUCTURAL_CANONICAL_V1",
+  "mysqlVersion": "8.4.9",
+  "latestMigration": "2.6.24",
+  "migrationShaCount": 46,
+  "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9",
+  "sourceMigration": "V2.6.24__create_exact_canary_scope_governance.sql",
+  "sourceMigrationSha256": "e549147abcf77168a1b1ef465c76ed642f7ce02f250117d0019bbeeb8d524822",
+  "flywayChecksum": 857951823,
+  "derivation": "Two independent MySQL 8.4.9 Fresh databases and one MySQL 8.4.9 V2.6.23-to-V2.6.24 Upgrade database produced identical runtime-structural canonical text.",
+  "preserves": "rc2-schema-fingerprint-baseline.json remains the immutable V2.6.23 RC2 attestation contract."
+}

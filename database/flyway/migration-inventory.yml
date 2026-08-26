@@ -816,7 +816,17 @@ acceptance_runs:
     evidence_root: "D:/codex-rc2-v2623-20260824-111106/evidence"
     note: "Adds only nullable remark columns to the three audited realtime eligibility evidence tables. ROLE Runtime and Canary remain disabled; RC1 TEST database was not touched; S4 real-MySQL concurrency debt remains open."
 
-candidate_assets: []
+candidate_assets:
+  - version: "2.6.24"
+    canonical_file: "database/migration/mysql/V2.6.24__create_exact_canary_scope_governance.sql"
+    module: "workflow/canary-governance-gap-closure"
+    asset_status: "CANDIDATE"
+    execution_status: "NOT_EXECUTED"
+    automatic_scan: true
+    sha256: "e549147abcf77168a1b1ef465c76ed642f7ce02f250117d0019bbeeb8d524822"
+    flyway_checksum: null
+    depends_on: ["2.6.23"]
+    scope: "Exact six-dimensional append-only Canary authorization and enablement governance only; ROLE Runtime remains disabled"
 
 failed_candidate_archive:
   - version: "2.6.16"

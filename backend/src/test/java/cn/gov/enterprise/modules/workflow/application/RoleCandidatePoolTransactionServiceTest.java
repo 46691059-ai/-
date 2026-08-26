@@ -166,7 +166,7 @@ class RoleCandidatePoolTransactionServiceTest {
         when(tasks.findByNodeExecutionId(101L)).thenReturn(Optional.empty());
         when(ids.nextId()).thenReturn(1000L, 1001L, 1002L, 1003L, 1004L);
         return new Harness(new RoleCandidatePoolTransactionService(tasks, assignments,
-                pools, members, executions, ids), tasks, assignments, pools,
+                pools, members, executions, ids, (scope, at) -> true), tasks, assignments, pools,
                 members, executions);
     }
 

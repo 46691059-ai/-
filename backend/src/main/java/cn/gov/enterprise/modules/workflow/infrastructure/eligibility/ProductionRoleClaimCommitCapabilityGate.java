@@ -2,6 +2,7 @@ package cn.gov.enterprise.modules.workflow.infrastructure.eligibility;
 
 import cn.gov.enterprise.common.datascope.service.DataPermissionService;
 import cn.gov.enterprise.modules.workflow.domain.assignment.ResolverContractHash;
+import cn.gov.enterprise.modules.workflow.domain.canary.*;
 import cn.gov.enterprise.modules.workflow.domain.claim.RoleClaimCommitCapabilityGate;
 import java.util.List;
 import java.util.Objects;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Component;
 /** Re-reads DataScope, SoD and dynamic controls after row locks and immediately before Claim mutation. */
 @Component
 public final class ProductionRoleClaimCommitCapabilityGate implements RoleClaimCommitCapabilityGate {
-    private final DataPermissionService dataScope; private final RoleRuntimeGovernanceControlStore controls;
-    public ProductionRoleClaimCommitCapabilityGate(DataPermissionService dataScope,RoleRuntimeGovernanceControlStore controls){this.dataScope=dataScope;this.controls=controls;}
+    private final DataPermissionService dataScope; private final RoleRuntimeGovernanceControlStore controls; private final CanaryRuntimeGate canary;
+    public ProductionRoleClaimCommitCapabilityGate(DataPermissionService dataScope,RoleRuntimeGovernanceControlStore controls,CanaryRuntimeGate canary){this.dataScope=dataScope;this.controls=controls;this.canary=canary;}
     @Override public Decision verify(Facts f){
         try{
             var p=dataScope.current();
@@ -26,10 +27,11 @@ public final class ProductionRoleClaimCommitCapabilityGate implements RoleClaimC
             List<Key> required=List.of(
                     new Key("FEATURE_FLAG","GLOBAL","ON"),new Key("FEATURE_FLAG","ENTERPRISE|"+f.enterpriseId(),"ON"),
                     new Key("FEATURE_FLAG","WORKFLOW_DEFINITION|"+f.enterpriseId()+"|"+definition,"ON"),
-                    new Key("CANARY","CANARY|"+f.enterpriseId()+"|"+node,"ALLOW"),
                     new Key("KILL_SWITCH","GLOBAL","ALLOW"),new Key("KILL_SWITCH","ENTERPRISE|"+f.enterpriseId(),"ALLOW"),
                     new Key("KILL_SWITCH","DEFINITION_VERSION|"+f.enterpriseId()+"|"+version,"ALLOW"),
                     new Key("BUSINESS_SOD","BUSINESS_SOD|"+f.enterpriseId()+"|"+business,"ALLOW"));
+            if(!canary.allows(new CanaryScope(f.enterpriseId(),Long.parseLong(f.organizationId()),f.definitionId(),
+                    f.definitionVersionId(),f.nodeId(),f.roleCode()),f.checkedAt()))return deny("CANARY_SCOPE_CHANGED_OR_DENIED",f);
             StringBuilder evidence=new StringBuilder();
             for(Key key:required){var c=controls.latest(key.type,key.scope,f.checkedAt());if(c.isEmpty())return deny(key.type+"_UNAVAILABLE",f);
                 if(!key.allowed.equals(c.get().decision()))return deny(key.type+"_CHANGED_OR_DENIED",f);

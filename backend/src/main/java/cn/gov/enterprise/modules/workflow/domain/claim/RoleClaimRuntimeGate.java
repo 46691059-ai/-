@@ -7,5 +7,5 @@ public interface RoleClaimRuntimeGate {
 
     record RoleClaimGateContext(long instanceId, long enterpriseId, long definitionId,
             long definitionVersionId, long nodeId, String organizationId,
-            String resolverCode, String resolverVersion) { }
+            String roleCode, String resolverCode, String resolverVersion) { }
 }

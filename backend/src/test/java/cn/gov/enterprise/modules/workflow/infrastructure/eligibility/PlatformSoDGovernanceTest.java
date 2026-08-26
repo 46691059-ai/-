@@ -7,10 +7,14 @@ import static org.mockito.Mockito.*;
 
 import cn.gov.enterprise.modules.workflow.domain.role.eligibility.RealtimeEligibilityQuery;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowInstanceEntity;
+import cn.gov.enterprise.modules.workflow.infrastructure.persistence.entity.WorkflowTaskActionEntity;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.mapper.WorkflowInstanceMapper;
 import cn.gov.enterprise.modules.workflow.infrastructure.persistence.mapper.WorkflowTaskActionMapper;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import java.time.Instant;
 import java.util.Optional;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Test;
 
 class PlatformSoDGovernanceTest {
@@ -18,12 +22,15 @@ class PlatformSoDGovernanceTest {
     private static final String HASH="a".repeat(64);
 
     @Test void threeVersionedRulesMustAllAllowAndVersionDriftMustFailClosed(){
+        TableInfoHelper.initTableInfo(
+                new MapperBuilderAssistant(new MybatisConfiguration(), "platform-sod-governance-test"),
+                WorkflowTaskActionEntity.class);
         WorkflowInstanceMapper instances=mock(WorkflowInstanceMapper.class);
         WorkflowTaskActionMapper actions=mock(WorkflowTaskActionMapper.class);
         RoleRuntimeGovernanceControlStore controls=mock(RoleRuntimeGovernanceControlStore.class);
         WorkflowInstanceEntity instance=new WorkflowInstanceEntity(); instance.setId(1L); instance.setInitiatorUserId(7L);
         when(instances.selectById(1L)).thenReturn(instance);
-        when(actions.selectList(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class))).thenReturn(java.util.List.of());
+        when(actions.selectList(any())).thenReturn(java.util.List.of());
         when(controls.latest(eq("PLATFORM_SOD"),anyString(),eq(NOW)))
                 .thenReturn(Optional.of(control("ALLOW",1)));
         var adapter=new ProductionRealtimeCapabilityAdapters.PlatformSoD(instances,actions,controls);
