@@ -2,18 +2,20 @@
 
 ## 1. Decision and non-authorization statement
 
-This package is an audited draft for a future governance-hardened release. It is not an approval or activation instruction.
+This package is the audited human-review package bound to the governance-hardened release. It is not an approval or activation instruction.
+
+**Explicit warning: current package DOES NOT authorize Canary runtime.**
 
 - `APPROVAL_DECISION=PENDING_HUMAN_APPROVAL`
 - `BUSINESS_APPROVAL_EVIDENCE_COMPLETE=YES`
-- `RELEASE_IDENTITY_ATTESTATION=AWAITING_RELEASE_IDENTITY`
+- `RELEASE_IDENTITY_ATTESTATION=RELEASE_IDENTITY_BOUND`
 - `CANARY_AUTHORIZED=NO`
 - `CANARY_ENABLED=NO`
 - `ROLE_RUNTIME_ENABLED=NO`
 - `ROLE_RUNTIME=DISABLED`
 - `KILL_SWITCH=STOP_NEW_AND_CLAIM`
 
-No `PROPOSED`, `APPROVED_NOT_ENABLED`, or `ENABLED` governance row may be created from this draft. No Instance, Task, Candidate Pool, Claim, Admission, or Realtime Eligibility evidence may be created.
+This package does not itself create a `PROPOSED`, `APPROVED_NOT_ENABLED`, or `ENABLED` governance row. No Instance, Task, Candidate Pool, Claim, Admission, or Realtime Eligibility evidence is created by the post-tag attestation.
 
 ## 2. Release identities
 
@@ -22,10 +24,18 @@ The two release identities are deliberately distinct:
 | Identity | Tag / commit | Meaning |
 | --- | --- | --- |
 | Base RC2 | `workflow-v1.0.0-rc2` / `740bee63e79a2744eb06ff693b17e7ed3fdf9375` | Frozen historical RC2; does not contain Canary Governance hardening |
-| Governance Hardened candidate | recommended tag `workflow-v1.0.0-rc2.1` / final commit not yet created | Must contain S11.1 code, V2.6.24, S11.2 evidence/baseline, this final package, and the S11.3 report |
+| Governance Hardened release | annotated tag `workflow-v1.0.0-rc2.1` / `c5946d272e8eb88115671d66b46e8c8ec67b1477` | Contains S11.1 code, V2.6.24, S11.2 evidence/baseline, the S11.3 package and S11.3R frozen business evidence |
 | S11 checkpoint | no release tag / `7240683772ee65d4ee4a57d935e7dd0011907144` | Contains S11.1 and S11.2 assets, but is not the final tagged release identity |
 
-Business approval evidence is frozen before the release commit. The release commit is then created externally and does not need to contain its own SHA. S11.4 must bind the final annotated RC2.1 tag, peeled commit, remote verification and frozen `contentHash` in a post-tag Release Identity Attestation. The Base RC2 tag/commit must never be used as the complete hardened runtime identity.
+Business approval evidence was frozen before the release commit. The S11.4 post-tag attestation now binds the final annotated RC2.1 tag, peeled commit, tag object, live remote verification, and frozen business hashes without adding release identity to either canonical hash source. The Base RC2 tag/commit is not the hardened runtime identity.
+
+| RC2.1 release identity check | Verified value |
+| --- | --- |
+| Tag object | `269595532f17cc3db09880404ca11629d108fc6d` |
+| Peeled target | `c5946d272e8eb88115671d66b46e8c8ec67b1477` |
+| Tag type | `ANNOTATED` |
+| Remote branch head | `c5946d272e8eb88115671d66b46e8c8ec67b1477` |
+| Remote verification | `LIVE_GIT_LS_REMOTE / PASS` |
 
 ## 3. V2.6.24 identity and structural attestation
 
@@ -67,11 +77,11 @@ The scope model rejects null, wildcard, omitted role/organization, definition-le
 | versionBindingHash | `5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c` | `VersionNodeResolverBindingCanonical` for binding `990405` |
 | manifestHash | `e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed` | `RC2_CANARY_GOVERNANCE_RELEASE_MANIFEST_V1` compact canonical JSON |
 | contentHash | `b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade` | `RC2_CANARY_APPROVAL_CONTENT_V1` compact canonical JSON |
-| releaseTag | `AWAITING_RELEASE_IDENTITY` | S11.4 post-tag attestation; not an input to `contentHash` |
-| releaseCommit | `AWAITING_RELEASE_IDENTITY` | S11.4 post-tag attestation; not an input to `contentHash` |
+| releaseTag | `workflow-v1.0.0-rc2.1` | S11.4 post-tag attestation; not an input to `contentHash` |
+| releaseCommit | `c5946d272e8eb88115671d66b46e8c8ec67b1477` | S11.4 post-tag attestation; not an input to `contentHash` |
 | structuralFingerprint | `20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9` | V2.6.24 structural baseline |
 
-The four business hashes and structural fingerprint are frozen in `rc2-canary-approval-evidence-v1.json`; their sources and algorithms are specified in `workflow-rc2-canary-approval-evidence-hash-spec.md`. `AWAITING_RELEASE_IDENTITY` is a release-stage state, not a placeholder hash. No governance row may be written because the post-tag identity attestation has not happened.
+The four business hashes and structural fingerprint remain frozen in `rc2-canary-approval-evidence-v1.json`; their sources and algorithms are specified in `workflow-rc2-canary-approval-evidence-hash-spec.md`. Release identity is separately bound by `rc2-canary-post-tag-release-attestation-v1.json`, avoiding hash self-reference. The attestation is evidence only and writes no governance row.
 
 ## 6. State machine and separation
 
@@ -113,16 +123,17 @@ Rollback order after any future separately authorized activation is: keep or res
 | Field | Value |
 | --- | --- |
 | Decision | `PENDING_HUMAN_APPROVAL` |
-| Human approver | intentionally blank; no decision requested in S11.3 |
+| Human approver | intentionally blank; awaiting a separately recorded human decision |
 | Decision time | intentionally blank |
 | Approval reference | intentionally blank |
 
-Human scope approval remains prohibited until S11.4 creates and remotely verifies the final hardened commit, annotated tag and post-tag Release Identity Attestation. Even a later human scope approval would produce only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
+The release evidence is ready for a human Canary-scope approval decision, but no decision is implied or recorded here. Even a later human scope approval would produce only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
 
-## 11. Current blocker summary
+## 11. Current gate summary
 
-1. Business approval evidence is complete and reproducible before the release commit.
-2. The final governance-hardened commit and annotated `workflow-v1.0.0-rc2.1` tag do not yet exist.
-3. S11.4 must create the external post-tag attestation before any human approval request.
+1. Business approval evidence is complete, reproducible, and unchanged.
+2. The final governance-hardened commit and annotated `workflow-v1.0.0-rc2.1` tag are locally and remotely verified.
+3. The post-tag attestation uniquely binds the release identity, exact business evidence, migration identity, and six-dimensional scope.
+4. Human approval remains pending; runtime enablement is still fail closed and separately governed.
 
 This package must remain `PENDING_HUMAN_APPROVAL / NOT AUTHORIZED / NOT ENABLED`.

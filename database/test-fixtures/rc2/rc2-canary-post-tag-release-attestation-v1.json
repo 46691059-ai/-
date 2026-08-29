@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "RC2_CANARY_POST_TAG_RELEASE_ATTESTATION_V1",
+  "baseRelease": {
+    "tag": "workflow-v1.0.0-rc2",
+    "commit": "740bee63e79a2744eb06ff693b17e7ed3fdf9375"
+  },
+  "hardenedRelease": {
+    "tag": "workflow-v1.0.0-rc2.1",
+    "commit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "tagObject": "269595532f17cc3db09880404ca11629d108fc6d",
+    "tagType": "ANNOTATED",
+    "remoteBranchHead": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "remoteTagTarget": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "remoteTagObject": "269595532f17cc3db09880404ca11629d108fc6d",
+    "remoteTagType": "ANNOTATED",
+    "remoteVerified": true,
+    "remoteVerificationSource": "LIVE_GIT_LS_REMOTE"
+  },
+  "businessEvidence": {
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "migration": {
+    "version": "2.6.24",
+    "sha256": "e549147abcf77168a1b1ef465c76ed642f7ce02f250117d0019bbeeb8d524822",
+    "flywayChecksum": 857951823
+  },
+  "approvalProtocol": {
+    "approvalDoesNotEnable": true,
+    "roleRuntimeEnablementSeparate": true,
+    "requiredKillSwitch": "STOP_NEW_AND_CLAIM"
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "releaseAttestationStatus": "RELEASE_IDENTITY_BOUND"
+}

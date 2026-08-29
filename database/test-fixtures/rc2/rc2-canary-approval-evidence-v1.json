@@ -20,6 +20,10 @@
     "commit": "740bee63e79a2744eb06ff693b17e7ed3fdf9375"
   },
   "hardenedRelease": {
-    "status": "AWAITING_RELEASE_IDENTITY"
+    "status": "RELEASE_IDENTITY_BOUND",
+    "tag": "workflow-v1.0.0-rc2.1",
+    "commit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "tagObject": "269595532f17cc3db09880404ca11629d108fc6d",
+    "tagType": "ANNOTATED"
   }
 }

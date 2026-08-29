@@ -1,7 +1,6 @@
 package cn.gov.enterprise.modules.workflow.fixture;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import cn.gov.enterprise.modules.organization.approvalrole.domain.ApprovalRoleAssignmentSource;
 import cn.gov.enterprise.modules.organization.approvalrole.domain.ApprovalRoleAssignmentSourceType;
@@ -45,7 +44,7 @@ class Rc2CanaryApprovalEvidenceContractTest {
             "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9";
 
     @Test
-    void allFourHashesAreReproducibleAndMatchThePreReleaseArtifact() throws Exception {
+    void allFourHashesAreReproducibleAndMatchTheReleaseBoundArtifact() throws Exception {
         String directoryFirst = directoryHash();
         String directorySecond = directoryHash();
         String bindingFirst = bindingHash();
@@ -70,18 +69,65 @@ class Rc2CanaryApprovalEvidenceContractTest {
         assertThat(evidence.path("contentHash").asText()).isEqualTo(contentFirst);
         assertThat(evidence.path("structuralFingerprint").asText()).isEqualTo(STRUCTURAL);
         assertThat(evidence.path("hardenedRelease").path("status").asText())
-                .isEqualTo("AWAITING_RELEASE_IDENTITY");
-        assertThat(evidence.path("hardenedRelease").has("commit")).isFalse();
-        assertThat(evidence.path("hardenedRelease").has("tag")).isFalse();
+                .isEqualTo("RELEASE_IDENTITY_BOUND");
+        assertThat(evidence.path("hardenedRelease").path("tag").asText())
+                .isEqualTo("workflow-v1.0.0-rc2.1");
+        assertThat(evidence.path("hardenedRelease").path("commit").asText())
+                .isEqualTo("c5946d272e8eb88115671d66b46e8c8ec67b1477");
+        assertThat(evidence.path("hardenedRelease").path("tagObject").asText())
+                .isEqualTo("269595532f17cc3db09880404ca11629d108fc6d");
+        assertThat(evidence.path("hardenedRelease").path("tagType").asText())
+                .isEqualTo("ANNOTATED");
     }
 
     @Test
-    void preReleaseArtifactCannotBeUsedForARealGovernanceRecord() {
-        assertThatThrownBy(() -> new CanaryApprovalEvidence("1", 2,
+    void finalReleaseBoundArtifactCanInstantiateApprovalEvidenceWithoutGovernanceAction()
+            throws Exception {
+        JsonNode release = read("rc2-canary-approval-evidence-v1.json").path("hardenedRelease");
+        CanaryApprovalEvidence evidence = new CanaryApprovalEvidence("1", 2,
                 DIRECTORY_HASH, BINDING_HASH, MANIFEST_HASH, CONTENT_HASH,
-                null, null, STRUCTURAL))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("incomplete");
+                release.path("tag").asText(), release.path("commit").asText(), STRUCTURAL);
+
+        assertThat(evidence.releaseTag()).isEqualTo("workflow-v1.0.0-rc2.1");
+        assertThat(evidence.releaseCommit())
+                .isEqualTo("c5946d272e8eb88115671d66b46e8c8ec67b1477");
+        assertThat(evidence.contentHash()).isEqualTo(CONTENT_HASH);
+    }
+
+    @Test
+    void postTagAttestationUniquelyBindsReleaseBusinessEvidenceAndScope() throws Exception {
+        JsonNode evidence = read("rc2-canary-approval-evidence-v1.json");
+        JsonNode attestation = read("rc2-canary-post-tag-release-attestation-v1.json");
+        JsonNode hardened = attestation.path("hardenedRelease");
+
+        assertThat(attestation.path("schemaVersion").asText())
+                .isEqualTo("RC2_CANARY_POST_TAG_RELEASE_ATTESTATION_V1");
+        assertThat(attestation.path("releaseAttestationStatus").asText())
+                .isEqualTo("RELEASE_IDENTITY_BOUND");
+        assertThat(hardened.path("tag").asText()).isEqualTo("workflow-v1.0.0-rc2.1");
+        assertThat(hardened.path("commit").asText())
+                .isEqualTo("c5946d272e8eb88115671d66b46e8c8ec67b1477");
+        assertThat(hardened.path("tagObject").asText())
+                .isEqualTo("269595532f17cc3db09880404ca11629d108fc6d");
+        assertThat(hardened.path("tagType").asText()).isEqualTo("ANNOTATED");
+        assertThat(hardened.path("remoteBranchHead").asText())
+                .isEqualTo(hardened.path("commit").asText());
+        assertThat(hardened.path("remoteTagTarget").asText())
+                .isEqualTo(hardened.path("commit").asText());
+        assertThat(hardened.path("remoteTagObject").asText())
+                .isEqualTo(hardened.path("tagObject").asText());
+        assertThat(hardened.path("remoteVerified").asBoolean()).isTrue();
+        assertThat(attestation.path("businessEvidence").path("directoryResultHash").asText())
+                .isEqualTo(evidence.path("directoryResultHash").asText());
+        assertThat(attestation.path("businessEvidence").path("versionBindingHash").asText())
+                .isEqualTo(evidence.path("versionBindingHash").asText());
+        assertThat(attestation.path("businessEvidence").path("manifestHash").asText())
+                .isEqualTo(evidence.path("manifestHash").asText());
+        assertThat(attestation.path("businessEvidence").path("contentHash").asText())
+                .isEqualTo(evidence.path("contentHash").asText());
+        assertThat(attestation.path("businessEvidence").path("structuralFingerprint").asText())
+                .isEqualTo(evidence.path("structuralFingerprint").asText());
+        assertThat(attestation.path("scope")).isEqualTo(evidence.path("scope"));
     }
 
     @Test
