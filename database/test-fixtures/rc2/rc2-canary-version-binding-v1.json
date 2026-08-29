@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "RC2_CANARY_VERSION_BINDING_SOURCE_V1",
+  "bindingId": 990405,
+  "definitionId": 990401,
+  "definitionVersionId": 990402,
+  "nodeId": 990404,
+  "bindingOrder": 1,
+  "resolverCode": "ROLE_DIRECTORY",
+  "resolverVersion": "ROLE_DIRECTORY_V1",
+  "resolverContractHash": "5e8f9870effc7f886671f3cc5077a7bf0419cd9a6698dd6ca01e9de0c01f708d",
+  "strategyType": "ROLE",
+  "resolverMode": "CANDIDATE_POOL",
+  "targetType": "ROLE",
+  "roleCode": "RC1_TEST_CANARY_APPROVER",
+  "organizationScopeType": "FIXED_ORG",
+  "organizationId": 990101,
+  "effectiveTimePolicy": "NODE_ACTIVATED_AT",
+  "bindingSchemaVersion": "VERSION_NODE_RESOLVER_BINDING_V1"
+}

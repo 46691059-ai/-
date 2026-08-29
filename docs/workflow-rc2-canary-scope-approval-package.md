@@ -1,39 +1,52 @@
-# Workflow V1 RC2 Canary Scope Approval Readiness & Approval Package
+# Workflow V1 RC2.1 Canary Scope Approval Package
 
-## 1. 结论与非授权声明
+## 1. Decision and non-authorization statement
 
-本包绑定 `workflow-v1.0.0-rc2`，用于 RC2 Canary Scope 人工审批前的只读治理审计。当前结论为：
+This package is an audited draft for a future governance-hardened release. It is not an approval or activation instruction.
 
-- `DECISION=PENDING_HUMAN_APPROVAL`
-- `CANARY_SCOPE_MODEL_SUFFICIENT=NO`
-- `CANARY_GOVERNANCE_MODEL_GAP=YES`
-- `CANARY_APPROVAL_PACKAGE_READY=NO`
-- `ROLE_RUNTIME=DISABLED`
+- `APPROVAL_DECISION=PENDING_HUMAN_APPROVAL`
+- `BUSINESS_APPROVAL_EVIDENCE_COMPLETE=YES`
+- `RELEASE_IDENTITY_ATTESTATION=AWAITING_RELEASE_IDENTITY`
 - `CANARY_AUTHORIZED=NO`
 - `CANARY_ENABLED=NO`
+- `ROLE_RUNTIME_ENABLED=NO`
+- `ROLE_RUNTIME=DISABLED`
 - `KILL_SWITCH=STOP_NEW_AND_CLAIM`
 
-本文不是授权、启用或运行指令。不得依据本文写入治理控制、切换 Feature Flag、改变 Kill Switch、启动 ROLE Runtime，或创建 Instance、Task、Candidate Pool、Claim、Admission、Realtime Eligibility Evidence。
+No `PROPOSED`, `APPROVED_NOT_ENABLED`, or `ENABLED` governance row may be created from this draft. No Instance, Task, Candidate Pool, Claim, Admission, or Realtime Eligibility evidence may be created.
 
-## 2. Release Baseline
+## 2. Release identities
 
-| 项目 | 冻结值 | 审计结果 |
+The two release identities are deliberately distinct:
+
+| Identity | Tag / commit | Meaning |
 | --- | --- | --- |
-| Release tag | `workflow-v1.0.0-rc2` | 本地 annotated tag 存在 |
-| Release commit | `740bee63e79a2744eb06ff693b17e7ed3fdf9375` | tag target 与 HEAD 均匹配 |
-| RC1 tag target | `bf70c588752f8b32c27f3112e2ddb5e8803b4db6` | 未变化 |
-| Structural canonical | `RC2_SCHEMA_STRUCTURAL_CANONICAL_V2` | 冻结 |
-| Structural fingerprint | `92ea9f4d006233f672b22c3c335663c04121dbb652ce657aac07d7b04518171d` | 冻结 |
-| Migration SHA | `45/45_PASS` | 沿用已完成的 RC2 Release Gate 证据 |
-| Fresh / Upgrade | `PASS / PASS` | 结构一致 |
+| Base RC2 | `workflow-v1.0.0-rc2` / `740bee63e79a2744eb06ff693b17e7ed3fdf9375` | Frozen historical RC2; does not contain Canary Governance hardening |
+| Governance Hardened candidate | recommended tag `workflow-v1.0.0-rc2.1` / final commit not yet created | Must contain S11.1 code, V2.6.24, S11.2 evidence/baseline, this final package, and the S11.3 report |
+| S11 checkpoint | no release tag / `7240683772ee65d4ee4a57d935e7dd0011907144` | Contains S11.1 and S11.2 assets, but is not the final tagged release identity |
 
-`RC2_TAG_BASELINE_MATCH=YES`。本次审计以 RC2 tag 对应源码为准，不把后续 working tree 文件纳入 Canary 基线。
+Business approval evidence is frozen before the release commit. The release commit is then created externally and does not need to contain its own SHA. S11.4 must bind the final annotated RC2.1 tag, peeled commit, remote verification and frozen `contentHash` in a post-tag Release Identity Attestation. The Base RC2 tag/commit must never be used as the complete hardened runtime identity.
 
-## 3. 唯一 Scope Identity
+## 3. V2.6.24 identity and structural attestation
 
-本次唯一允许进入后续人工审批的 Proposed Scope 如下。所有字段均为精确匹配；禁止通配符、`ALL`、空值或以 `NULL` 表示全局。
+| Evidence | Frozen value |
+| --- | --- |
+| Migration | `V2.6.24__create_exact_canary_scope_governance.sql` |
+| Migration SHA-256 | `e549147abcf77168a1b1ef465c76ed642f7ce02f250117d0019bbeeb8d524822` |
+| Flyway checksum | `857951823` |
+| Latest migration | `2.6.24` |
+| Migration SHA validation | `46/46 PASS` |
+| Structural canonical | `RC2_CANARY_GOVERNANCE_STRUCTURAL_CANONICAL_V1` |
+| Structural fingerprint | `20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9` |
+| Fresh A / Fresh B / Upgrade | identical |
 
-| 维度 | 冻结值 |
+The Base RC2 V2.6.23 attestation remains separately frozen in `rc2-schema-fingerprint-baseline.json`; it was not overwritten.
+
+## 4. Exact six-dimensional scope
+
+Only this exact scope may be considered by a future human approval:
+
+| Dimension | Frozen value |
 | --- | --- |
 | enterpriseId | `990001` |
 | organizationId | `990101` |
@@ -41,177 +54,75 @@
 | definitionVersionId | `990402` |
 | nodeId | `990404` |
 | roleCode | `RC1_TEST_CANARY_APPROVER` |
-| role-bound node count | `1` |
-| status | `PROPOSED_NOT_ENABLED` |
 
-不得扩大到其他企业、组织、定义、版本、节点或审批角色。
+The scope model rejects null, wildcard, omitted role/organization, definition-level fallback, enterprise-level fallback, and any one-dimension mismatch.
 
-## 4. Directory Identity 与证据边界
+## 5. Directory and approval evidence inventory
 
-| 项目 | 冻结值/状态 |
-| --- | --- |
-| directoryRevision | `1` |
-| directoryCandidateCount | `2` |
-| candidate userId count | `2`，不在本文披露具体 ID |
-| roleCode | `RC1_TEST_CANARY_APPROVER` |
-| organizationId | `990101` |
-| Directory Result Hash | 当前审批输入未提供可冻结的具体值，必须在后续审批前补齐并校验 |
+| Field | Value/status | Authoritative source |
+| --- | --- | --- |
+| directoryRevision | `1` | controlled fixture manifest and Directory revision contract |
+| directoryCandidateCount | `2` | controlled fixture contract |
+| directoryResultHash | `2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234` | `ApprovalRoleCanonical.resultHash` over the frozen fixture Directory result |
+| versionBindingHash | `5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c` | `VersionNodeResolverBindingCanonical` for binding `990405` |
+| manifestHash | `e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed` | `RC2_CANARY_GOVERNANCE_RELEASE_MANIFEST_V1` compact canonical JSON |
+| contentHash | `b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade` | `RC2_CANARY_APPROVAL_CONTENT_V1` compact canonical JSON |
+| releaseTag | `AWAITING_RELEASE_IDENTITY` | S11.4 post-tag attestation; not an input to `contentHash` |
+| releaseCommit | `AWAITING_RELEASE_IDENTITY` | S11.4 post-tag attestation; not an input to `contentHash` |
+| structuralFingerprint | `20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9` | V2.6.24 structural baseline |
 
-RC2 Fixture Contract 能冻结 revision、人数、有效时间及角色/组织标识，但本审批输入没有给出 Directory Result Hash。不得使用候选人数或 revision 替代 Directory Result Hash。
+The four business hashes and structural fingerprint are frozen in `rc2-canary-approval-evidence-v1.json`; their sources and algorithms are specified in `workflow-rc2-canary-approval-evidence-hash-spec.md`. `AWAITING_RELEASE_IDENTITY` is a release-stage state, not a placeholder hash. No governance row may be written because the post-tag identity attestation has not happened.
 
-## 5. 当前治理模型审计
+## 6. State machine and separation
 
-### 5.1 权威对象与读取规则
-
-Canary 的当前持久化控制权威是 `workflow_role_runtime_governance_control`。它采用 append-only 记录、`control_type + scope_key + config_version + delete_token` 唯一键、有效时间窗口与证据 Hash；UPDATE/DELETE 由数据库 Trigger 拒绝。`RoleRuntimeGovernanceControlStore` 按 `control_type + scope_key` 读取生效期内最高 `config_version`，缺失或读取异常时上层路径拒绝执行。
-
-当前 Claim Gate 的 Canary 键为：
+The append-only state model is:
 
 ```text
-CANARY|{enterpriseId}|DEF:{definitionId}|VER:{definitionVersionId}|NODE:{nodeId}
+PROPOSED -> APPROVED_NOT_ENABLED -> ENABLED -> SUSPENDED -> ENABLED
+     |                |                |            |
+     +----------------+----------------+------------+-> REVOKED
 ```
 
-Realtime 与 commit-time 路径使用等价的 enterprise/definition/version/node 业务范围键。`scope_key` 虽是自由字符串，但生产读取代码不会构造包含 `organizationId` 和 `roleCode` 的 Canary 键，因此不能仅靠写入一个更长键获得运行时强制校验。
+Approval appends `APPROVED_NOT_ENABLED`; it does not enable Canary, enable ROLE Runtime, change the Kill Switch, or create runtime products. `PROPOSED -> ENABLED` and `REVOKED -> ENABLED` are rejected. `APPROVED_NOT_ENABLED` remains a runtime deny decision.
 
-### 5.2 十项审计回答
+Runtime allow requires all of the following independently:
 
-| 问题 | 当前 RC2 事实 | 结论 |
-| --- | --- | --- |
-| Canary Authorization 权威持久化对象 | `workflow_role_runtime_governance_control` 的 `CANARY` 控制记录 | 存在 |
-| Canary Scope 表达 | enterprise + definition + version + node 的 `scope_key` | 仅四维 |
-| 六维 Scope 支持 | organizationId、roleCode 未进入 Canary gate key | 不支持 |
-| Authorized 与 Enabled 独立 | `CANARY/ALLOW` 同时是运行时放行条件；无独立 Canary approval 状态被该 gate 消费 | 未分离 |
-| ROLE Runtime 与 Canary 独立 | `workflow.role-runtime.claim-enabled` 默认 false，且 Canary 还需 `ALLOW` | 已分离 |
-| Kill Switch 覆盖 | Claim 前、Realtime capability、commit-time 均检查；未发现其在 Role Directory prepare、Task/Candidate Pool 创建入口的统一前置检查 | 覆盖不完整 |
-| 完整 Activation Gate | 存在 ROLE Activation approval domain/persistence，但未与 Canary 六维 Scope 控制读取形成完整生产闭环 | 不存在 |
-| Fail Closed | Claim/Realtime/commit-time 对缺失、过期、拒绝或异常控制均拒绝 | 已存在，但仅覆盖当前键模型 |
-| Scope 越界检测 | 四维键漂移有测试；organizationId/roleCode 越界不能由 Canary gate 拒绝 | 不完整 |
-| Scope 撤销/禁用 | 可追加更高版本 `DENY` 或恢复 Kill Switch；禁止原位 UPDATE/DELETE | 存在 append-only 控制能力 |
+1. the exact six-dimensional Canary scope is `ENABLED`;
+2. ROLE Runtime is explicitly enabled by its separate governance action;
+3. Feature Flag and runtime safety evidence pass;
+4. every Kill Switch layer explicitly allows execution.
 
-### 5.3 状态模型复用边界
+## 7. Negative matrix
 
-现有 `RoleRuntimeActivationStatus` 已定义 `DRAFT → ELIGIBLE → APPROVED` 及 `BLOCKED / REJECTED / REVOKED`，并明确禁止由该聚合进入 `ENABLED`。后续不得创建第二套平行审批状态机。
+The S11.2 real MySQL/application matrix proved denial for each individual mismatch in enterprise, organization, definition, definition version, node, and role. It also proved null/wildcard rejection or isolation, legacy fail-closed behavior, approval-without-enablement denial, enable-without-approval rejection, runtime-disabled denial, and Kill Switch denial.
 
-本 Canary 包对现有语义的映射为：
+No `WARN_AND_CONTINUE`, `NULL=ALL`, wildcard, broad scope, or legacy governance fallback is permitted.
 
-```text
-PROPOSED                 = 尚未形成有效的三方 Activation approval
-APPROVED_NOT_ENABLED     = 复用 RoleRuntimeActivationStatus.APPROVED
-ENABLED                  = 独立 Canary governance control + 独立 ROLE runtime enablement 均通过
-SUSPENDED / REVOKED      = append-only DENY / REVOKED 证据，不删除历史记录
-```
+## 8. Append-only, concurrency, and legacy behavior
 
-当前只有 `PROPOSED / PENDING_HUMAN_APPROVAL`。由于生产 Canary gate 未消费包含六维 Scope 的批准证据，不能晋级为 `APPROVED_NOT_ENABLED`。
+Historical ledger rows reject `UPDATE` and `DELETE`. State changes insert a new revision. Scope/revision and predecessor uniqueness plus expected-revision CAS prevent two current successors, duplicate revisions, silent overwrite, and last-write-wins. Legacy V2.6.23 governance rows are never translated into a new six-dimensional Canary state and remain fail closed.
 
-## 6. Approval Preconditions
+## 9. Kill Switch and rollback
 
-| 分类 | 条件 | 当前结果 |
-| --- | --- | --- |
-| Release | remote RC2 tag、target、RC1 immutable、45/45 SHA、结构指纹冻结 | PASS |
-| Schema | Fresh、RC1→RC2 Upgrade、结构一致、Mapping Checker | PASS |
-| Runtime safety | Runtime disabled、Canary off、Kill Switch safe | PASS |
-| Scope | 1 个 ROLE node、2 个候选、唯一推荐 Scope | PASS（证据层） |
-| Scope enforcement | 六个维度均进入生产 Canary gate | FAIL |
-| Directory | role/org/revision/count 匹配 | PASS（Fixture 证据层） |
-| Directory hash | 可冻结并在激活时精确校验的 Result Hash | INCOMPLETE |
-| Authorization split | Canary approval 与 Canary enablement 独立 | FAIL |
-| Security | secret/PII finding 为 0 | PASS |
-| Rollback | 可 append-only deny、关闭 Runtime、恢复 Kill Switch、保留 Evidence | PASS（设计层） |
-| Rollback enforcement | Kill Switch 在 new runtime、Task、Pool、Claim、Admission 全入口统一生效 | FAIL |
+The authoritative state remains `STOP_NEW_AND_CLAIM`. Approval, Canary enablement, and ROLE Runtime enablement cannot modify it implicitly.
 
-因此 `APPROVAL_PRECONDITIONS_COMPLETE=NO`。
+Rollback order after any future separately authorized activation is: keep or restore `STOP_NEW_AND_CLAIM`; disable ROLE Runtime; append `SUSPENDED` or `REVOKED`; block new runtime/claim/admission; retain all ledger and audit evidence; investigate without deleting history.
 
-## 7. 后续 Activation Gate
+## 10. Human approval section
 
-后续 Repair Sprint 必须建立单一、原子、fail-closed 的激活 Gate，并按固定顺序校验：
-
-1. RC2 release tag 与 commit 精确匹配；
-2. structural canonical version 与 fingerprint 精确匹配；
-3. 45 项 Migration SHA 无漂移；
-4. 六维 Scope 与批准证据逐字段精确匹配；
-5. Directory revision、candidate count、Directory Result Hash 精确匹配；
-6. resolver binding hash、manifest hash、content hash 精确匹配；
-7. Role Activation 三方批准证据完整且未撤销；
-8. Canary authorization 已批准但尚未启用；
-9. Runtime enablement、Canary enablement 为独立动作；
-10. Feature Flag、Kill Switch、Canary、SoD、Audit 均满足；
-11. Fixture 无 partial state，运行对象计数为 0；
-12. schema/migration 无漂移。
-
-任何缺失、歧义、过期、Hash 漂移或查询异常均为 `FAIL_CLOSED`；禁止 fallback、默认全局 Scope、自动降级或改用 EXPLICIT_USER。
-
-该设计本身完整，`ACTIVATION_GATE_DESIGN=PASS`；但当前 RC2 代码尚未实现完整 Gate。
-
-## 8. Scope Escape 负向矩阵
-
-| # | 单变量变更 | 预期 |
-| --- | --- | --- |
-| 1 | enterpriseId ≠ `990001` | DENY |
-| 2 | organizationId ≠ `990101` | DENY |
-| 3 | definitionId ≠ `990401` | DENY |
-| 4 | definitionVersionId ≠ `990402` | DENY |
-| 5 | nodeId ≠ `990404` | DENY |
-| 6 | roleCode ≠ `RC1_TEST_CANARY_APPROVER` | DENY |
-| 7 | directoryRevision ≠ `1` | DENY |
-| 8 | candidateCount ≠ `2` | DENY |
-| 9 | resolver binding hash 漂移 | DENY |
-| 10 | manifest hash 漂移 | DENY |
-| 11 | content hash 漂移 | DENY |
-| 12 | releaseTag ≠ `workflow-v1.0.0-rc2` | DENY |
-| 13 | releaseCommit ≠ `740bee63e79a2744eb06ff693b17e7ed3fdf9375` | DENY |
-| 14 | structuralFingerprint 漂移 | DENY |
-
-所有场景均禁止 `WARN_AND_CONTINUE`。矩阵设计完整，`SCOPE_ESCAPE_NEGATIVE_MATRIX=PASS`；其中 organizationId、roleCode 两项在当前生产 Canary key 下尚不能强制执行，是阻断本次批准的核心缺口。
-
-## 9. Kill Switch 与 Rollback
-
-异常发生后的第一动作必须是恢复或保持：
-
-```text
-KILL_SWITCH=STOP_NEW_AND_CLAIM
-```
-
-受控回退顺序：
-
-1. 追加更高 `config_version` 的 Kill Switch/Canary deny 控制，禁止原位修改；
-2. 关闭独立 ROLE Runtime enablement；
-3. 阻断 new ROLE runtime、Task/Pool 激活、Claim 与 Admission；
-4. 将 Canary Scope 标记为 SUSPENDED 或 REVOKED；
-5. 保留 Activation、Admission、Realtime Eligibility、Claim 与外部审计 Evidence；
-6. 完成运行对象盘点与人工处置，不以 DELETE 历史证据作为回滚手段。
-
-`KILL_SWITCH_ROLLBACK_DESIGN=PASS`。但当前 Kill Switch 消费点不能证明覆盖 Task/Candidate Pool 创建入口；修复前不得执行 Canary。
-
-## 10. Approval Decision Record
-
-| 字段 | 值 |
+| Field | Value |
 | --- | --- |
 | Decision | `PENDING_HUMAN_APPROVAL` |
-| Package readiness | `NO` |
-| Blocking severity | `P0` |
-| Runtime authorization | `NO` |
-| Canary authorization | `NO` |
-| Canary enablement | `NO` |
+| Human approver | intentionally blank; no decision requested in S11.3 |
+| Decision time | intentionally blank |
+| Approval reference | intentionally blank |
 
-阻断项：
+Human scope approval remains prohibited until S11.4 creates and remotely verifies the final hardened commit, annotated tag and post-tag Release Identity Attestation. Even a later human scope approval would produce only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
 
-1. Canary Scope 权威键缺少 `organizationId` 与 `roleCode`；
-2. Canary approval 与 Canary enablement 未形成两个独立且被生产 Gate 消费的状态；
-3. Directory Result Hash 尚未作为本 Scope 的冻结审批输入；
-4. Kill Switch 尚未证明在 new runtime、Task 与 Candidate Pool 创建入口统一生效；
-5. 现有 Role Activation approval evidence 未与六维 Canary Scope 控制形成原子桥接。
+## 11. Current blocker summary
 
-## 11. 验证结果
+1. Business approval evidence is complete and reproducible before the release commit.
+2. The final governance-hardened commit and annotated `workflow-v1.0.0-rc2.1` tag do not yet exist.
+3. S11.4 must create the external post-tag attestation before any human approval request.
 
-- 定向测试共执行 25 项：23 通过、1 跳过、1 失败。
-- 可重复失败项：`PlatformSoDGovernanceTest.threeVersionedRulesMustAllAllowAndVersionDriftMustFailClosed`；实际返回 `INDETERMINATE / platform SoD unavailable`，符合运行时 fail-closed 结果，但不符合该测试期望的 `PASS`。本任务未修改 RC2 tag 上的测试或生产代码。
-- `ConfiguredRoleClaimRuntimeGateTest`、`WorkflowRoleRuntimeActivationGateTest`、`RoleRuntimeProductionCapabilityBundleTest`、`Rc2ControlledCanaryFixtureContractTest` 全部通过；数据库型 Fixture Seeder 测试按既有条件跳过。
-- 审批包 trailing whitespace 为 0，`git diff --check` 通过。
-
-该定向回归失败进一步阻断审批包晋级；不得将 fail-closed 的 `INDETERMINATE` 解释为 Canary 可运行。
-
-## 12. Next-Step Activation Boundary
-
-后续应单独建立 Repair Sprint，只处理 Canary 治理模型缺口：定义六维不可歧义 Scope canonical、将 approval evidence 与 enablement 分离、让所有 Runtime 入口消费同一 fail-closed Gate，并补齐 14 项负向测试及 Kill Switch 全入口测试。完成真实数据库和应用回归前，不得请求人工批准，更不得进入 Canary Activation。
-
-本次未修改 Production Code、Migration、数据库、RC1/RC2 tag，也未触碰 RC1 TEST 数据库。
+This package must remain `PENDING_HUMAN_APPROVAL / NOT AUTHORIZED / NOT ENABLED`.

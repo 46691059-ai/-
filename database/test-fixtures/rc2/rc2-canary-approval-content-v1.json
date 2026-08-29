@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "RC2_CANARY_APPROVAL_CONTENT_V1",
+  "canonicalizationVersion": "RC2_CANARY_GOVERNANCE_JSON_CANONICAL_V1",
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "directoryEvidence": {
+    "directoryRevision": "1",
+    "directoryCandidateCount": 2,
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234"
+  },
+  "binding": {
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c"
+  },
+  "manifest": {
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed"
+  },
+  "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9",
+  "governancePolicyVersion": "RC2_CANARY_GOVERNANCE_POLICY_V1",
+  "approvalDoesNotEnable": true,
+  "roleRuntimeEnablementSeparate": true,
+  "requiredKillSwitch": "STOP_NEW_AND_CLAIM"
+}

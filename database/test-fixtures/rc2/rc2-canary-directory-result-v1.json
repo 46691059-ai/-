@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "RC2_CANARY_DIRECTORY_RESULT_SOURCE_V1",
+  "approvalScope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "enterpriseId": "990001",
+  "organizationId": 990101,
+  "roleCode": "RC1_TEST_CANARY_APPROVER",
+  "effectiveAt": "2026-01-01T00:00:00Z",
+  "revision": 1,
+  "complete": true,
+  "members": [
+    {
+      "userId": 990201,
+      "assignmentId": 990303,
+      "effectiveFrom": "2026-01-01T00:00:00Z",
+      "effectiveTo": "2099-12-31T00:00:00Z",
+      "sourceType": "GOVERNANCE_DECISION",
+      "sourceSystem": "RC2_TEST_FIXTURE",
+      "sourceReference": "RC2_TEST_CANARY_ASSIGNMENT_01"
+    },
+    {
+      "userId": 990202,
+      "assignmentId": 990304,
+      "effectiveFrom": "2026-01-01T00:00:00Z",
+      "effectiveTo": "2099-12-31T00:00:00Z",
+      "sourceType": "GOVERNANCE_DECISION",
+      "sourceSystem": "RC2_TEST_FIXTURE",
+      "sourceReference": "RC2_TEST_CANARY_ASSIGNMENT_02"
+    }
+  ]
+}

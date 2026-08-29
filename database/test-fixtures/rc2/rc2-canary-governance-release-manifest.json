@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "RC2_CANARY_GOVERNANCE_RELEASE_MANIFEST_V1",
+  "canonicalizationVersion": "RC2_CANARY_GOVERNANCE_JSON_CANONICAL_V1",
+  "hashAlgorithm": "SHA-256",
+  "encoding": "UTF-8",
+  "baseRelease": {
+    "tag": "workflow-v1.0.0-rc2",
+    "commit": "740bee63e79a2744eb06ff693b17e7ed3fdf9375"
+  },
+  "migrations": [
+    { "version": "2.6.21", "sha256": "cb9555ba5f81c292654286fe8c7396cdead4b71c9387c4b73d09139d4147296e" },
+    { "version": "2.6.22", "sha256": "658b4939a7e92295527ef3a5116d20814b0d17e4c34e46f3955e4c21c67dcc05" },
+    { "version": "2.6.23", "sha256": "874427e1df075042485c9098ad2f1b79dbc632200f01614f85529b30765c169d" },
+    { "version": "2.6.24", "sha256": "e549147abcf77168a1b1ef465c76ed642f7ce02f250117d0019bbeeb8d524822", "flywayChecksum": 857951823 }
+  ],
+  "structuralAttestations": [
+    { "latestMigration": "2.6.23", "canonicalVersion": "RC2_SCHEMA_STRUCTURAL_CANONICAL_V2", "fingerprint": "92ea9f4d006233f672b22c3c335663c04121dbb652ce657aac07d7b04518171d" },
+    { "latestMigration": "2.6.24", "canonicalVersion": "RC2_CANARY_GOVERNANCE_STRUCTURAL_CANONICAL_V1", "fingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9" }
+  ],
+  "approvalEvidenceSchemaVersion": "RC2_CANARY_APPROVAL_EVIDENCE_V1",
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "contracts": {
+    "directoryCanonicalVersion": "ROLE_DIRECTORY_RESULT_HASH_V1",
+    "versionBindingCanonicalVersion": "VERSION_NODE_RESOLVER_BINDING_V1",
+    "governancePolicyVersion": "RC2_CANARY_GOVERNANCE_POLICY_V1",
+    "validationReport": "workflow-rc2-s11-2-canary-governance-real-mysql-validation-report.md"
+  }
+}
