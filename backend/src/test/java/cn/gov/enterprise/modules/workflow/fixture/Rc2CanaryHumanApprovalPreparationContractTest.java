@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
             .resolve("database/test-fixtures/rc2");
 
     @Test
-    void pendingDecisionBindsExactReleaseScopeEvidenceAndDirectory() throws Exception {
+    void recordedHumanApprovalBindsExactReleaseScopeEvidenceAndDirectory() throws Exception {
         JsonNode decision = read("rc2-canary-human-approval-decision-v1.json");
         JsonNode evidence = read("rc2-canary-approval-evidence-v1.json");
         JsonNode attestation = read("rc2-canary-post-tag-release-attestation-v1.json");
@@ -28,6 +29,8 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
                 .isEqualTo(attestation.path("hardenedRelease").path("commit").asText());
         assertThat(decision.path("approvalSubject").path("attestationCommit").asText())
                 .isEqualTo("d627c38af00eb6be5f2a8fda572679c62c4937c3");
+        assertThat(decision.path("approvalSubject").path("preDecisionBaselineCommit").asText())
+                .isEqualTo("e96b498deb97c7c2a0d32b9165bbe1edef99b1e0");
         assertThat(decision.path("scope")).isEqualTo(evidence.path("scope"));
         assertThat(decision.path("evidence").path("directoryResultHash").asText())
                 .isEqualTo(evidence.path("directoryResultHash").asText());
@@ -46,11 +49,12 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
     }
 
     @Test
-    void pendingTemplateHasEveryRequiredFieldAndNoHumanDecision() throws Exception {
+    void explicitHumanDecisionIsRecordedAsApprovedNotEnabled() throws Exception {
         JsonNode root = read("rc2-canary-human-approval-decision-v1.json");
         List<String> requiredTextFields = List.of(
                 "/approvalSubject/runtimeReleaseTag", "/approvalSubject/runtimeReleaseCommit",
-                "/approvalSubject/attestationCommit", "/scope/roleCode",
+                "/approvalSubject/attestationCommit",
+                "/approvalSubject/preDecisionBaselineCommit", "/scope/roleCode",
                 "/evidence/directoryResultHash", "/evidence/versionBindingHash",
                 "/evidence/manifestHash", "/evidence/contentHash",
                 "/evidence/structuralFingerprint");
@@ -58,7 +62,7 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
                 "/scope/enterpriseId", "/scope/organizationId", "/scope/definitionId",
                 "/scope/definitionVersionId", "/scope/nodeId");
 
-        assertThat(isCompletePendingArtifact(root, requiredTextFields,
+        assertThat(isCompleteApprovalArtifact(root, requiredTextFields,
                 requiredNumericScopeFields)).isTrue();
         requiredTextFields.forEach(pointer ->
                 assertThat(root.at(pointer).isTextual() && !root.at(pointer).asText().isBlank())
@@ -68,35 +72,45 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
         for (String pointer : requiredTextFields) {
             JsonNode incomplete = root.deepCopy();
             remove(incomplete, pointer);
-            assertThat(isCompletePendingArtifact(incomplete, requiredTextFields,
+            assertThat(isCompleteApprovalArtifact(incomplete, requiredTextFields,
                     requiredNumericScopeFields)).as("missing " + pointer).isFalse();
         }
         for (String pointer : requiredNumericScopeFields) {
             JsonNode incomplete = root.deepCopy();
             remove(incomplete, pointer);
-            assertThat(isCompletePendingArtifact(incomplete, requiredTextFields,
+            assertThat(isCompleteApprovalArtifact(incomplete, requiredTextFields,
                     requiredNumericScopeFields)).as("missing " + pointer).isFalse();
         }
-        JsonNode pending = root.path("decision");
-        assertThat(pending.path("status").asText()).isEqualTo("PENDING_HUMAN_APPROVAL");
-        assertThat(pending.path("decisionBy").isNull()).isTrue();
-        assertThat(pending.path("decisionAt").isNull()).isTrue();
-        assertThat(pending.path("decisionReason").isNull()).isTrue();
+        JsonNode recorded = root.path("decision");
+        assertThat(recorded.path("previousStatus").asText())
+                .isEqualTo("PENDING_HUMAN_APPROVAL");
+        assertThat(recorded.path("status").asText()).isEqualTo("APPROVED_NOT_ENABLED");
+        assertThat(recorded.path("humanDecision").asText()).isEqualTo("APPROVE");
+        assertThat(recorded.path("decisionSource").asText())
+                .isEqualTo("EXPLICIT_HUMAN_DECISION");
+        assertThat(recorded.path("decisionActorType").asText()).isEqualTo("HUMAN");
+        assertThat(recorded.path("decisionActorReference").asText())
+                .isEqualTo("EXPLICIT_INTERACTIVE_APPROVER");
+        assertThat(recorded.path("decisionBy").isNull()).isTrue();
+        assertThat(Instant.parse(recorded.path("decisionAt").asText())).isNotNull();
+        assertThat(recorded.path("decisionReason").asText())
+                .isEqualTo("EXPLICIT_HUMAN_APPROVAL");
     }
 
     @Test
-    void approvalChoicesAreNotEnablementAndCannotChangeRuntimeControls() throws Exception {
+    void approvalEventIsAppendOnlyAndDoesNotCreateEnablementEvents() throws Exception {
         JsonNode root = read("rc2-canary-human-approval-decision-v1.json");
-        JsonNode choices = root.path("decision").path("allowedValues");
-        assertThat(choices).hasSize(2);
-        assertThat(choices.path(0).asText()).isEqualTo("APPROVE");
-        assertThat(choices.path(1).asText()).isEqualTo("REJECT");
-        assertThat(choices.toString()).doesNotContain("ENABLE", "ENABLED",
-                "APPROVED_NOT_ENABLED");
-        assertThat(root.path("governance").path("approvalDoesNotEnable").asBoolean()).isTrue();
-        assertThat(root.path("governance").path("roleRuntimeEnablementSeparate").asBoolean())
-                .isTrue();
-        assertThat(root.path("governance").path("killSwitch").asText())
+        JsonNode governance = root.path("governance");
+        assertThat(governance.path("approvalEvent").asText()).isEqualTo("APPROVE");
+        assertThat(governance.path("appendOnly").asBoolean()).isTrue();
+        assertThat(governance.path("approvalDoesNotEnable").asBoolean()).isTrue();
+        assertThat(governance.path("roleRuntimeEnablementSeparate").asBoolean()).isTrue();
+        assertThat(governance.path("canaryAuthorized").asBoolean()).isTrue();
+        assertThat(governance.path("canaryEnabled").asBoolean()).isFalse();
+        assertThat(governance.path("roleRuntimeEnabled").asBoolean()).isFalse();
+        assertThat(governance.path("enableEventCreated").asBoolean()).isFalse();
+        assertThat(governance.path("roleRuntimeEventCreated").asBoolean()).isFalse();
+        assertThat(governance.path("killSwitch").asText())
                 .isEqualTo("STOP_NEW_AND_CLAIM");
     }
 
@@ -104,7 +118,7 @@ class Rc2CanaryHumanApprovalPreparationContractTest {
         return JSON.readTree(Files.readString(FIXTURE.resolve(file)));
     }
 
-    private static boolean isCompletePendingArtifact(JsonNode root, List<String> textFields,
+    private static boolean isCompleteApprovalArtifact(JsonNode root, List<String> textFields,
             List<String> numericFields) {
         return textFields.stream().allMatch(pointer -> root.at(pointer).isTextual()
                         && !root.at(pointer).asText().isBlank())

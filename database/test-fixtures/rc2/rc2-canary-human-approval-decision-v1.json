@@ -3,7 +3,8 @@
   "approvalSubject": {
     "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
     "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
-    "attestationCommit": "d627c38af00eb6be5f2a8fda572679c62c4937c3"
+    "attestationCommit": "d627c38af00eb6be5f2a8fda572679c62c4937c3",
+    "preDecisionBaselineCommit": "e96b498deb97c7c2a0d32b9165bbe1edef99b1e0"
   },
   "scope": {
     "enterpriseId": 990001,
@@ -26,18 +27,26 @@
     "recommendedCandidateCount": 1
   },
   "decision": {
-    "status": "PENDING_HUMAN_APPROVAL",
-    "allowedValues": [
-      "APPROVE",
-      "REJECT"
-    ],
+    "previousStatus": "PENDING_HUMAN_APPROVAL",
+    "status": "APPROVED_NOT_ENABLED",
+    "humanDecision": "APPROVE",
+    "decisionSource": "EXPLICIT_HUMAN_DECISION",
+    "decisionActorType": "HUMAN",
+    "decisionActorReference": "EXPLICIT_INTERACTIVE_APPROVER",
     "decisionBy": null,
-    "decisionAt": null,
-    "decisionReason": null
+    "decisionAt": "2026-08-29T09:29:14.107Z",
+    "decisionReason": "EXPLICIT_HUMAN_APPROVAL"
   },
   "governance": {
     "approvalDoesNotEnable": true,
     "roleRuntimeEnablementSeparate": true,
-    "killSwitch": "STOP_NEW_AND_CLAIM"
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "canaryAuthorized": true,
+    "canaryEnabled": false,
+    "roleRuntimeEnabled": false,
+    "approvalEvent": "APPROVE",
+    "enableEventCreated": false,
+    "roleRuntimeEventCreated": false,
+    "appendOnly": true
   }
 }

@@ -6,7 +6,8 @@ This package is the audited human-review package bound to the governance-hardene
 
 **Explicit warning: current package DOES NOT authorize Canary runtime.**
 
-- `APPROVAL_DECISION=PENDING_HUMAN_APPROVAL`
+- `HUMAN_DECISION=APPROVE`
+- `APPROVAL_STATE=APPROVED_NOT_ENABLED`
 - `BUSINESS_APPROVAL_EVIDENCE_COMPLETE=YES`
 - `RELEASE_IDENTITY_ATTESTATION=RELEASE_IDENTITY_BOUND`
 - `CANARY_AUTHORIZED=NO`
@@ -15,7 +16,7 @@ This package is the audited human-review package bound to the governance-hardene
 - `ROLE_RUNTIME=DISABLED`
 - `KILL_SWITCH=STOP_NEW_AND_CLAIM`
 
-This package does not itself create a `PROPOSED`, `APPROVED_NOT_ENABLED`, or `ENABLED` governance row. No Instance, Task, Candidate Pool, Claim, Admission, or Realtime Eligibility evidence is created by the post-tag attestation.
+The explicit human decision authorizes only the exact scope for a future independent enablement gate. **THIS APPROVAL DOES NOT ENABLE CANARY. THIS APPROVAL DOES NOT ENABLE ROLE RUNTIME.** No `ENABLED` event, Instance, Task, Candidate Pool, Claim, Admission, or Realtime Eligibility evidence was created.
 
 ## 2. Release identities
 
@@ -120,26 +121,30 @@ Rollback order after any future separately authorized activation is: keep or res
 
 ## 10. Human approval section
 
-- `CURRENT_DECISION=PENDING_HUMAN_APPROVAL`
+- `CURRENT_DECISION=APPROVE`
+- `APPROVAL_STATE=APPROVED_NOT_ENABLED`
 - Decision artifact: `rc2-canary-human-approval-decision-v1.json`
 - Post-tag attestation commit: `d627c38af00eb6be5f2a8fda572679c62c4937c3`
+- Pre-decision baseline commit: `e96b498deb97c7c2a0d32b9165bbe1edef99b1e0`
 
 | Field | Value |
 | --- | --- |
-| Decision | `PENDING_HUMAN_APPROVAL` |
-| Human approver | intentionally blank; awaiting a separately recorded human decision |
-| Decision time | intentionally blank |
-| Approval reference | intentionally blank |
+| Decision | `APPROVE` |
+| Resulting state | `APPROVED_NOT_ENABLED` |
+| Decision source | `EXPLICIT_HUMAN_DECISION` |
+| Human approver | normalized non-PII reference `EXPLICIT_INTERACTIVE_APPROVER` |
+| Decision time | recorded in the versioned decision artifact |
+| Approval reference | exact decision artifact and pre-decision baseline commit |
 
-The release evidence is ready for a human Canary-scope approval decision, but no decision is implied or recorded here. Even a later human scope approval would produce only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
+The explicit human `APPROVE` decision is recorded for exactly enterprise `990001`, organization `990101`, definition `990401`, definition version `990402`, node `990404`, and role `RC1_TEST_CANARY_APPROVER`. Its result is only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
 
-The human reviewer may explicitly choose only `APPROVE` or `REJECT`. If `APPROVE` is later selected and recorded through the separately authorized governance workflow, its result is `APPROVED_NOT_ENABLED`. It does not enable Canary, enable ROLE Runtime, or change the Kill Switch.
+The human reviewer selected `APPROVE`; the selection is recorded with `decisionSource=EXPLICIT_HUMAN_DECISION`. It does not enable Canary, enable ROLE Runtime, or change the Kill Switch.
 
 ## 11. Current gate summary
 
 1. Business approval evidence is complete, reproducible, and unchanged.
 2. The final governance-hardened commit and annotated `workflow-v1.0.0-rc2.1` tag are locally and remotely verified.
 3. The post-tag attestation uniquely binds the release identity, exact business evidence, migration identity, and six-dimensional scope.
-4. Human approval remains pending; runtime enablement is still fail closed and separately governed.
+4. Human approval is recorded as `APPROVED_NOT_ENABLED`; runtime enablement is still fail closed and separately governed.
 
-This package must remain `PENDING_HUMAN_APPROVAL / NOT AUTHORIZED / NOT ENABLED`.
+This package is `APPROVED_NOT_ENABLED / AUTHORIZED / NOT ENABLED` for the exact six-dimensional scope only.
