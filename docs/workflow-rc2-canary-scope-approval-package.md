@@ -120,6 +120,10 @@ Rollback order after any future separately authorized activation is: keep or res
 
 ## 10. Human approval section
 
+- `CURRENT_DECISION=PENDING_HUMAN_APPROVAL`
+- Decision artifact: `rc2-canary-human-approval-decision-v1.json`
+- Post-tag attestation commit: `d627c38af00eb6be5f2a8fda572679c62c4937c3`
+
 | Field | Value |
 | --- | --- |
 | Decision | `PENDING_HUMAN_APPROVAL` |
@@ -128,6 +132,8 @@ Rollback order after any future separately authorized activation is: keep or res
 | Approval reference | intentionally blank |
 
 The release evidence is ready for a human Canary-scope approval decision, but no decision is implied or recorded here. Even a later human scope approval would produce only `APPROVED_NOT_ENABLED`; Canary enablement and ROLE Runtime activation still require separate approvals.
+
+The human reviewer may explicitly choose only `APPROVE` or `REJECT`. If `APPROVE` is later selected and recorded through the separately authorized governance workflow, its result is `APPROVED_NOT_ENABLED`. It does not enable Canary, enable ROLE Runtime, or change the Kill Switch.
 
 ## 11. Current gate summary
 
