@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "RC2_CANARY_ENABLEMENT_AUTHORIZATION_V1",
+  "releaseIdentity": {
+    "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
+    "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "runtimeTagObject": "269595532f17cc3db09880404ca11629d108fc6d",
+    "preEnableBaselineCommit": "5d6881d509a76be9c8a6874117539bd1e99400b5",
+    "humanApprovalRecordCommit": "e986791bc9a2870916b851e03b07186ebac4449e"
+  },
+  "approvedScope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "evidence": {
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "humanDecision": {
+    "decision": "ENABLE",
+    "source": "EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "previousState": "PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "authorizationState": "AUTHORIZED_TO_ENABLE",
+    "actorType": "HUMAN",
+    "actorReference": "EXPLICIT_INTERACTIVE_ENABLEMENT_APPROVER",
+    "decisionAt": "2026-08-31T01:46:16.678Z"
+  },
+  "runtimeState": {
+    "approvalState": "APPROVED_NOT_ENABLED",
+    "canaryAuthorized": true,
+    "canaryEnabled": false,
+    "roleRuntimeEnabled": false,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM"
+  },
+  "execution": {
+    "runtimeEnablementExecuted": false,
+    "enableEventCreated": false,
+    "roleRuntimeEventCreated": false,
+    "roleRuntimeActivationExecuted": false,
+    "runtimeScopeObjectCreated": false,
+    "appendOnlyAuthorizationRecord": true
+  }
+}

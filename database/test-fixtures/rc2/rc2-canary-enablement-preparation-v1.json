@@ -1,6 +1,7 @@
 {
   "schemaVersion": "RC2_CANARY_ENABLEMENT_PREPARATION_V1",
   "preparationBaselineCommit": "e986791bc9a2870916b851e03b07186ebac4449e",
+  "preEnableBaselineCommit": "5d6881d509a76be9c8a6874117539bd1e99400b5",
   "humanApprovalRecordCommit": "e986791bc9a2870916b851e03b07186ebac4449e",
   "runtimeRelease": {
     "tag": "workflow-v1.0.0-rc2.1",
@@ -38,10 +39,15 @@
     "currentRuntimeObjectCount": 0
   },
   "enablementDecision": {
-    "status": "PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "previousStatus": "PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "status": "AUTHORIZED_TO_ENABLE",
+    "enablementDecision": "ENABLE",
+    "decisionSource": "EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "decisionActorType": "HUMAN",
+    "decisionActorReference": "EXPLICIT_INTERACTIVE_ENABLEMENT_APPROVER",
     "decisionBy": null,
-    "decisionAt": null,
-    "decisionReason": null
+    "decisionAt": "2026-08-31T01:46:16.678Z",
+    "decisionReason": "EXPLICIT_CANARY_ENABLEMENT_AUTHORIZATION"
   },
   "runtimeControls": {
     "canaryEnabled": false,
@@ -61,5 +67,5 @@
     "blockNewRuntimeAndClaims": true,
     "preserveAppendOnlyEvidence": true
   },
-  "preparationStatus": "READY_FOR_EXPLICIT_HUMAN_ENABLEMENT_DECISION"
+  "preparationStatus": "ENABLEMENT_AUTHORIZATION_RECORDED"
 }

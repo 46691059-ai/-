@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -42,27 +43,43 @@ class Rc2CanaryEnablementPreparationContractTest {
     }
 
     @Test
-    void preparationCannotBeMistakenForAnEnablementDecisionOrEvent() throws Exception {
+    void explicitHumanDecisionAuthorizesButDoesNotExecuteEnablement() throws Exception {
         JsonNode preparation = read("rc2-canary-enablement-preparation-v1.json");
+        JsonNode authorization = read("rc2-canary-enablement-authorization-v1.json");
         JsonNode decision = preparation.path("enablementDecision");
         JsonNode controls = preparation.path("runtimeControls");
 
-        assertThat(decision.path("status").asText())
+        assertThat(decision.path("previousStatus").asText())
                 .isEqualTo("PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION");
+        assertThat(decision.path("status").asText()).isEqualTo("AUTHORIZED_TO_ENABLE");
+        assertThat(decision.path("enablementDecision").asText()).isEqualTo("ENABLE");
+        assertThat(decision.path("decisionSource").asText())
+                .isEqualTo("EXPLICIT_HUMAN_ENABLEMENT_DECISION");
+        assertThat(decision.path("decisionActorType").asText()).isEqualTo("HUMAN");
+        assertThat(decision.path("decisionActorReference").asText())
+                .isEqualTo("EXPLICIT_INTERACTIVE_ENABLEMENT_APPROVER");
         assertThat(decision.path("decisionBy").isNull()).isTrue();
-        assertThat(decision.path("decisionAt").isNull()).isTrue();
-        assertThat(decision.path("decisionReason").isNull()).isTrue();
+        assertThat(Instant.parse(decision.path("decisionAt").asText())).isNotNull();
         assertThat(controls.path("canaryEnabled").asBoolean()).isFalse();
         assertThat(controls.path("enableEventCreated").asBoolean()).isFalse();
         assertThat(controls.path("roleRuntimeEnabled").asBoolean()).isFalse();
         assertThat(controls.path("roleRuntimeActivationEventCreated").asBoolean()).isFalse();
         assertThat(controls.path("approvalDoesNotEnable").asBoolean()).isTrue();
         assertThat(controls.path("roleRuntimeEnablementSeparate").asBoolean()).isTrue();
+        assertThat(authorization.path("humanDecision").path("authorizationState").asText())
+                .isEqualTo("AUTHORIZED_TO_ENABLE");
+        assertThat(authorization.path("runtimeState").path("approvalState").asText())
+                .isEqualTo("APPROVED_NOT_ENABLED");
+        assertThat(authorization.path("execution").path("runtimeEnablementExecuted").asBoolean())
+                .isFalse();
+        assertThat(authorization.path("execution").path("runtimeScopeObjectCreated").asBoolean())
+                .isFalse();
     }
 
     @Test
     void killSwitchAndAppendOnlySuspendRollbackContractAreFrozen() throws Exception {
         JsonNode preparation = read("rc2-canary-enablement-preparation-v1.json");
+        JsonNode authorization = read("rc2-canary-enablement-authorization-v1.json");
         JsonNode controls = preparation.path("runtimeControls");
         JsonNode rollback = preparation.path("rollback");
 
@@ -77,6 +94,20 @@ class Rc2CanaryEnablementPreparationContractTest {
         assertThat(rollback.path("disableRoleRuntimeSeparately").asBoolean()).isTrue();
         assertThat(rollback.path("blockNewRuntimeAndClaims").asBoolean()).isTrue();
         assertThat(rollback.path("preserveAppendOnlyEvidence").asBoolean()).isTrue();
+        assertThat(authorization.path("releaseIdentity").path("preEnableBaselineCommit").asText())
+                .isEqualTo("5d6881d509a76be9c8a6874117539bd1e99400b5");
+        assertThat(authorization.path("releaseIdentity").path("runtimeReleaseTag").asText())
+                .isEqualTo(preparation.path("runtimeRelease").path("tag").asText());
+        assertThat(authorization.path("releaseIdentity").path("runtimeReleaseCommit").asText())
+                .isEqualTo(preparation.path("runtimeRelease").path("commit").asText());
+        assertThat(authorization.path("releaseIdentity").path("runtimeTagObject").asText())
+                .isEqualTo(preparation.path("runtimeRelease").path("tagObject").asText());
+        assertThat(authorization.path("approvedScope")).isEqualTo(preparation.path("scope"));
+        assertThat(authorization.path("evidence")).isEqualTo(preparation.path("evidence"));
+        assertThat(authorization.path("runtimeState").path("killSwitch").asText())
+                .isEqualTo("STOP_NEW_AND_CLAIM");
+        assertThat(authorization.path("execution").path("appendOnlyAuthorizationRecord")
+                .asBoolean()).isTrue();
     }
 
     private static JsonNode read(String file) throws Exception {

@@ -2,6 +2,13 @@
 
 This checklist prepares a later explicit human enablement decision. It does not enable Canary and must remain unchecked in S11.6A.
 
+- [x] Explicit enablement decision received: `ENABLE`.
+- [x] Authorization state recorded: `AUTHORIZED_TO_ENABLE`.
+
+**THIS HUMAN DECISION DOES NOT ENABLE CANARY RUNTIME.**
+
+**THIS HUMAN DECISION DOES NOT ENABLE ROLE RUNTIME.**
+
 - [ ] Runtime tag is `workflow-v1.0.0-rc2.1` and still peels to `c5946d272e8eb88115671d66b46e8c8ec67b1477`.
 - [ ] Human approval record commit is `e986791bc9a2870916b851e03b07186ebac4449e` with state `APPROVED_NOT_ENABLED`.
 - [ ] All five frozen evidence values match the approved artifact.
@@ -16,7 +23,8 @@ This checklist prepares a later explicit human enablement decision. It does not 
 - [ ] Immediate rollback starts by retaining/restoring `STOP_NEW_AND_CLAIM`, then transitions `ENABLED → SUSPENDED` or to `REVOKED`.
 - [ ] Rollback blocks new runtime/claim activity and preserves append-only evidence.
 
-Future explicit decision — leave both unchecked during S11.6A:
+Recorded authorization and execution boundary:
 
-- [ ] ENABLE EXACT CANARY SCOPE
-- [ ] DO NOT ENABLE
+- [x] ENABLE decision recorded for the exact Canary scope
+- [ ] Runtime Canary enablement executed
+- [ ] ROLE Runtime activation executed

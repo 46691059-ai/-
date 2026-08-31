@@ -162,3 +162,16 @@ This package is `APPROVED_NOT_ENABLED / AUTHORIZED / NOT ENABLED` for the exact 
 - Kill Switch: `STOP_NEW_AND_CLAIM`
 
 Preparation does not change `APPROVED_NOT_ENABLED` to `ENABLED`. A future explicit human Canary Enablement Gate must independently revalidate release identity, all evidence hashes, exact scope, observation readiness, rollback readiness, ROLE Runtime separation, and the Kill Switch.
+
+## 13. Explicit Canary enablement authorization
+
+- `HUMAN_ENABLEMENT_DECISION=ENABLE`
+- `ENABLEMENT_AUTHORIZATION_STATE=AUTHORIZED_TO_ENABLE`
+- `PRE_ENABLE_BASELINE_COMMIT=5d6881d509a76be9c8a6874117539bd1e99400b5`
+- `CANARY_ENABLED=NO`
+- `ENABLE_EVENT_CREATED=NO`
+- `ROLE_RUNTIME_ENABLED=NO`
+- `ROLE_RUNTIME_ACTIVATION_EXECUTED=NO`
+- `KILL_SWITCH=STOP_NEW_AND_CLAIM`
+
+The exact six-dimensional Canary scope is authorized for a future independent runtime enablement execution gate. No runtime enablement has occurred. No ROLE Runtime activation has occurred.
