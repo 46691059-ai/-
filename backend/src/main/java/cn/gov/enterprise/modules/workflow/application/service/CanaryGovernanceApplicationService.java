@@ -14,6 +14,28 @@ public class CanaryGovernanceApplicationService {
     @Autowired
     public CanaryGovernanceApplicationService(CanaryGovernanceRepository repository,WorkflowIdentityGenerator ids){this(repository,ids,Clock.systemUTC());}
     public CanaryGovernanceApplicationService(CanaryGovernanceRepository repository,WorkflowIdentityGenerator ids,Clock clock){this.repository=repository;this.ids=ids;this.clock=clock;}
+    @Transactional public CanaryGovernanceBootstrapResult bootstrapApproved(
+            CanaryGovernanceBootstrapCommand command) {
+        Instant now=Instant.now(clock);
+        var existing=repository.latest(command.scope(),now);
+        if(existing.isPresent()){
+            var current=existing.orElseThrow();
+            if(current.state()!=CanaryGovernanceState.APPROVED_NOT_ENABLED
+                    || !current.evidence().equals(command.evidence())
+                    || !current.reason().equals(command.bindingReason())) {
+                throw new IllegalStateException("Canary scope already governed by different bootstrap identity");
+            }
+            return CanaryGovernanceBootstrapResult.ALREADY_EXISTS;
+        }
+        var proposed=CanaryGovernanceRecord.proposed(ids.nextId(),command.scope(),
+                command.evidence(),command.bindingReason(),now);
+        repository.insert(proposed);
+        var approved=proposed.transition(ids.nextId(),
+                CanaryGovernanceState.APPROVED_NOT_ENABLED,command.approvalActor(),
+                command.bindingReason(),now);
+        repository.insert(approved);
+        return CanaryGovernanceBootstrapResult.CREATED;
+    }
     @Transactional public CanaryGovernanceRecord propose(CanaryScope scope,CanaryApprovalEvidence evidence,String reason){
         if(repository.latest(scope,Instant.now(clock)).isPresent())throw new IllegalStateException("Canary scope already governed");
         var record=CanaryGovernanceRecord.proposed(ids.nextId(),scope,evidence,reason,Instant.now(clock));repository.insert(record);return record;

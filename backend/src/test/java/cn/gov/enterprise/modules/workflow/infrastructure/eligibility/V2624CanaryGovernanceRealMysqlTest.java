@@ -17,9 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @EnabledIfEnvironmentVariable(named = "V2624_MYSQL_URL", matches = ".+")
 class V2624CanaryGovernanceRealMysqlTest {
-    private static final Instant AT = Instant.parse("2026-08-26T02:30:00Z");
+    private static final Instant AT = Instant.parse("2026-08-31T08:00:00Z");
     private static final CanaryScope SCOPE = new CanaryScope(
-            991001, 991101, 991401, 991402, 991404, "RC2_CANARY_GATE_TEST");
+            990001, 990101, 990401, 990402, 990404, "RC1_TEST_CANARY_APPROVER");
 
     @Autowired private CanaryRuntimeGate gate;
     @Autowired private CanaryGovernanceRepository repository;
@@ -28,20 +28,20 @@ class V2624CanaryGovernanceRealMysqlTest {
     @Test
     void realPersistenceAndRuntimeGateRequireExactScopeAndIndependentRuntimeEnablement() {
         assertThat(repository.latest(SCOPE, AT)).get()
-                .extracting(record -> record.state().name()).isEqualTo("ENABLED");
-        assertThat(gate.allows(SCOPE, AT)).isTrue();
-        assertThat(gate.allows(new CanaryScope(999999, 991101, 991401, 991402, 991404,
-                "RC2_CANARY_GATE_TEST"), AT)).isFalse();
-        assertThat(gate.allows(new CanaryScope(991001, 999999, 991401, 991402, 991404,
-                "RC2_CANARY_GATE_TEST"), AT)).isFalse();
-        assertThat(gate.allows(new CanaryScope(991001, 991101, 999999, 991402, 991404,
-                "RC2_CANARY_GATE_TEST"), AT)).isFalse();
-        assertThat(gate.allows(new CanaryScope(991001, 991101, 991401, 999999, 991404,
-                "RC2_CANARY_GATE_TEST"), AT)).isFalse();
-        assertThat(gate.allows(new CanaryScope(991001, 991101, 991401, 991402, 999999,
-                "RC2_CANARY_GATE_TEST"), AT)).isFalse();
-        assertThat(gate.allows(new CanaryScope(991001, 991101, 991401, 991402, 991404,
-                "RC2_CANARY_GATE_OTHER"), AT)).isFalse();
+                .extracting(record -> record.state().name()).isEqualTo("APPROVED_NOT_ENABLED");
+        assertThat(gate.allows(SCOPE, AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(999999, 990101, 990401, 990402, 990404,
+                "RC1_TEST_CANARY_APPROVER"), AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(990001, 999999, 990401, 990402, 990404,
+                "RC1_TEST_CANARY_APPROVER"), AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(990001, 990101, 999999, 990402, 990404,
+                "RC1_TEST_CANARY_APPROVER"), AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(990001, 990101, 990401, 999999, 990404,
+                "RC1_TEST_CANARY_APPROVER"), AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(990001, 990101, 990401, 990402, 999999,
+                "RC1_TEST_CANARY_APPROVER"), AT)).isFalse();
+        assertThat(gate.allows(new CanaryScope(990001, 990101, 990401, 990402, 990404,
+                "RC1_TEST_CANARY_OTHER"), AT)).isFalse();
 
         var runtimeDisabled = new ProductionCanaryRuntimeGate(repository, controls, false);
         assertThat(runtimeDisabled.allows(SCOPE, AT)).isFalse();
