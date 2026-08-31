@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "RC2_CANARY_RUNTIME_ENABLEMENT_EXECUTION_V1",
+  "releaseIdentity": {
+    "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
+    "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "runtimeTagObject": "269595532f17cc3db09880404ca11629d108fc6d"
+  },
+  "authorization": {
+    "enablementAuthorizationCommit": "3904efd7cd2a35736f46988b48170a7cd2813654",
+    "preEnableBaselineCommit": "5d6881d509a76be9c8a6874117539bd1e99400b5",
+    "humanApprovalRecordCommit": "e986791bc9a2870916b851e03b07186ebac4449e"
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "evidence": {
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "runtimeGovernanceTarget": {
+    "type": "APPEND_ONLY_LEDGER_AGGREGATE",
+    "table": "workflow_role_canary_scope_governance",
+    "aggregate": "CanaryGovernanceRecord",
+    "keyCount": 6,
+    "matchCount": 1,
+    "expectedCurrentState": "APPROVED_NOT_ENABLED",
+    "expectedCurrentRevision": 2,
+    "authoritativeStateSource": "LATEST_EFFECTIVE_APPEND_ONLY_LEDGER_REVISION"
+  },
+  "preExecutionState": {
+    "enablementAuthorizationState": "AUTHORIZED_TO_ENABLE",
+    "canaryEnabled": false,
+    "roleRuntimeEnabled": false,
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "killSwitchRevalidationRequired": true
+  },
+  "execution": {
+    "status": "PENDING_RUNTIME_ENABLEMENT_EXECUTION",
+    "operationKeySchema": "RC2_CANARY_ENABLE_OPERATION_KEY_V1",
+    "operationKeyCanonical": "RC2_CANARY_ENABLE_V1|990001|990101|990401|990402|990404|RC1_TEST_CANARY_APPROVER|3904efd7cd2a35736f46988b48170a7cd2813654|workflow-v1.0.0-rc2.1|c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "operationKey": "37b88399d42cf782f644d14fe2f1704b0ae7e840e01b6c739da78d497df4ac26",
+    "expectedRevision": 2,
+    "enableEventCreated": false,
+    "runtimeEnablementExecuted": false,
+    "runtimeEnablementAt": null,
+    "runtimeScopeObjectCreated": false,
+    "trafficSwitched": false
+  },
+  "transactionContract": {
+    "transactional": true,
+    "singleAppendRequired": true,
+    "compareAndSetRevisionRequired": true,
+    "duplicatePreviousRecordRejected": true,
+    "duplicateScopeRevisionRejected": true,
+    "partialSuccessAllowed": false,
+    "retryUsesSameOperationKey": true
+  },
+  "postExecutionExpectedState": {
+    "canaryEnabled": true,
+    "roleRuntimeEnabled": false,
+    "observationStartCondition": "SUCCESSFUL_SINGLE_CANARY_ENABLE_EVENT"
+  }
+}
