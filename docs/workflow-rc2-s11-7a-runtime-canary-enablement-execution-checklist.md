@@ -15,7 +15,13 @@
 - [x] Observation plan available
 - [x] ROLE Runtime separation verified
 
-Execution remains deliberately pending:
+Execution evidence frozen by S11.7C:
 
-- [ ] Runtime enablement execution command issued
-- [ ] Runtime enablement execution completed
+- [x] Runtime enablement execution command issued
+- [x] Runtime enablement execution completed
+- [x] Exactly one ENABLE event created
+- [x] Canary state is ENABLED
+- [x] ROLE runtime remains DISABLED
+- [x] Kill switch unchanged
+- [x] Traffic remains unreleased
+- [x] Observation entrypoint ready

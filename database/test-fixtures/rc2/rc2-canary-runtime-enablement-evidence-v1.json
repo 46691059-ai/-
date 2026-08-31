@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "RC2_CANARY_RUNTIME_ENABLEMENT_EVIDENCE_V1",
+  "executionIdentity": {
+    "runtimeGovernanceBootstrapCommit": "111297fe0174525549e11ba66e5005667f15890e",
+    "runtimeEnablementPreparationCommit": "3fb1ec7236274aa3c44c6a907477c5ae3851c109",
+    "enablementAuthorizationCommit": "3904efd7cd2a35736f46988b48170a7cd2813654",
+    "humanApprovalRecordCommit": "e986791bc9a2870916b851e03b07186ebac4449e",
+    "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
+    "runtimeTagObject": "269595532f17cc3db09880404ca11629d108fc6d"
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "preExecutionState": {
+    "canaryState": "APPROVED_NOT_ENABLED",
+    "enableEventCount": 0,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM"
+  },
+  "execution": {
+    "enableEventCreated": true,
+    "enableEventCount": 1,
+    "enableEventRevision": 3,
+    "eventSequence": ["PROPOSED", "APPROVED_NOT_ENABLED", "ENABLED"],
+    "runtimeEnablementExecuted": true,
+    "runtimeEnablementAt": "2026-08-31T08:22:53.611Z"
+  },
+  "postExecutionState": {
+    "canaryState": "ENABLED",
+    "canaryEnabled": true,
+    "roleRuntimeEnabled": false,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "trafficReleased": false
+  },
+  "safety": {
+    "businessTaskCreated": false,
+    "claimExecuted": false,
+    "scopeWideningOccurred": false,
+    "nullWildcardScopeUsed": false,
+    "parentScopeInheritanceUsed": false,
+    "crossScopeFallbackUsed": false,
+    "enableChangesKillSwitch": false
+  },
+  "evidence": {
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "observationBaseline": {
+    "captureStatus": "PARTIAL",
+    "canaryState": "ENABLED",
+    "enableEventCount": 1,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "runtimeScopeCount": 1,
+    "businessTelemetryAsserted": false
+  }
+}

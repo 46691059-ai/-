@@ -50,7 +50,7 @@ class Rc2CanaryRuntimeEnablementExecutionPreparationContractTest {
         assertThat(target.path("keyCount").asInt()).isEqualTo(6);
         assertThat(target.path("matchCount").asInt()).isEqualTo(1);
         assertThat(target.path("expectedCurrentState").asText())
-                .isEqualTo("APPROVED_NOT_ENABLED");
+                .isEqualTo("ENABLED");
         assertThat(template.path("scope")).isEqualTo(authorization.path("approvedScope"));
         assertThat(template.path("evidence")).isEqualTo(authorization.path("evidence"));
         assertThat(template.path("authorization").path("enablementAuthorizationCommit").asText())
@@ -64,9 +64,9 @@ class Rc2CanaryRuntimeEnablementExecutionPreparationContractTest {
                 execution.path("operationKeyCanonical").asText()))
                 .isEqualTo(execution.path("operationKey").asText());
         assertThat(execution.path("status").asText())
-                .isEqualTo("PENDING_RUNTIME_ENABLEMENT_EXECUTION");
-        assertThat(execution.path("enableEventCreated").asBoolean()).isFalse();
-        assertThat(execution.path("runtimeEnablementExecuted").asBoolean()).isFalse();
+                .isEqualTo("RUNTIME_CANARY_ENABLED");
+        assertThat(execution.path("enableEventCreated").asBoolean()).isTrue();
+        assertThat(execution.path("runtimeEnablementExecuted").asBoolean()).isTrue();
     }
 
     @Test

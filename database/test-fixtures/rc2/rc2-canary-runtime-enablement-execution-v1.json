@@ -31,26 +31,31 @@
     "aggregate": "CanaryGovernanceRecord",
     "keyCount": 6,
     "matchCount": 1,
-    "expectedCurrentState": "APPROVED_NOT_ENABLED",
-    "expectedCurrentRevision": 2,
+    "expectedCurrentState": "ENABLED",
+    "expectedCurrentRevision": 3,
     "authoritativeStateSource": "LATEST_EFFECTIVE_APPEND_ONLY_LEDGER_REVISION"
   },
   "preExecutionState": {
     "enablementAuthorizationState": "AUTHORIZED_TO_ENABLE",
+    "canaryState": "APPROVED_NOT_ENABLED",
+    "enableEventCount": 0,
     "canaryEnabled": false,
     "roleRuntimeEnabled": false,
     "killSwitch": "STOP_NEW_AND_CLAIM",
     "killSwitchRevalidationRequired": true
   },
   "execution": {
-    "status": "PENDING_RUNTIME_ENABLEMENT_EXECUTION",
+    "status": "RUNTIME_CANARY_ENABLED",
     "operationKeySchema": "RC2_CANARY_ENABLE_OPERATION_KEY_V1",
     "operationKeyCanonical": "RC2_CANARY_ENABLE_V1|990001|990101|990401|990402|990404|RC1_TEST_CANARY_APPROVER|3904efd7cd2a35736f46988b48170a7cd2813654|workflow-v1.0.0-rc2.1|c5946d272e8eb88115671d66b46e8c8ec67b1477",
     "operationKey": "37b88399d42cf782f644d14fe2f1704b0ae7e840e01b6c739da78d497df4ac26",
     "expectedRevision": 2,
-    "enableEventCreated": false,
-    "runtimeEnablementExecuted": false,
-    "runtimeEnablementAt": null,
+    "enableEventCreated": true,
+    "enableEventCount": 1,
+    "enableEventRevision": 3,
+    "eventSequence": ["PROPOSED", "APPROVED_NOT_ENABLED", "ENABLED"],
+    "runtimeEnablementExecuted": true,
+    "runtimeEnablementAt": "2026-08-31T08:22:53.611Z",
     "runtimeScopeObjectCreated": false,
     "trafficSwitched": false
   },
@@ -66,6 +71,8 @@
   "postExecutionExpectedState": {
     "canaryEnabled": true,
     "roleRuntimeEnabled": false,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM",
     "observationStartCondition": "SUCCESSFUL_SINGLE_CANARY_ENABLE_EVENT"
   }
 }
