@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "RC2_CANARY_OBSERVATION_EVIDENCE_V1",
+  "identity": {
+    "observationBaselineCommit": "fd833003e6134b7c0e39a08d513fd0aa2af195eb",
+    "runtimeEnablementEvidenceCommit": "fd833003e6134b7c0e39a08d513fd0aa2af195eb",
+    "runtimeGovernanceBootstrapCommit": "111297fe0174525549e11ba66e5005667f15890e",
+    "enablementAuthorizationCommit": "3904efd7cd2a35736f46988b48170a7cd2813654",
+    "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
+    "runtimeTagObject": "269595532f17cc3db09880404ca11629d108fc6d"
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "observationWindow": {
+    "startUtc": "2026-08-31T09:10:04.452Z",
+    "endUtc": "2026-08-31T09:10:14.516Z",
+    "snapshotCount": 2,
+    "durationMillis": 10064
+  },
+  "runtimeState": {
+    "canaryState": "ENABLED",
+    "canaryEnabled": true,
+    "enableEventCount": 1,
+    "enableEventRevision": 3,
+    "runtimeGovernanceTargetCount": 1,
+    "roleRuntimeEnabled": false,
+    "roleRuntime": "DISABLED",
+    "killSwitch": "STOP_NEW_AND_CLAIM"
+  },
+  "scopeObservation": {
+    "scopeAnomalyCount": 0,
+    "evidenceVariantCount": 1,
+    "evidenceDrift": false,
+    "scopeWideningOccurred": false,
+    "nullWildcardScopeUsed": false,
+    "parentScopeInheritanceUsed": false,
+    "crossScopeFallbackUsed": false
+  },
+  "businessIsolation": {
+    "workflowTaskCount": 0,
+    "candidatePoolCount": 0,
+    "candidateMemberCount": 0,
+    "claimCount": 0,
+    "claimAuditCount": 0,
+    "externalAuditOutboxCount": 0,
+    "externalAuditReceiptCount": 0,
+    "trafficReleased": false
+  },
+  "telemetry": {
+    "businessErrorTelemetry": "NOT_OBSERVED",
+    "businessLatencyTelemetry": "NOT_OBSERVED",
+    "completeness": "PARTIAL"
+  },
+  "result": {
+    "observationStateStable": true,
+    "observationResult": "PASS"
+  }
+}
