@@ -148,3 +148,17 @@ The human reviewer selected `APPROVE`; the selection is recorded with `decisionS
 4. Human approval is recorded as `APPROVED_NOT_ENABLED`; runtime enablement is still fail closed and separately governed.
 
 This package is `APPROVED_NOT_ENABLED / AUTHORIZED / NOT ENABLED` for the exact six-dimensional scope only.
+
+## 12. Canary enablement preparation
+
+- Preparation artifact: `rc2-canary-enablement-preparation-v1.json`
+- Preparation baseline / approval record: `e986791bc9a2870916b851e03b07186ebac4449e`
+- Enablement decision: `PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION`
+- Exact blast-radius scope count: `1`
+- Maximum recommended candidates: `1`
+- Canary enabled: `NO`
+- Enable event created: `NO`
+- ROLE Runtime enabled: `NO`
+- Kill Switch: `STOP_NEW_AND_CLAIM`
+
+Preparation does not change `APPROVED_NOT_ENABLED` to `ENABLED`. A future explicit human Canary Enablement Gate must independently revalidate release identity, all evidence hashes, exact scope, observation readiness, rollback readiness, ROLE Runtime separation, and the Kill Switch.

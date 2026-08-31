@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "RC2_CANARY_ENABLEMENT_PREPARATION_V1",
+  "preparationBaselineCommit": "e986791bc9a2870916b851e03b07186ebac4449e",
+  "humanApprovalRecordCommit": "e986791bc9a2870916b851e03b07186ebac4449e",
+  "runtimeRelease": {
+    "tag": "workflow-v1.0.0-rc2.1",
+    "commit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "tagObject": "269595532f17cc3db09880404ca11629d108fc6d"
+  },
+  "approval": {
+    "state": "APPROVED_NOT_ENABLED",
+    "humanDecision": "APPROVE",
+    "canaryAuthorized": true
+  },
+  "scope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "evidence": {
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "blastRadius": {
+    "scopeCount": 1,
+    "directoryRevision": "1",
+    "directoryCandidateCount": 2,
+    "maximumRecommendedCandidates": 1,
+    "wildcardAllowed": false,
+    "parentScopeInheritanceAllowed": false,
+    "crossScopeFallbackAllowed": false,
+    "currentRuntimeObjectCount": 0
+  },
+  "enablementDecision": {
+    "status": "PENDING_EXPLICIT_HUMAN_ENABLEMENT_DECISION",
+    "decisionBy": null,
+    "decisionAt": null,
+    "decisionReason": null
+  },
+  "runtimeControls": {
+    "canaryEnabled": false,
+    "enableEventCreated": false,
+    "roleRuntimeEnabled": false,
+    "roleRuntimeActivationEventCreated": false,
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "killSwitchMustBeRevalidatedAtEnablement": true,
+    "approvalDoesNotEnable": true,
+    "roleRuntimeEnablementSeparate": true
+  },
+  "rollback": {
+    "primaryTransition": "ENABLED_TO_SUSPENDED",
+    "terminalTransition": "ANY_NON_REVOKED_TO_REVOKED",
+    "firstAction": "RESTORE_OR_RETAIN_STOP_NEW_AND_CLAIM",
+    "disableRoleRuntimeSeparately": true,
+    "blockNewRuntimeAndClaims": true,
+    "preserveAppendOnlyEvidence": true
+  },
+  "preparationStatus": "READY_FOR_EXPLICIT_HUMAN_ENABLEMENT_DECISION"
+}
