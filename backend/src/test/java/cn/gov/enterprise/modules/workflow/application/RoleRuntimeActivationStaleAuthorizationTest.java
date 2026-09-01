@@ -1,0 +1,8 @@
+package cn.gov.enterprise.modules.workflow.application;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import cn.gov.enterprise.modules.workflow.application.command.RoleRuntimeActivationCommand;
+import org.junit.jupiter.api.Test;
+class RoleRuntimeActivationStaleAuthorizationTest{
+ @Test void changedReleaseCommitFailsClosed(){var f=RoleRuntimeActivationTestSupport.fixture();var c=RoleRuntimeActivationTestSupport.command();var stale=new RoleRuntimeActivationCommand(c.scope(),c.eventId(),c.authorizationId(),c.authorizationType(),c.authorizationCommit(),c.designCommit(),c.observationEvidenceCommit(),c.runtimeEnablementEvidenceCommit(),"2222222222222222222222222222222222222222",c.runtimeReleaseTag(),c.approvalEvidenceHash(),c.directoryResultHash(),c.versionBindingHash(),c.manifestHash(),c.contentHash(),c.structuralFingerprint(),c.actorType(),c.actorId());assertThatThrownBy(()->f.service().activate(stale)).hasMessageContaining("STALE");}
+ @Test void changedAuthorizationIdentityFailsClosed(){var f=RoleRuntimeActivationTestSupport.fixture();var c=RoleRuntimeActivationTestSupport.command();var stale=new RoleRuntimeActivationCommand(c.scope(),c.eventId(),"other",c.authorizationType(),c.authorizationCommit(),c.designCommit(),c.observationEvidenceCommit(),c.runtimeEnablementEvidenceCommit(),c.runtimeReleaseCommit(),c.runtimeReleaseTag(),c.approvalEvidenceHash(),c.directoryResultHash(),c.versionBindingHash(),c.manifestHash(),c.contentHash(),c.structuralFingerprint(),c.actorType(),c.actorId());assertThatThrownBy(()->f.service().activate(stale)).hasMessageContaining("STALE");}
+}

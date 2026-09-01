@@ -34,4 +34,13 @@ public class CanaryGovernanceRepositoryImpl implements CanaryGovernanceRepositor
         if(rows.size()!=1)return Optional.empty();
         return Optional.of(CanaryGovernanceEntityMapper.toDomain(rows.getFirst()));
     }
+    @Override public long countByExactScopeAndState(CanaryScope s,CanaryGovernanceState state){
+        return mapper.selectCount(new LambdaQueryWrapper<CanaryGovernanceEntity>()
+                .eq(CanaryGovernanceEntity::getEnterpriseId,s.enterpriseId())
+                .eq(CanaryGovernanceEntity::getOrganizationId,s.organizationId())
+                .eq(CanaryGovernanceEntity::getDefinitionId,s.definitionId())
+                .eq(CanaryGovernanceEntity::getDefinitionVersionId,s.definitionVersionId())
+                .eq(CanaryGovernanceEntity::getNodeId,s.nodeId()).eq(CanaryGovernanceEntity::getRoleCode,s.roleCode())
+                .eq(CanaryGovernanceEntity::getGovernanceState,state.name()).eq(CanaryGovernanceEntity::getDeleted,0));
+    }
 }

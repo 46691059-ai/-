@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "RC2_ROLE_RUNTIME_ACTIVATION_MECHANISM_V1",
+  "gate": "RC2-S11.9P-B",
+  "designCommit": "a9a1f3d3962b9ad4a0f4e4bb9d81b617fc820175",
+  "implementationBaselineCommit": "a9a1f3d3962b9ad4a0f4e4bb9d81b617fc820175",
+  "migration": {
+    "version": "2.6.25",
+    "file": "V2.6.25__create_role_runtime_activation_event.sql",
+    "sha256": "984b7db090ba148e3dbae7ca70988d2ff34015af51a518f33320b34371b2fbae",
+    "flywayChecksum": 1683053973,
+    "historicalShaValidation": "46/46_PASS",
+    "historicalMigrationShaChanged": false
+  },
+  "authoritativePersistenceModel": "APPEND_ONLY_WORKFLOW_ROLE_RUNTIME_ACTIVATION_EVENT_WITH_EVENT_DERIVED_STATE",
+  "eventType": "ROLE_RUNTIME_ACTIVATED",
+  "transition": { "from": "DISABLED", "to": "ACTIVATED" },
+  "exactScope": {
+    "enterpriseId": 990001,
+    "organizationId": 990101,
+    "definitionId": 990401,
+    "definitionVersionId": 990402,
+    "nodeId": 990404,
+    "roleCode": "RC1_TEST_CANARY_APPROVER"
+  },
+  "authorization": {
+    "type": "ACTIVATE_ROLE_RUNTIME",
+    "independentFrom": ["APPROVE", "ENABLE"],
+    "designCommit": "a9a1f3d3962b9ad4a0f4e4bb9d81b617fc820175"
+  },
+  "evidenceBindings": {
+    "canaryObservationEvidenceCommit": "82945b58e751a3922db87ac721c5e946b49a8f84",
+    "runtimeEnablementEvidenceCommit": "fd833003e6134b7c0e39a08d513fd0aa2af195eb",
+    "runtimeReleaseCommit": "c5946d272e8eb88115671d66b46e8c8ec67b1477",
+    "runtimeReleaseTag": "workflow-v1.0.0-rc2.1",
+    "directoryResultHash": "2e1736fae83be972259ccee92b8d448d463e7c8a5483d49afcda7225a3279234",
+    "versionBindingHash": "5b473845390a2a4c69f28a7b9d63d538a0a371cea447e97ecd00707ddbb87c1c",
+    "manifestHash": "e76bc7f8ee3cca977d4363b6073106d66deffe2491d0290a569d46fa3bac57ed",
+    "contentHash": "b2bc64b3c6cebbd1713b92074f5fdcf6862d94fb70338a6b2d07c76c61ef8ade",
+    "structuralFingerprint": "20253809be2aeb7c76fe36a7d37293b6ca8b77741998aead726893056044a5b9"
+  },
+  "validation": {
+    "idempotency": "PASS",
+    "replayProtection": "PASS",
+    "databaseConcurrencyGuard": "PASS",
+    "transactionAtomicity": "PASS",
+    "staleAuthorizationProtection": "PASS",
+    "killSwitchIsolation": "PASS",
+    "trafficIsolation": "PASS",
+    "exactScope": "PASS",
+    "realMysqlMigration": "PASS"
+  },
+  "runtimeProtection": {
+    "rc2Runtime": "127.0.0.1:3306/enterprise_platform",
+    "databaseWriteExecuted": false,
+    "runtimeMigrationExecuted": false,
+    "roleRuntimeActivationExecuted": false,
+    "roleRuntimeEventCreated": false,
+    "killSwitch": "STOP_NEW_AND_CLAIM",
+    "trafficReleased": false,
+    "businessTaskCreated": false,
+    "claimExecuted": false
+  }
+}
